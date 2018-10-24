@@ -1,0 +1,184 @@
+# org.json from https://mvnrepository.com/artifact/org.json/json
+# Documentation - https://stleary.github.io/JSON-java/
+
+# load java stuff
+import java.net.*;
+
+sub tostring {
+	$obj = $1;
+	return [$obj toString];
+}
+
+# Stupid loader hack because Cobaltstrike's jar loading is broken in jre9+
+# thanks to some implementation changes by Oracle.
+sub new_loader {
+	$json_jar_file = 'file:///share/tools/cobaltstrike/scripts/client/jars/json.jar';
+	$json_url = [new URL: $json_jar_file];
+	$json_loader = [new URLClassLoader: @($json_url)];
+	return $json_loader;
+}
+
+sub new_class {
+	$json_loader = new_loader();
+	$name = $1;
+	return [Class forName: $name, false, $json_loader];
+}
+
+sub new_jsonobject {
+	$json_loader = new_loader();
+	$class_JSONObject = new_class('org.json.JSONObject');
+	$class_Map = new_class('java.util.Map');
+	$class_String = new_class('java.lang.String');
+
+	$arg = $1;
+	if ($arg) {
+		if ($arg isa ^String) {
+			# string constructor
+			$ctor = [$class_JSONObject getDeclaredConstructor: @($class_String)];
+			return [$ctor newInstance: @($arg)];
+		} else if ($arg isa typeOf(%())) {
+			# hash/map constructor
+			# TODO fix this shit
+			$ctor = [$class_JSONObject getDeclaredConstructor: @($class_Map)];
+			$casted = casti($arg, $class_Map);
+			return [$ctor newInstance: @($casted)];
+		} else {
+			println("[json] unknown arg type: " . typeOf($arg));
+			println("[json] for message: " . $arg);
+			return $null;
+		}
+	} else {
+		# single constructor
+		return [$class_JSONObject newInstance];
+	}
+}
+
+sub new_jsonarray {
+	$json_loader = new_loader();
+	$class_JSONArray = new_class('org.json.JSONArray');
+	$class_String = new_class('java.lang.String');
+
+	$arg = $1;
+	if ($arg) {
+		$ctor = [$class_JSONArray getDeclaredConstructor: @($class_String)];
+		return [$ctor newInstance: @($arg)];
+	} else {
+		return [$class_JSONArray newInstance];
+	}
+}
+
+# Convert JSONObjects and JSONArrays to native types
+sub convert_json {
+	local('$obj $class_name %ret @ret $i $key');
+
+	$obj = $1;
+	$class_name = [[$obj getClass] getName];
+
+	if ($class_name eq 'org.json.JSONObject') {
+		%ret = %();
+		foreach $key (json_keys($obj)) {
+			%ret[$key] = convert_json(json_value($obj, $key));
+		}
+		return %ret;
+	} else if ($class_name eq 'org.json.JSONArray') {
+		@ret = @();
+		for ($i = 0; $i < json_length($obj); $i++) {
+			push(@ret, convert_json(json_index($obj, $i)));
+		}
+		return @ret;
+	} else {
+		return $obj;
+	}
+}
+
+sub from_json {
+	$json = $1;
+
+	$class_Map = new_class('java.util.Map');
+	$class_String = new_class('java.lang.String');
+
+	$obj = new_jsonobject($json);
+	if ($obj) {
+		return convert_json($obj);
+	} else {
+		return $null;
+	}
+}
+
+# Convert object to json
+# Note: The dictionary keys will all be wrong because sleep's java parameter
+# marshalling is broken. I don't feel like fixing it here because this language
+# is borderline impossible to use. See fix_dicts on the python side.
+sub to_json {
+	$item = $1;
+
+	$obj = new_jsonobject($item);
+	if ($obj) {
+		return tostring($obj);
+	} else {
+		return $null;
+	}
+}
+
+sub json_keys {
+	$obj = $1;
+	return [[$obj keySet] toArray];
+}
+
+sub json_value {
+	$obj = $1;
+	$item = $2;
+	return [$obj opt: $item];
+}
+
+sub json_index {
+	$arr = $1;
+	$index = $2;
+	return [$arr get: $index];
+}
+
+sub json_length {
+	$arr = $1;
+	return [$arr length];
+}
+
+sub json_string {
+	$obj = new_jsonobject();
+	return [$obj stringToValue: $1];
+}
+
+$test = false;
+
+if ($test) {
+	$obj = new_jsonobject();
+	[$obj put: 'a', 'b'];
+	println($obj);
+
+	$v = [$obj stringToValue: '{"c": "d"}'];
+	println($v);
+	println(json_keys($obj));
+	println(json_value($obj, 'a'));
+
+	$obj2 = new_jsonobject('{"t": "z"}');
+	println($obj2);
+
+	$obj2 = new_jsonarray('[1]');
+	println($obj2);
+
+	$v2 = [$obj stringToValue: '[2]'];
+	println($v2);
+
+	println(json_string('{"zz": "dd"}'));
+
+	$obj = new_jsonobject(%('ll' => 'bb'));
+	println(tostring($obj));
+	println(json_keys($obj));
+
+	$obj = new_jsonobject('{1: {"b": "c"}}');
+	println(json_value($obj, 1));
+
+	println('from_json tests');
+	println(from_json('{"a": 1}'));
+	println(from_json('{"b": [1, 2, 3]}'));
+	println(convert_json(new_jsonarray('[1, 2]')));
+}

@@ -1,0 +1,3 @@
+include(script_resource('pycobalt.cna'));
+
+$handle = python('/share/tools/cobaltstrike/scripts/client/pycobalt/test.py');

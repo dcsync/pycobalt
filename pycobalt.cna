@@ -1,0 +1,204 @@
+# results = python('<filename>', args...)
+# inside python:
+#   sys.argv is passed to helper function for parsing
+#   any aggressor function works
+#   anything printed is either:
+#     - printed to console
+#     - or ran as an aggressor command (magic prefix)
+#     - or interpreted as a return value for the function (magic prefix)
+#
+# test.cna:
+#
+#    python('find.py', '1')
+#    python_stop('find.py')
+#
+# find.py:
+#
+#    def callback():
+#        for beacon in beacons():
+#            print(beacon['bid'])
+#
+#    beacon_initial(callback)
+#    beacon_alias('test', callback)
+#
+# 1. aggressor gets new beacon
+# 2. aggressor sends 'event beacon_initial' to python
+# 3. python calls beacon_initial callbacks
+# 4. python calls beacons()
+# 5. python beacons() prints '<aggressor> beacons()'
+# 6. aggressor reads the line and calls beacons()
+# 7. aggressor marshals beacons() output and sends to python
+# 8. python beacons() takes the return line and unmarshalls it. returns it
+# 9. python prints the beacon bid
+# 10. aggressor reads this line and prints it to script console (e.g. '[find.py] 3')
+
+include(script_resource('json.cna'));
+
+# For events
+%python_handles = %();
+$python_handles_lock = semaphore();
+
+sub find_handle {
+	$script = $1;
+	return %python_handles[$script];
+}
+
+sub find_script {
+	$handle = $1;
+
+	foreach $key => $value (%python_handles) {
+		if ($value is $handle) {
+			return $key;
+		}
+	}
+	return $null;
+}
+
+sub debug {
+	$debug_on = false;
+	if ($debug_on) {
+		println('[pycobalt debug] ' . $1);
+	}
+}
+
+sub msg {
+	println('[pycobalt] ' . $1);
+}
+
+sub write_message {
+	$handle = $1;
+	$name = $2;
+	$message = $3;
+
+	if (-eof $handle) {
+		# Handle is closed
+		debug('EOF!');
+		return;
+	}
+
+	%wrapper = %('name' => $name, 'message' => $message);
+	$marshalled = '';
+	$marshalled = tostring(new_jsonobject(%wrapper)) . "\n";
+	debug('sending ' . $marshalled);
+	writeb($handle, $marshalled);
+}
+
+sub dispatch_event {
+	$name = $1;
+	@args = $2;
+
+	# Write event to all handles
+	acquire($python_handles_lock);
+	foreach $script => $handle (%python_handles) {
+		%message = %('name' => $name, 'args' => @args);
+		write_message($handle, 'event', %message);
+	}
+	release($python_handles_lock);
+}
+
+sub handle_message {
+	$handle = $1;
+	$name = $2;
+	$message = $3;
+
+	if ($name eq 'fork') {
+		debug('forking now');
+		return true;
+	} else if ($name eq 'message') {
+		# print message
+		println('[pycobalt script] ' . $message);
+	} else if ($name eq 'debug') {
+		# print debug message
+		println('[pycobalt script debug] ' . $message);
+	} else if ($name eq 'error') {
+		# print error message
+		println('[pycobalt script error] ' . $message);
+	} else if ($name eq 'call') {
+		# call a function
+		$func = $message['name'];
+		@args = $message['args'];
+		$closure = compile_closure('return ' . $func . '($1, $2, $3, $4, $5, $6, $7, $8, $9);');
+		$ret = invoke($closure, @args);
+		write_message($handle, 'return', $ret);
+	} else if ($name eq 'command') {
+		$callback = lambda({
+			@args = $1;
+			%info = %('name' => $command_name, 'args' => @args);
+			write_message($command_handle, 'command', %info);
+		}, $command_handle => $handle, $command_name => $message);
+		command($message, $callback);
+	} else if ($name eq 'alias') {
+		$callback = lambda({
+			%info = %('name' => $alias_name, 'args' => @_);
+			write_message($alias_handle, 'alias', %info);
+		}, $alias_handle => $handle, $alias_name => $message);
+		alias($message, $callback);
+	} else if ($name eq 'eval') {
+		# eval some code
+		eval($message);
+	} else {
+		msg("unhandled message of type $name : " . $message);
+	}
+	return false;
+}
+
+sub thread_callback {
+	while $line (readln($handle)) {
+		$obj = from_json($line);
+
+		if ($obj) {
+			debug('received ' . $obj);
+			if (handle_message($handle, $obj['name'], $obj['message'])) {
+				return true;
+			}
+		} else {
+			msg('failed to parse json: ' . $line);
+		}
+	}
+
+	msg('closing script ' . $script);
+
+	if (!-eof $handle) {
+		closef($handle);
+	}
+	return false;
+}
+
+sub python {
+	$script = $1;
+
+	msg('executing script ' . $script);
+	$handle = exec($script);
+	if (checkError($error)) {
+		msg("failed to execute script '" . $script . "': " . $error);
+	}
+
+	# Close existing
+	acquire($python_handles_lock);
+	if (%python_handles[$script]) {
+		debug('closing existing handle');
+		closef(%python_handles[$script]);
+	}
+
+	# We parse the results in the same thread until we receive a fork command.
+	# This allows us to register aliases and stuff.
+	%python_handles[$script] = $handle;
+	release($python_handles_lock);
+	if (thread_callback(\$handle, \$script)) {
+		fork(&thread_callback, \$handle, \$script);
+	}
+}
+
+sub python_stop {
+	$script = $1;
+
+	# Remove it from handles list
+	acquire($python_handles_lock);
+	if (%python_handles[$script]) {
+		closef(%python_handles[$script]);
+		%python_handles[$script] = $null;
+	}
+	release($python_handles_lock);
+}
+
+include(script_resource('events.cna'));
