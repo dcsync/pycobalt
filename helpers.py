@@ -7,13 +7,29 @@ def findprocess(bid, proc_name, callback):
     """
     Find processes by name. Call callback([{pid, arch}, ...]) with results.
     """
-    @callbacks.callback
     def ps_callback(bid, content):
         procs = []
         for line in content.splitlines():
-            (name, _, pid, arch) = line.split()
+            name, ppid, pid, *others = line.split('\t')
+            # get arch
+            if len(others) > 1:
+                arch = others[0]
+            else:
+                arch = None
+
+            # get user
+            if len(others) > 2:
+                user = others[1]
+            else:
+                user = None
+
             if name == proc_name:
-                procs.append({'pid': pid, 'arch': arch})
+                proc_info = {'name': name, 'ppid': ppid, 'pid': pid}
+                if arch:
+                    proc_info['arch'] = arch
+                if user:
+                    proc_info['user'] = user
+                procs.append(proc_info)
 
         callback(procs)
 

