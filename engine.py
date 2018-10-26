@@ -1,21 +1,20 @@
 #
 # For communication with cobaltstrike
 #
-# TODO popups
-# TODO handle callback functions (e.g. bps)
+# TODO gui stuff
 # TODO better argument checking on aggressor functions
-# TODO kill process after
 
 import json
 import re
 import sys
 import traceback
 
-import utils
-import events
-import aggressor
-import commands
-import aliases
+import pycobalt.utils as utils
+import pycobalt.events as events
+import pycobalt.aggressor as aggressor
+import pycobalt.commands as commands
+import pycobalt.aliases as aliases
+import pycobalt.callbacks as callbacks
 
 _in_pipe = None
 _out_pipe = None
@@ -67,28 +66,28 @@ def fix_dicts(old):
     return new
 
 # Loop forever, handling messages
-def loop(fork=True):
+def loop(fork_first=True):
     # tell cobaltstrike to fork
-    if fork:
-        communicate.fork()
+    if fork_first:
+        fork()
 
-    reader = communicate.readiter()
+    reader = readiter()
     while True:
         try:
             name, message = next(reader)
             if name:
-                communicate.handle_message(name, message)
+                handle_message(name, message)
             else:
-                communicate.error('received invalid message: {}'.format(message))
+                error('received invalid message: {}'.format(message))
         except StopIteration as e:
             break
         except Exception as e:
-            communicate.error('exception: {}\n'.format(str(e)))
-            communicate.error('traceback: {}'.format(traceback.format_exc()))
+            error('exception: {}\n'.format(str(e)))
+            error('traceback: {}'.format(traceback.format_exc()))
 
 # Handle a received message according to its name
 def handle_message(name, message):
-    debug('handling message of type {}: {}'.format(name, messagE))
+    debug('handling message of type {}: {}'.format(name, message))
     if name == 'event':
         # dispatch event
         event_name = message['name']
@@ -104,6 +103,11 @@ def handle_message(name, message):
         command_name = message['name']
         command_args = message['args'] if 'args' in message else []
         commands.call(command_name, command_args)
+    elif name == 'callback':
+        # dispatch callback
+        callback_name = message['name']
+        callback_args = message['args'] if 'args' in message else []
+        callbacks.call(callback_name, callback_args)
     elif name == 'eval':
         # eval python code
         eval(message)
@@ -153,24 +157,39 @@ def fork():
     write('fork')
 
 # Call aggressor function
-def call(name, args):
+def call(name, args, silent=False):
+    resolved_args = []
+    for arg in args:
+        # resolve function callbacks
+        if callable(arg):
+            # check if this is a callback
+            func_name = callbacks.name(arg)
+            if func_name:
+                debug('found func {} in call'.format(func_name))
+                # function is a callback. this is sort of dirty but we'll pass
+                # this as a string with a magic prefix so json can handle it.
+                resolved_args.append('<<callback>> ' + func_name)
+            else:
+                # not found
+                raise RuntimeError('tried to call aggressor function {} with non-callback function {}'.format(name, str(arg)))
+        else:
+            resolved_args.append(arg)
+
     message = {
                 'name': name,
-                'args': args,
+                'args': resolved_args,
+                'silent': silent,
               }
     write('call', message)
 
-    # read until we get a return value
+    # read and handle messages until we get our return value
     while True:
         name, message = read()
         if name == 'return':
             # got it
             return message
         else:
-
-
-    if name != 'return':
-        raise RuntimeError('out of sync input message: {}'.format(name))
+            handle_message(name, message)
 
 # Eval aggressor code
 def eval(code):
@@ -204,8 +223,28 @@ def alias(name):
 
     write('alias', name)
 
+# Register a callback
+def callback(name):
+    global _has_forked
+    if _has_forked:
+        # cobaltstrike crashes if you try to use functions created across threads
+        error('tried to register a callback function after forking')
+        return
+
+    write('callback', name)
+
+# Register an event
+def event(name):
+    global _has_forked
+    if _has_forked:
+        # cobaltstrike crashes if you try to use event callbacks created across threads
+        error('tried to register an event after forking')
+        return
+
+    write('event', name)
+
 # Write script console debug message
-_debug_on = False
+_debug_on = True
 def debug(line):
     global _debug_on
     if _debug_on:
