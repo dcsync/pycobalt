@@ -5,7 +5,7 @@ script=$1
 timeout=5
 
 if ! timeout $timeout grep -m1 -q '"name": "fork"' <("$script") ; then
-	echo "script didn't call engine.fork() within $timeout seconds"
+	echo "script didn't call engine.fork() within $timeout seconds. did you call engine.loop()?"
 else
 	echo 'script looks good!'
 fi

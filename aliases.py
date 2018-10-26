@@ -21,11 +21,23 @@ import pycobalt.utils as utils
 # { name: callback }
 _callbacks = {}
 
-def register(name, callback):
+def register(name, callback, short_help=None, long_help=None):
     global _callbacks
 
     engine.alias(name)
     _callbacks[name] = callback
+
+    # register help info
+    if not long_help:
+        long_help = ''
+        if short_help:
+            long_help += short_help + '\n\n'
+        long_help += 'Python syntax: {}{}'.format(name, utils.signature(callback))
+
+    if not short_help:
+        short_help = 'Custom python command'
+
+    aggressor.beacon_command_register(name, short_help, long_help)
 
 def call(name, args):
     global _callbacks
@@ -34,19 +46,28 @@ def call(name, args):
         raise RuntimeError('unknown alias: {}'.format(name))
 
     callback = _callbacks[name]
+    bid = int(args[0])
     if utils.check_args(callback, args):
-        callback(*args)
+        try:
+            callback(*args)
+        except Exception as e:
+            aggressor.berror(bid, "Caught Python exception while executing alias '{}': {}".format(name, str(e)))
+            aggressor.berror(bid, 'See Script Console for more details.')
+            raise e
     else:
-        bid = int(args[0])
         syntax = '{}{}'.format(name, utils.signature(callback))
-        aggressor.berror(bid, "syntax: " + syntax)
-        engine.error("invalid number of arguments passed to alias '{}'. syntax: {}".format(name, syntax))
+        aggressor.berror(bid, "Syntax: " + syntax)
+        engine.error("Invalid number of arguments passed to alias '{}'. Syntax: {}".format(name, syntax))
 
 # Decorator
 class alias:
-    def __init__(self, name):
+    def __init__(self, name, short_help=None, long_help=None):
         self.name = name
-    
+        self.short_help = short_help
+        self.long_help = long_help
+
     def __call__(self, func):
         self.func = func
-        register(self.name, self.func)
+        register(self.name, self.func,
+                 short_help=self.short_help,
+                 long_help=self.long_help)
