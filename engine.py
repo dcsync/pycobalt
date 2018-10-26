@@ -1,8 +1,14 @@
 #
 # For communication with cobaltstrike
 #
-# TODO gui stuff
+# TODO serialize special objects
 # TODO better argument checking on aggressor functions
+# TODO use callbacks.py for commands.py
+# TODO use callbacks.py for aliases.py
+# TODO use callbacks.py for events.py
+# TODO make callback serialization automatic
+# TODO use better special serialization prefixes
+# TODO fork first
 
 import json
 import re
@@ -157,21 +163,30 @@ def fork():
     write('fork')
 
 # Call aggressor function
-def call(name, args, silent=False):
+def call(name, args, silent=False, fork=False):
+    # resolve function callbacks
     resolved_args = []
     for arg in args:
-        # resolve function callbacks
         if callable(arg):
-            # check if this is a callback
             func_name = callbacks.name(arg)
             if func_name:
-                debug('found func {} in call'.format(func_name))
-                # function is a callback. this is sort of dirty but we'll pass
-                # this as a string with a magic prefix so json can handle it.
-                resolved_args.append('<<callback>> ' + func_name)
+                # known callback. may as well use the stored name
+                debug('found known callback {} in call'.format(func_name))
             else:
-                # not found
-                raise RuntimeError('tried to call aggressor function {} with non-callback function {}'.format(name, str(arg)))
+                # register a new callback
+                # apparently this is not possible after cobaltstrike fork()s so
+                # we have to register callbacks first
+
+                callbacks.register(arg)
+
+                #raise RuntimeError('function {} is not registered as a callback'.format(arg.__name__))
+
+            resolved_args.append(callbacks.serialized(arg))
+
+            # when there's a callback involved we must fork because the script
+            # thread is busy reading from the script.
+            debug('forcing fork for call to {}'.format(name))
+            fork = True
         else:
             resolved_args.append(arg)
 
@@ -179,17 +194,19 @@ def call(name, args, silent=False):
                 'name': name,
                 'args': resolved_args,
                 'silent': silent,
+                'fork': fork,
               }
     write('call', message)
 
-    # read and handle messages until we get our return value
-    while True:
-        name, message = read()
-        if name == 'return':
-            # got it
-            return message
-        else:
-            handle_message(name, message)
+    if not fork:
+        # read and handle messages until we get our return value
+        while True:
+            name, message = read()
+            if name == 'return':
+                # got it
+                return message
+            else:
+                handle_message(name, message)
 
 # Eval aggressor code
 def eval(code):
@@ -208,37 +225,21 @@ def command(name):
     global _has_forked
     if _has_forked:
         # cobaltstrike crashes if you try to register a command after forking
-        error('tried to register a command after forking')
+        raise RuntimeError('tried to register a command after forking')
         return
 
     write('command', name)
 
 # Register an alias
 def alias(name):
-    global _has_forked
-    if _has_forked:
-        # cobaltstrike crashes if you try to register an alias after forking
-        error('tried to register an alias after forking')
-        return
-
     write('alias', name)
-
-# Register a callback
-def callback(name):
-    global _has_forked
-    if _has_forked:
-        # cobaltstrike crashes if you try to use functions created across threads
-        error('tried to register a callback function after forking')
-        return
-
-    write('callback', name)
 
 # Register an event
 def event(name):
     global _has_forked
     if _has_forked:
         # cobaltstrike crashes if you try to use event callbacks created across threads
-        error('tried to register an event after forking')
+        raise RuntimeError('tried to register an event after forking')
         return
 
     write('event', name)

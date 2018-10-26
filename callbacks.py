@@ -1,19 +1,10 @@
 #
 # For registering aggressor-to-python function callbacks
 #
-# Regular example:
-#
-#     def ps_callback(bid, results):
-#         engine.message('received ps callback for {}'.format(bid))
-#     callbacks.register(ps_callback)
-#
-# Decorator example:
-#
-#     @callbacks.callback
-#     def ps_callback(bid, results):
-#         engine.message('received ps callback for {}'.format(bid))
-#
 # Usage example:
+#
+#     def ps_callback(bid, results):
+#         engine.message('received ps callback for {}'.format(bid))
 #
 #     aggressor.bps(bid, ps_callback)
 #
@@ -27,6 +18,8 @@ import pycobalt.engine as engine
 _callbacks = {}
 # { func: name }
 _reverse_callbacks = {}
+
+_serialize_prefix = '<<callback>> '
 
 # Call a function callback
 def call(name, args):
@@ -50,19 +43,19 @@ def name(func):
         return None
 
 # Register a callback
-def register(name, callback):
+def register(func, name=None):
     global _callbacks
     global _reverse_callbacks
-    _callbacks[name] = callback
-    _reverse_callbacks[callback] = name
-    engine.callback(name)
 
-# Decorator
-class callback:
-    def __init__(self, func):
-        self.func = func
-        self.name = '{}_{}'.format(self.func.__name__, str(hash(func)).replace('-', '1'))
-        register(self.name, self)
+    if not name:
+        # make unique name based on function name and its hash
+        name = '{}_{}'.format(func.__name__, str(hash(func)).replace('-', '1'))
 
-    def __call__(self, *args):
-        self.func(*args)
+    _callbacks[name] = func
+    _reverse_callbacks[func] = name
+
+def serialized(thing):
+    if callable(thing):
+        return _serialize_prefix + name(thing)
+    else:
+        return _serialize_prefix + thing
