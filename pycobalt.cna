@@ -32,11 +32,15 @@
 # 9. python prints the beacon bid
 # 10. aggressor reads this line and prints it to script console (e.g. '[find.py] 3')
 
-include(script_resource('json.cna'));
+include(script_resource('pycobalt/json.cna'));
 
-# For events
+# Process handles
 %python_handles = %();
 $python_handles_lock = semaphore();
+
+# For special serialization objects
+%python_callbacks = %();
+%python_objects = %();
 
 sub find_handle {
 	$script = $1;
@@ -55,7 +59,7 @@ sub find_script {
 }
 
 sub debug {
-	$debug_on = false;
+	$debug_on = true;
 	if ($debug_on) {
 		println('[pycobalt debug] ' . $1);
 	}
@@ -79,21 +83,74 @@ sub write_message {
 	%wrapper = %('name' => $name, 'message' => $message);
 	$marshalled = '';
 	$marshalled = tostring(new_jsonobject(%wrapper)) . "\n";
-	debug('sending ' . $marshalled);
+	#debug('sending ' . $marshalled);
 	writeb($handle, $marshalled);
 }
 
-sub dispatch_event {
-	$name = $1;
-	@args = $2;
+sub serialize_special {
+	local('$arg $item $key $object_prefix');
 
-	# Write event to all handles
-	acquire($python_handles_lock);
-	foreach $script => $handle (%python_handles) {
-		%message = %('name' => $name, 'args' => @args);
-		write_message($handle, 'event', %message);
+	$arg = $1;
+
+	$object_prefix = '<<object>> ';
+
+	if ($arg isa ^String || $arg isa ^Long || $arg isa ^Integer || $arg isa ^Double) {
+		# primitive type, serializable by json
+		return $arg;
+	} else if ($arg isa typeOf(@())) {
+		# recurse lists
+		for $item ($arg) {
+			$item = serialize_special($item);
+		}
+		return $arg;
+	} else if ($arg isa typeOf(%())) {
+		# recurse hashes
+		foreach $key => $item ($arg) {
+			$arg[$key] = serialize_special($item);
+		}
+		return $arg;
+	} else {
+		# TODO serialize
+		return $arg;
 	}
-	release($python_handles_lock);
+}
+
+sub deserialize_special {
+	local('$arg $item $key $object_prefix');
+
+	$arg = $1;
+
+	$object_prefix = '<<object>> ';
+	if ($arg isa ^String) {
+		$prefix_len = strlen($object_prefix);
+		# fuck this language
+		if (left($arg, $prefix_len) eq $object_prefix) {
+			$object_name = substr($arg, $prefix_len);
+			$object = %python_objects[$object_name];
+			if (!$object) {
+				msg('could not find object ' . $object_name);
+				return $arg;
+			}
+			debug('found object: ' . $object_name . ' - ' . $object);
+			return $object;
+		} else {
+			return $arg;
+		}
+	} else if ($arg isa typeOf(@())) {
+		# recurse lists
+		for $item ($arg) {
+			$item = deserialize_special($item);
+		}
+		return $arg;
+	} else if ($arg isa typeOf(%())) {
+		# recurse hashes
+		foreach $key => $item ($arg) {
+			$arg[$key] = deserialize_special($item);
+		}
+		return $arg;
+	} else {
+		return $arg;
+	}
 }
 
 sub handle_message {
@@ -117,8 +174,45 @@ sub handle_message {
 		# call a function
 		$func = $message['name'];
 		@args = $message['args'];
-		$closure = compile_closure('return ' . $func . '($1, $2, $3, $4, $5, $6, $7, $8, $9);');
+		$silent = $message['silent'];
+		$closure_text = 'return ' . $func;
+
+		# deserialize special objects
+		@args = deserialize_special(@args);
+
+		# resolve callbacks as needed
+		foreach $arg (@args) {
+			$prefix = '<<callback>> ';
+			$len = strlen($prefix);
+			if (left($arg, $len) eq $prefix) {
+				$callback_name = substr($arg, $len);
+				$callback = %python_callbacks[$callback_name];
+				#$arg = function('&' . $callback_name);
+				$arg = $callback;
+				if (!$arg) {
+					msg('could not find closure: ' . $callback_name);
+					return false;
+				}
+			}
+		}
+
+		# silent functions (e.g. bshell!())
+		if ($silent) {
+			$closure_text .= '!';
+		}
+		$closure_text .= '(';
+
+		# add arguments (nothing like python's *args in sleep)
+		for ($i = 1; $i < size(@args); $i++) {
+			$closure_text .= '$' . $i . ',';
+		}
+		$closure_text .= '$' . $i . ');';
+
+		debug('closure call: ' . $closure_text);
+		debug('closure args: ' . @args);
+		$closure = compile_closure($closure_text);
 		$ret = invoke($closure, @args);
+		$ret = serialize_special($ret);
 		write_message($handle, 'return', $ret);
 	} else if ($name eq 'command') {
 		$callback = lambda({
@@ -126,13 +220,31 @@ sub handle_message {
 			%info = %('name' => $command_name, 'args' => @args);
 			write_message($command_handle, 'command', %info);
 		}, $command_handle => $handle, $command_name => $message);
+		debug('registering command ' . $message);
 		command($message, $callback);
 	} else if ($name eq 'alias') {
 		$callback = lambda({
 			%info = %('name' => $alias_name, 'args' => @_);
 			write_message($alias_handle, 'alias', %info);
 		}, $alias_handle => $handle, $alias_name => $message);
+		debug('registering alias ' . $message);
 		alias($message, $callback);
+	} else if ($name eq 'callback') {
+		$callback = lambda({
+			%info = %('name' => $callback_name, 'args' => @_);
+			write_message($callback_handle, 'callback', %info);
+		}, $callback_handle => $handle, $callback_name => $message);
+
+		debug('registering callback ' . $message);
+		%python_callbacks[$message] = $callback;
+		#setf('&' . $message, $callback);
+	} else if ($name eq 'event') {
+		$callback = lambda({
+			%info = %('name' => $event_name, 'args' => @_);
+			write_message($event_handle, 'event', %info);
+		}, $event_handle => $handle, $event_name => $message);
+		debug('registering event ' . $message);
+		on($message, $callback);
 	} else if ($name eq 'eval') {
 		# eval some code
 		eval($message);
@@ -147,7 +259,7 @@ sub thread_callback {
 		$obj = from_json($line);
 
 		if ($obj) {
-			debug('received ' . $obj);
+			#debug('received ' . $obj);
 			if (handle_message($handle, $obj['name'], $obj['message'])) {
 				return true;
 			}
@@ -185,7 +297,7 @@ sub python {
 	%python_handles[$script] = $handle;
 	release($python_handles_lock);
 	if (thread_callback(\$handle, \$script)) {
-		fork(&thread_callback, \$handle, \$script);
+		fork(&thread_callback, \$handle, \$script, \%python_callbacks);
 	}
 }
 
@@ -200,5 +312,3 @@ sub python_stop {
 	}
 	release($python_handles_lock);
 }
-
-include(script_resource('events.cna'));

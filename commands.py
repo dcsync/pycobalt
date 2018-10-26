@@ -1,7 +1,5 @@
 #
 # For registering script console commands
-# Due to a limitation in cobalt strike these are only callable with the prefix 'py'
-# For example: $ py test_command 1 2 3
 #
 # Regular example:
 #
@@ -17,8 +15,8 @@
 #
 
 
-import communicate
-import utils
+import pycobalt.engine as engine
+import pycobalt.utils as utils
 
 # { name: callback }
 _callbacks = {}
@@ -26,7 +24,7 @@ _callbacks = {}
 def register(name, callback):
     global _callbacks
 
-    communicate.command(name)
+    engine.command(name)
     _callbacks[name] = callback
 
 def call(name, args):
@@ -39,7 +37,8 @@ def call(name, args):
     if utils.check_args(callback, args):
         callback(*args)
     else:
-        communicate.error("invalid number of arguments passed to command '{}'".format(name))
+        syntax = '{}{}'.format(name, utils.signature(callback))
+        engine.error("invalid number of arguments passed to command '{}'. syntax: {}".format(name, syntax))
 
 # Decorator
 class command:

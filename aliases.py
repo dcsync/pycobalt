@@ -14,9 +14,9 @@
 #         print(args)
 #
 
-import communicate
-import aggressor
-import utils
+import pycobalt.engine as engine
+import pycobalt.aggressor as aggressor
+import pycobalt.utils as utils
 
 # { name: callback }
 _callbacks = {}
@@ -24,7 +24,7 @@ _callbacks = {}
 def register(name, callback):
     global _callbacks
 
-    communicate.alias(name)
+    engine.alias(name)
     _callbacks[name] = callback
 
 def call(name, args):
@@ -38,8 +38,9 @@ def call(name, args):
         callback(*args)
     else:
         bid = int(args[0])
-        aggressor.blog(bid, "{}: invalid number of arguments".format(name))
-        communicate.error("invalid number of arguments passed to alias '{}'".format(name))
+        syntax = '{}{}'.format(name, utils.signature(callback))
+        aggressor.berror(bid, "syntax: " + syntax)
+        engine.error("invalid number of arguments passed to alias '{}'. syntax: {}".format(name, syntax))
 
 # Decorator
 class alias:

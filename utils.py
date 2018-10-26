@@ -36,3 +36,7 @@ def check_args(func, args):
                 min_args += 1
 
     return len(args) >= min_args and len(args) <= max_args
+
+# Get function signature
+def signature(func):
+    return str(inspect.signature(func))
