@@ -1,3 +1,0 @@
-include(script_resource('pycobalt/pycobalt.cna'));
-
-python('/share/tools/cobaltstrike/scripts/client/pycobalt/test.py');

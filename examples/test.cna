@@ -1,0 +1,3 @@
+include(script_resource('../pycobalt.cna'));
+
+python(script_resource('test.py'));
