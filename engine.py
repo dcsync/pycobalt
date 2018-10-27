@@ -1,14 +1,9 @@
-#
-# For communication with cobaltstrike
-#
-# TODO serialize special objects
+"""
+For communication with cobaltstrike
+"""
+
 # TODO better argument checking on aggressor functions
-# TODO use callbacks.py for commands.py
-# TODO use callbacks.py for aliases.py
-# TODO use callbacks.py for events.py
-# TODO make callback serialization automatic
-# TODO use better special serialization prefixes
-# TODO fork first
+# TODO handle 'set'
 
 import json
 import re
@@ -25,6 +20,8 @@ import pycobalt.callbacks as callbacks
 _in_pipe = None
 _out_pipe = None
 
+_debug_on = True
+
 def __init__():
     global _in_pipe
     global _out_pipe
@@ -36,6 +33,11 @@ def __init__():
     sys.stderr = sys.stdout
 
 def write(message_type, message=''):
+    """
+    Write a message to cobaltstrike. Message can be anything serializable by
+    json.
+    """
+
     global _out_pipe
     wrapper = {
                   'name': message_type,
@@ -44,8 +46,11 @@ def write(message_type, message=''):
     _out_pipe.write(json.dumps(wrapper) + "\n")
     _out_pipe.flush()
 
-# Fix for mudge's shitty Java parameter marshalling
 def fix_dicts(old):
+    """
+    Fix for sleep's broken Java parameter marshalling
+    """
+
     if not isinstance(old, dict):
         return old
 
@@ -71,9 +76,41 @@ def fix_dicts(old):
         new[new_key] = new_item
     return new
 
-# Loop forever, handling messages
+def handle_message(name, message):
+    """
+    Handle a received message according to its name
+    """
+
+    debug('handling message of type {}: {}'.format(name, message))
+    if name == 'callback':
+        # dispatch callback
+        callback_name = message['name']
+        callback_args = message['args'] if 'args' in message else []
+        callbacks.call(callback_name, callback_args)
+    elif name == 'eval':
+        # eval python code
+        eval(message)
+    else:
+        raise RuntimeError('received unhandled or out-of-order message type: {} {}'.format(name, str(message)))
+
+_has_forked = False
+def fork():
+    """
+    Tell cobaltstrike to fork
+    """
+
+    global _has_forked
+
+    if _has_forked:
+        raise RuntimeError('tried to fork cobaltstrike twice')
+
+    write('fork')
+
 def loop(fork_first=True):
-    # tell cobaltstrike to fork
+    """
+    Loop forever, handling messages
+    """
+
     if fork_first:
         fork()
 
@@ -91,38 +128,12 @@ def loop(fork_first=True):
             error('exception: {}\n'.format(str(e)))
             error('traceback: {}'.format(traceback.format_exc()))
 
-# Handle a received message according to its name
-def handle_message(name, message):
-    debug('handling message of type {}: {}'.format(name, message))
-    if name == 'event':
-        # dispatch event
-        event_name = message['name']
-        event_args = message['args'] if 'args' in message else []
-        events.call(event_name, event_args)
-    elif name == 'alias':
-        # dispatch alias
-        alias_name = message['name']
-        alias_args = message['args'] if 'args' in message else []
-        aliases.call(alias_name, alias_args)
-    elif name == 'command':
-        # dispatch command
-        command_name = message['name']
-        command_args = message['args'] if 'args' in message else []
-        commands.call(command_name, command_args)
-    elif name == 'callback':
-        # dispatch callback
-        callback_name = message['name']
-        callback_args = message['args'] if 'args' in message else []
-        callbacks.call(callback_name, callback_args)
-    elif name == 'eval':
-        # eval python code
-        eval(message)
-    else:
-        raise RuntimeError('received unhandled or out-of-order message type: {} {}'.format(name, str(message)))
-
-# Parse an input line
-# Format: {'name':<name>, 'message':<message>}
 def parse_line(line):
+    """
+    Parse an input line
+    Format: {'name':<name>, 'message':<message>}
+    """
+
     try:
         line = line.strip()
         wrapper = json.loads(line)
@@ -137,62 +148,42 @@ def parse_line(line):
     except Exception as e:
         return None, str(e)
 
-# Read a message line
-# Returns: message name, submessage
 def read():
+    """
+    Read a message line
+    Returns: message name, submessage
+    """
+
     global _in_pipe
     return parse_line(next(_in_pipe))
 
-# Read message lines
-# Returns: message name, submessage
 def readiter():
+    """
+    Read message lines
+    Returns: iter({message name, submessage}, ...)
+    """
+
     global _in_pipe
     for line in _in_pipe:
         yield parse_line(line)
 
-# Tell cobaltstrike to fork
-_has_forked = False
-def fork():
-    global _has_forked
-    if _has_forked:
-        # already forked?
-        error('tried to fork twice')
-        return
-
-    _has_forked = True
-    write('fork')
-
-# Call aggressor function
 def call(name, args, silent=False, fork=False):
-    # resolve function callbacks
-    resolved_args = []
-    for arg in args:
-        if callable(arg):
-            func_name = callbacks.name(arg)
-            if func_name:
-                # known callback. may as well use the stored name
-                debug('found known callback {} in call'.format(func_name))
-            else:
-                # register a new callback
-                # apparently this is not possible after cobaltstrike fork()s so
-                # we have to register callbacks first
+    """
+    Call a sleep/aggressor function
+    """
 
-                callbacks.register(arg)
+    # serialize and register function callbacks if needed
+    if callbacks.has_callback(args):
+        args = callbacks.serialized(args)
 
-                #raise RuntimeError('function {} is not registered as a callback'.format(arg.__name__))
-
-            resolved_args.append(callbacks.serialized(arg))
-
-            # when there's a callback involved we must fork because the script
-            # thread is busy reading from the script.
-            debug('forcing fork for call to {}'.format(name))
-            fork = True
-        else:
-            resolved_args.append(arg)
+        # when there's a callback involved we must fork because the script
+        # thread is busy reading from the script.
+        debug('forcing fork for call to {}'.format(name))
+        fork = True
 
     message = {
                 'name': name,
-                'args': resolved_args,
+                'args': args,
                 'silent': silent,
                 'fork': fork,
               }
@@ -208,45 +199,45 @@ def call(name, args, silent=False, fork=False):
             else:
                 handle_message(name, message)
 
-# Eval aggressor code
 def eval(code):
+    """
+    Eval aggressor code
+    """
+
     write('eval', code)
 
-# Write error notice
+def menu(menu_items):
+    """
+    Register a cobaltstrike menu
+    """
+
+    global _has_forked
+
+    if _has_forked:
+        raise RuntimeError('tried to register a menu after forking. this crashes cobaltstrike')
+
+    menu_items = callbacks.serialized(menu_items)
+    write('menu', menu_items)
+
 def error(line):
+    """
+    Write error notice
+    """
+
     write('error', line)
 
-# Write script console message
 def message(line):
+    """
+    Write script console message
+    """
+
     write('message', line)
 
-# Register a command
-def command(name):
-    global _has_forked
-    if _has_forked:
-        # cobaltstrike crashes if you try to register a command after forking
-        raise RuntimeError('tried to register a command after forking')
-        return
-
-    write('command', name)
-
-# Register an alias
-def alias(name):
-    write('alias', name)
-
-# Register an event
-def event(name):
-    global _has_forked
-    if _has_forked:
-        # cobaltstrike crashes if you try to use event callbacks created across threads
-        raise RuntimeError('tried to register an event after forking')
-        return
-
-    write('event', name)
-
-# Write script console debug message
-_debug_on = True
 def debug(line):
+    """
+    Write script console debug message
+    """
+
     global _debug_on
     if _debug_on:
         write('debug', line)
