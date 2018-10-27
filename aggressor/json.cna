@@ -8,6 +8,10 @@
 # load java stuff
 import java.net.*;
 
+if (!$pycobalt_path) {
+	$pycobalt_path = script_resource();
+}
+
 # Explicit toString
 sub tostring {
 	$obj = $1;
@@ -19,7 +23,12 @@ sub tostring {
 #
 # This makes a new loader which is capable of loading the json library
 sub new_loader {
-	$json_jar_file = 'file://' . script_resource('jars/json.jar');
+	$json_jar_file = 'file://' . $pycobalt_path . '/jars/json.jar';
+
+	if (!-exists ($pycobalt_path . '/json.cna')) {
+		die('could not find ' . $json_jar_file . '. check include path');
+	}
+
 	$json_url = [new URL: $json_jar_file];
 	$json_loader = [new URLClassLoader: @($json_url)];
 	return $json_loader;
@@ -27,17 +36,27 @@ sub new_loader {
 
 # Make a new class by name
 sub new_class {
-	$json_loader = new_loader();
+	if (!$json_loader) {
+		$json_loader = new_loader();
+	}
 	$name = $1;
 	return [Class forName: $name, false, $json_loader];
 }
 
 # Make a new JSONObject
 sub new_jsonobject {
-	$json_loader = new_loader();
-	$class_JSONObject = new_class('org.json.JSONObject');
-	$class_Map = new_class('java.util.Map');
-	$class_String = new_class('java.lang.String');
+	if (!$json_loader) {
+		$json_loader = new_loader();
+	}
+	if (!$class_JSONObject) {
+		$class_JSONObject = new_class('org.json.JSONObject');
+	}
+	if (!$class_Map) {
+		$class_Map = new_class('java.util.Map');
+	}
+	if (!$class_String) {
+		$class_String = new_class('java.lang.String');
+	}
 
 	$arg = $1;
 	if ($arg) {
@@ -65,8 +84,12 @@ sub new_jsonobject {
 # Make a new JSONArray
 sub new_jsonarray {
 	$json_loader = new_loader();
-	$class_JSONArray = new_class('org.json.JSONArray');
-	$class_String = new_class('java.lang.String');
+	if (!$class_JSONArray) {
+		$class_JSONArray = new_class('org.json.JSONArray');
+	}
+	if (!$class_String) {
+		$class_String = new_class('java.lang.String');
+	}
 
 	$arg = $1;
 	if ($arg) {
