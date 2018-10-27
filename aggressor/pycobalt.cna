@@ -1,9 +1,3 @@
-include(script_resource('pycobalt/json.cna'));
-
-# For special serialization objects
-# { name: handle }
-%python_objects = %();
-
 # Write debug message to console
 sub debug {
 	$debug_on = true;
@@ -21,6 +15,26 @@ sub msg {
 sub error {
 	println('[pycobalt error] ' . $1);
 }
+
+sub die {
+	error($1);
+	exit();
+}
+
+if (!$pycobalt_path) {
+	$pycobalt_path = script_resource();
+}
+msg('include path is: ' . $pycobalt_path);
+
+if (!-exists ($pycobalt_path . '/json.cna')) {
+	die('could not find json.cna. check include path');
+}
+
+include($pycobalt_path . '/json.cna');
+
+# For special serialization objects
+# { name: handle }
+%python_objects = %();
 
 # Print a stacktrace
 sub stacktrace {
@@ -281,7 +295,7 @@ sub handle_message {
 		if ($fork) {
 			# fork it and call it
 			debug('forking before calling function');
-			fork(&closure_caller, \$closure_text, \@args, \$handle);
+			fork(&closure_caller, \$closure_text, \@args, \$handle, \$pycobalt_path);
 		} else {
 			# call it in this thread, and send return value
 			$ret = closure_caller();
@@ -338,7 +352,7 @@ sub python {
 
 	# run without forking first
 	if (thread_callback()) {
-		fork(&thread_callback, \$handle, \$script, \%python_objects);
+		fork(&thread_callback, \$handle, \$script, \%python_objects, \$pycobalt_path);
 	}
 
 	return $handle;
