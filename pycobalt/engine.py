@@ -20,7 +20,7 @@ import pycobalt.callbacks as callbacks
 _in_pipe = None
 _out_pipe = None
 
-_debug_on = True
+_debug_on = False
 
 def __init__():
     global _in_pipe
@@ -128,6 +128,13 @@ def loop(fork_first=True):
             error('exception: {}\n'.format(str(e)))
             error('traceback: {}'.format(traceback.format_exc()))
 
+def stop():
+    """
+    Stop the script (just exits the process)
+    """
+
+    sys.exit()
+
 def parse_line(line):
     """
     Parse an input line
@@ -232,6 +239,22 @@ def message(line):
     """
 
     write('message', line)
+
+def enable_debug():
+    """
+    Enable debug messages
+    """
+
+    global _debug_on
+    _debug_on = True
+
+def disable_debug():
+    """
+    Disable debug messages
+    """
+
+    global _debug_on
+    _debug_on = False
 
 def debug(line):
     """

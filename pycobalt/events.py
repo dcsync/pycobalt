@@ -14,7 +14,7 @@ Decorator example:
         engine.message('event callback test {} - {} - {}'.format(who, contents, time))
 """
 
-_supported_events = [
+_official_events = [
     'beacon_checkin',
     'beacon_error',
     'beacon_indicator',
@@ -75,14 +75,13 @@ import pycobalt.engine as engine
 import pycobalt.aggressor as aggressor
 import pycobalt.callbacks as callbacks
 
-def supported(name):
+def official(name):
     """
     Check if an event is one of the official cobaltstrike ones
     """
 
-    global _supported_events
-    return name in _supported_events
-    #raise RuntimeError('tried to register unsupported event: {}'.format(name))
+    global _official_events
+    return name in _official_events
 
 def register(name, callback):
     """
@@ -101,8 +100,11 @@ class event:
     Decorator
     """
 
-    def __init__(self, name):
+    def __init__(self, name, official_only=True):
         self.name = name
+
+        if official_only and not official(name):
+            raise RuntimeError('tried to register an unofficial event: {name}. try events.event("{name}", official_only=False).'.format(name=name))
 
     def __call__(self, func):
         self.func = func

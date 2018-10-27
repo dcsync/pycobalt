@@ -16,6 +16,7 @@ sub error {
 	println('[pycobalt error] ' . $1);
 }
 
+# Write error message to console and exit
 sub die {
 	error($1);
 	exit();
