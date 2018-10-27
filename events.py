@@ -1,18 +1,18 @@
-#
-# For registering event callbacks
-#
-# Regular example:
-#
-#     def test_event_action(who, contents, time):
-#         engine.message('event callback test {} - {} - {}'.format(who, contents, time))
-#     events.register('event_action', test_event_action)
-#
-# Decorator example:
-#
-#     @events.event('event_action')
-#     def test_event_action(who, contents, time):
-#         engine.message('event callback test {} - {} - {}'.format(who, contents, time))
-#
+"""
+For registering event callbacks
+
+Regular example:
+
+    def test_event_action(who, contents, time):
+        engine.message('event callback test {} - {} - {}'.format(who, contents, time))
+    events.register('event_action', test_event_action)
+
+Decorator example:
+
+    @events.event('event_action')
+    def test_event_action(who, contents, time):
+        engine.message('event callback test {} - {} - {}'.format(who, contents, time))
+"""
 
 _supported_events = [
     'beacon_checkin',
@@ -72,34 +72,35 @@ import collections
 
 import pycobalt.utils as utils
 import pycobalt.engine as engine
+import pycobalt.aggressor as aggressor
+import pycobalt.callbacks as callbacks
 
-# name: [callback1, callback2]
-_callbacks = collections.defaultdict(list)
+def supported(name):
+    """
+    Check if an event is one of the official cobaltstrike ones
+    """
 
-# Call an event callback
-def call(name, args):
-    global _callbacks
-    if name in _callbacks:
-        for callback in _callbacks[name]:
-            if utils.check_args(callback, args):
-                callback(*args)
-            else:
-                syntax = '{}{}'.format(name, utils.signature(callback))
-                engine.error("invalid number of arguments passed to event handler '{}' for event '{}'. syntax: {}".format(callback, name, syntax))
-    else:
-        engine.debug('no event handles for event: {}'.format(name))
-
-# Register a callback
-def register(name, callback):
-    global _callbacks
     global _supported_events
-    if name not in _supported_events:
-        raise RuntimeError('tried to register unsupported event: {}'.format(name))
-    _callbacks[name].append(callback)
-    engine.event(name)
+    return name in _supported_events
+    #raise RuntimeError('tried to register unsupported event: {}'.format(name))
 
-# Decorator
+def register(name, callback):
+    """
+    Register an event callback.
+    """
+
+    def event_callback(*args):
+        engine.debug('calling callback for event {}'.format(name))
+        callback(*args)
+
+    callbacks.register(event_callback, prefix='event_{}'.format(name))
+    aggressor.on(name, event_callback)
+
 class event:
+    """
+    Decorator
+    """
+
     def __init__(self, name):
         self.name = name
 

@@ -1,31 +1,46 @@
-#
-# For registering aliasess
-#
-# Regular example:
-#
-#     def test_alias(args):
-#         print(args)
-#     aliases.register('test_alias', test_alias)
-#
-# Decorator example:
-#
-#     @aliases.alias('test_alias')
-#     def test_alias(args):
-#         print(args)
-#
+"""
+For registering aliasess
 
-import pycobalt.engine as engine
+Regular example:
+
+    def test_alias(args):
+        print(args)
+    aliases.register('test_alias', test_alias)
+
+Decorator example:
+
+    @aliases.alias('test_alias')
+    def test_alias(args):
+        print(args)
+"""
+
 import pycobalt.aggressor as aggressor
+import pycobalt.callbacks as callbacks
+import pycobalt.engine as engine
 import pycobalt.utils as utils
 
-# { name: callback }
-_callbacks = {}
-
 def register(name, callback, short_help=None, long_help=None):
-    global _callbacks
+    """
+    Register an alias
+    """
 
-    engine.alias(name)
-    _callbacks[name] = callback
+    def alias_callback(*args):
+        bid = int(args[0])
+        if utils.check_args(callback, args):
+            try:
+                engine.debug('calling callback for alias {}'.format(name))
+                callback(*args)
+            except Exception as e:
+                aggressor.berror(bid, "Caught Python exception while executing alias '{}': {}".format(name, str(e)))
+                aggressor.berror(bid, 'See Script Console for more details.')
+                raise e
+        else:
+            syntax = '{}{}'.format(name, utils.signature(callback))
+            aggressor.berror(bid, "Syntax: " + syntax)
+            engine.error("Invalid number of arguments passed to alias '{}'. Syntax: {}".format(name, syntax))
+
+    callbacks.register(alias_callback, prefix='alias_{}'.format(name))
+    aggressor.alias(name, alias_callback)
 
     # register help info
     if not long_help:
@@ -39,28 +54,11 @@ def register(name, callback, short_help=None, long_help=None):
 
     aggressor.beacon_command_register(name, short_help, long_help)
 
-def call(name, args):
-    global _callbacks
-
-    if name not in _callbacks:
-        raise RuntimeError('unknown alias: {}'.format(name))
-
-    callback = _callbacks[name]
-    bid = int(args[0])
-    if utils.check_args(callback, args):
-        try:
-            callback(*args)
-        except Exception as e:
-            aggressor.berror(bid, "Caught Python exception while executing alias '{}': {}".format(name, str(e)))
-            aggressor.berror(bid, 'See Script Console for more details.')
-            raise e
-    else:
-        syntax = '{}{}'.format(name, utils.signature(callback))
-        aggressor.berror(bid, "Syntax: " + syntax)
-        engine.error("Invalid number of arguments passed to alias '{}'. Syntax: {}".format(name, syntax))
-
-# Decorator
 class alias:
+    """
+    Decorator for alias registration
+    """
+
     def __init__(self, name, short_help=None, long_help=None):
         self.name = name
         self.short_help = short_help

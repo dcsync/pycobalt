@@ -1,29 +1,10 @@
 include(script_resource('pycobalt/json.cna'));
 
-# Process handles
-%python_handles = %();
-$python_handles_lock = semaphore();
-
 # For special serialization objects
 # { name: handle }
 %python_objects = %();
 
-sub find_handle {
-	$script = $1;
-	return %python_handles[$script];
-}
-
-sub find_script {
-	$handle = $1;
-
-	foreach $key => $value (%python_handles) {
-		if ($value is $handle) {
-			return $key;
-		}
-	}
-	return $null;
-}
-
+# Write debug message to console
 sub debug {
 	$debug_on = true;
 	if ($debug_on) {
@@ -31,11 +12,28 @@ sub debug {
 	}
 }
 
+# Write message to console
 sub msg {
 	println('[pycobalt] ' . $1);
 }
 
+# Write error message to console
+sub error {
+	println('[pycobalt error] ' . $1);
+}
+
+sub stacktrace {
+	local('@stack');
+
+	@stack = [[Thread currentThread] getStackTrace];
+	debug('Stack size: ' . size(@stack));
+	for $frame (@stack) {
+		debug($frame);
+	}
+}
+
 sub write_message {
+	local('$handle $name $message');
 	$handle = $1;
 	$name = $2;
 	$message = $3;
@@ -46,49 +44,69 @@ sub write_message {
 		return;
 	}
 
-	%wrapper = %('name' => $name, 'message' => $message);
+	%wrapper = %(name => $name, message => $message);
 	$marshalled = '';
 	$marshalled = tostring(new_jsonobject(%wrapper)) . "\n";
 	#debug('sending ' . $marshalled);
 	writeb($handle, $marshalled);
 }
 
+# Serialize non-primitive object references. This includes Java objects. Java
+# objects are opaque to the Python side.
 sub serialize_special {
-	local('$arg $item $key $object_prefix');
+	local('$arg $item $key $object_prefix $object_name');
 
 	$arg = $1;
 
-	$object_prefix = '<<object>> ';
+	$object_prefix = '<<--pycobalt object-->> ';
 
-	if ($arg isa ^String || $arg isa ^Long || $arg isa ^Integer || $arg isa ^Double) {
+	if (($arg isa ^String) || ($arg isa ^Long) || ($arg isa ^Integer) || ($arg isa ^Double)) {
 		# primitive type, serializable by json
+		#debug('primitive ' . $arg);
 		return $arg;
-	} else if ($arg isa typeOf(@())) {
+	} else if ($arg isa typeOf(@()) || $arg isa ^CollectionWrapper) {
+		#debug('recursing list ' . $arg);
 		# recurse lists
+		@new_list = @();
 		foreach $item ($arg) {
-			$item = serialize_special($item);
+			push(@new_list, serialize_special($item));
 		}
-		return $arg;
+		return @new_list;
 	} else if ($arg isa typeOf(%())) {
+		#debug('recursing map');
 		# recurse hashes
+		%new_hash = %();
 		foreach $key => $item ($arg) {
-			$arg[$key] = serialize_special($item);
+			%new_hash[$key] = serialize_special($item);
 		}
+		return %new_hash;
+	} else if ($arg is $null) {
+		#debug('null');
 		return $arg;
 	} else {
-		# TODO serialize
-		return $arg;
+		# TODO identityHashCode isn't quite safe enough. we need a better way to do this
+		$object_name = [[$arg getClass] getName] . '_' . [System identityHashCode: $arg];
+		if ($object_name in %python_objects) {
+			debug('using existing java object named ' . $object_name);
+		} else {
+			debug('adding java object ' . $arg . ' with name ' . $object_name);
+			%python_objects[$object_name] = $arg;
+		}
+
+		return $object_prefix . $arg;
 	}
 }
 
+# Deserialize non-primitive object references and Python callbacks.
 sub deserialize_special {
-	local('$arg $item $key $object_prefix $handle $object_name $object $callback_prefix $callback $callback_name');
+	local('$arg $item $key $object_prefix $handle $object_name');
+	local('$object $callback_prefix $callback $callback_name @new_list %new_hash');
 
 	$arg = $1;
 	$handle = $2;
 
-	$object_prefix = '<<object>> ';
-	$callback_prefix = '<<callback>> ';
+	$object_prefix = '<<--pycobalt object-->> ';
+	$callback_prefix = '<<--pycobalt callback-->> ';
 
 	if ($arg isa ^String) {
 		if (left($arg, strlen($object_prefix)) eq $object_prefix) {
@@ -106,7 +124,11 @@ sub deserialize_special {
 			$callback_name = substr($arg, strlen($callback_prefix));
 
 			$callback = lambda({
-				%info = %('name' => $callback_name, 'args' => @_);
+				@args = @_;
+				# XXX stack is already overflowing when there are menu options and such
+				# could possibly fork() here to create a new thread/stack
+				#@args = serialize_special(@_);
+				%info = %(name => $callback_name, args => @args);
 				write_message($callback_handle, 'callback', %info);
 			}, $callback_handle => $handle, \$callback_name);
 
@@ -116,28 +138,96 @@ sub deserialize_special {
 		}
 	} else if ($arg isa typeOf(@())) {
 		# recurse lists
+		@new_list = @();
 		foreach $item ($arg) {
-			$item = deserialize_special($item, $handle);
+			push(@new_list, deserialize_special($item, $handle));
 		}
-		return $arg;
+		return @new_list;
 	} else if ($arg isa typeOf(%())) {
 		# recurse hashes
+		%new_hash = %();
 		foreach $key => $item ($arg) {
-			$arg[$key] = deserialize_special($item, $handle);
+			%new_hash[$key] = deserialize_special($item, $handle);
 		}
-		return $arg;
+		return %new_hash;
 	} else {
 		return $arg;
 	}
 }
 
+# Make menu
+# Fields include:
+#   - type: type of item
+#   - name: name of item (or menu text)
+#   - callback: callback (called before children are produced)
+#   - children: child items
+#
+# Types include:
+#   - popup
+#   - menu
+#   - item
+#   - insert_menu
+#   - separator
+sub set_menu {
+	local('%menu $child');
+
+	%menu = $1;
+
+	debug('setting up menu ' . %menu);
+	println();
+
+	sub menu_callback {
+		debug('in callback for ' . %menu);
+		println();
+
+		# Call the callback
+		if ('callback' in %menu) {
+			$callback = %menu['callback'];
+			debug('calling callback ' . $callback);
+			invoke($callback, @_);
+		}
+
+		# Deal with children
+		if ('children' in %menu) {
+			@children = %menu['children'];
+			debug('children: ' . @children);
+			foreach $child (@children) {
+				debug('dealing with child ' . $child);
+				println();
+				set_menu($child);
+			}
+		}
+	}
+
+	if (%menu['type'] eq 'popup') {
+		debug('making popup');
+		popup(%menu['name'], lambda(&menu_callback, \%menu));
+	} else if (%menu['type'] eq 'menu') {
+		debug('making menu');
+		menu(%menu['name'], lambda(&menu_callback, \%menu));
+	} else if (%menu['type'] eq 'item') {
+		debug('making item');
+		item(%menu['name'], lambda(&menu_callback, \%menu));
+	} else if (%menu['type'] eq 'insert_menu') {
+		debug('making insert');
+		insert_menu(%menu['name'], $1, $2, $3, $4, $5, $6);
+	} else if (%menu['type'] eq 'separator') {
+		debug('making separator');
+		separator();
+	} else {
+		error('invalid menu type: ' . %menu['type']);
+	}
+}
+
+# Handle a message
 sub handle_message {
+	local('$name $handle $message');
+
 	$handle = $1;
 	$name = $2;
 	$message = $3;
 
 	if ($name eq 'fork') {
-		debug('forking now');
 		return true;
 	} else if ($name eq 'message') {
 		# print message
@@ -169,6 +259,7 @@ sub handle_message {
 		}
 		$closure_text .= '$' . $i . ');';
 
+		# this deserializes special objects and callbacks and calls the closure
 		sub closure_caller {
 			# deserialize special objects
 			# must be performed here so that the callback closures are created
@@ -184,8 +275,9 @@ sub handle_message {
 			return $ret;
 		}
 
+		# call it
 		if ($fork) {
-			# fork it
+			# fork it and call it
 			debug('forking before calling function');
 			fork(&closure_caller, \$closure_text, \@args, \$handle);
 		} else {
@@ -193,38 +285,17 @@ sub handle_message {
 			$ret = closure_caller();
 			write_message($handle, 'return', $ret);
 		}
-	} else if ($name eq 'command') {
-		$callback = lambda({
-			@args = $1;
-			%info = %('name' => $command_name, 'args' => @args);
-			write_message($command_handle, 'command', %info);
-		}, $command_handle => $handle, $command_name => $message);
-		debug('registering command ' . $message);
-		command($message, $callback);
-	} else if ($name eq 'alias') {
-		# forked to prevent it from calling into the main thread, which will be
-		# busy reading from the python script.
-		sub register_alias {
-			$callback = lambda({
-				%info = %('name' => $alias_name, 'args' => @_);
-				write_message($alias_handle, 'alias', %info);
-			}, \$alias_handle, \$alias_name);
-			debug('registering alias: ' . $alias_name);
-			alias($alias_name, $callback);
-		}
-		fork(&register_alias, $alias_name => $message, $alias_handle => $handle);
-	} else if ($name eq 'event') {
-		$callback = lambda({
-			%info = %('name' => $event_name, 'args' => @_);
-			write_message($event_handle, 'event', %info);
-		}, $event_handle => $handle, $event_name => $message);
-		debug('registering event ' . $message);
-		on($message, $callback);
+	} else if ($name eq 'menu') {
+		local('%menu');
+		debug('menu call: ' . $message);
+		%menu = deserialize_special($message, $handle);
+		debug('deserialized: ' . %menu);
+		set_menu(%menu);
 	} else if ($name eq 'eval') {
 		# eval some code
 		eval($message);
 	} else {
-		msg("unhandled message of type $name : " . $message);
+		msg("unhandled message of type $name - " . $message);
 	}
 	return false;
 }
@@ -248,6 +319,7 @@ sub thread_callback {
 	if (!-eof $handle) {
 		closef($handle);
 	}
+
 	return false;
 }
 
@@ -255,35 +327,28 @@ sub python {
 	$script = $1;
 
 	msg('executing script ' . $script);
-	$handle = exec($script . ' 2>&1');
+	$handle = exec($script);
 	if (checkError($error)) {
 		msg("failed to execute script '" . $script . "': " . $error);
 	}
 
-	# Close existing
-	acquire($python_handles_lock);
-	if (%python_handles[$script]) {
-		debug('closing existing handle');
-		closef(%python_handles[$script]);
-	}
-
-	# We parse the results in the same thread until we receive a fork command.
-	# This allows us to register aliases and stuff.
-	%python_handles[$script] = $handle;
-	release($python_handles_lock);
-	if (thread_callback(\$handle, \$script)) {
+	# run without forking first
+	if (thread_callback()) {
 		fork(&thread_callback, \$handle, \$script, \%python_objects);
 	}
+
+	return $handle;
 }
 
 sub python_stop {
-	$script = $1;
+	$handle = $1;
 
-	# Remove it from handles list
-	acquire($python_handles_lock);
-	if (%python_handles[$script]) {
-		closef(%python_handles[$script]);
-		%python_handles[$script] = $null;
-	}
-	release($python_handles_lock);
+	closef($handle);
+}
+
+sub python_eval {
+	$handle = $1;
+	$code = $2;
+
+	write_message($handle, 'eval', $code);
 }
