@@ -29,7 +29,7 @@ def test_alias(bid):
 # Message test
 engine.message('test message')
 
-# For testing the error handling on the cobalt strike side
+# For testing the error handling on the cobaltstrike side
 #raise RuntimeError('exception test')
 
 engine.loop()
