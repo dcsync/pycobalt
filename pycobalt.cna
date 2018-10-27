@@ -22,6 +22,7 @@ sub error {
 	println('[pycobalt error] ' . $1);
 }
 
+# Print a stacktrace
 sub stacktrace {
 	local('@stack');
 
@@ -32,6 +33,7 @@ sub stacktrace {
 	}
 }
 
+# Write a message to a script
 sub write_message {
 	local('$handle $name $message');
 	$handle = $1;
@@ -300,6 +302,7 @@ sub handle_message {
 	return false;
 }
 
+# Per-script thread
 sub thread_callback {
 	while $line (readln($handle)) {
 		$obj = from_json($line);
@@ -323,6 +326,7 @@ sub thread_callback {
 	return false;
 }
 
+# Start a Python script
 sub python {
 	$script = $1;
 
@@ -340,12 +344,14 @@ sub python {
 	return $handle;
 }
 
+# Stop a Python script
 sub python_stop {
 	$handle = $1;
 
 	closef($handle);
 }
 
+# Eval arbitrary code within a Python script
 sub python_eval {
 	$handle = $1;
 	$code = $2;

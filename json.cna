@@ -1,29 +1,38 @@
+#
 # org.json from https://mvnrepository.com/artifact/org.json/json
 # Documentation - https://stleary.github.io/JSON-java/
+#
+# Thanks to @vysec's ANGRYPUPPY for the library suggestion
+#
 
 # load java stuff
 import java.net.*;
 
+# Explicit toString
 sub tostring {
 	$obj = $1;
 	return [$obj toString];
 }
 
-# Stupid loader hack because Cobaltstrike's jar loading is broken in jre9+
-# thanks to some implementation changes by Oracle.
+# Cobaltstrike's jar loading is broken in jre9+ thanks to some
+# implementation changes by Oracle.
+#
+# This makes a new loader which is capable of loading the json library
 sub new_loader {
-	$json_jar_file = 'file:///share/tools/cobaltstrike/scripts/client/jars/json.jar';
+	$json_jar_file = 'file://' . script_resource('jars/json.jar');
 	$json_url = [new URL: $json_jar_file];
 	$json_loader = [new URLClassLoader: @($json_url)];
 	return $json_loader;
 }
 
+# Make a new class by name
 sub new_class {
 	$json_loader = new_loader();
 	$name = $1;
 	return [Class forName: $name, false, $json_loader];
 }
 
+# Make a new JSONObject
 sub new_jsonobject {
 	$json_loader = new_loader();
 	$class_JSONObject = new_class('org.json.JSONObject');
@@ -53,6 +62,7 @@ sub new_jsonobject {
 	}
 }
 
+# Make a new JSONArray
 sub new_jsonarray {
 	$json_loader = new_loader();
 	$class_JSONArray = new_class('org.json.JSONArray');
@@ -91,6 +101,7 @@ sub convert_json {
 	}
 }
 
+# Convert json to object
 sub from_json {
 	$json = $1;
 
@@ -106,9 +117,6 @@ sub from_json {
 }
 
 # Convert object to json
-# Note: The dictionary keys will all be wrong because sleep's java parameter
-# marshalling is broken. I don't feel like fixing it here because this language
-# is borderline impossible to use. See fix_dicts on the python side.
 sub to_json {
 	$item = $1;
 
@@ -120,31 +128,30 @@ sub to_json {
 	}
 }
 
+# Get keys from JSONObject
 sub json_keys {
 	$obj = $1;
 	return [[$obj keySet] toArray];
 }
 
+# Get value from JSONObject
 sub json_value {
 	$obj = $1;
 	$item = $2;
 	return [$obj opt: $item];
 }
 
+# Get value from JSONArray
 sub json_index {
 	$arr = $1;
 	$index = $2;
 	return [$arr get: $index];
 }
 
+# Get length of JSONArray
 sub json_length {
 	$arr = $1;
 	return [$arr length];
-}
-
-sub json_string {
-	$obj = new_jsonobject();
-	return [$obj stringToValue: $1];
 }
 
 $test = false;
@@ -167,8 +174,6 @@ if ($test) {
 
 	$v2 = [$obj stringToValue: '[2]'];
 	println($v2);
-
-	println(json_string('{"zz": "dd"}'));
 
 	$obj = new_jsonobject(%('ll' => 'bb'));
 	println(tostring($obj));
