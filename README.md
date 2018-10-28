@@ -6,8 +6,8 @@ pycobalt is a python api for cobaltstrike.
 installation
 ============
 
-pycobalt comes in two parts: a python library and an aggressor library for
-cobaltstrike. these libraries communicate with each other.
+pycobalt comes in two parts: a python library and an aggressor library. these
+libraries communicate with each other.
 
 python side
 -----------
@@ -88,7 +88,7 @@ examples
 ========
 
 here are some script examples. for more complete examples see the
-[`examples`](https://github.com/dcsync/pycobalt/tree/master/examples) directory.
+[examples](https://github.com/dcsync/pycobalt/tree/master/examples) directory.
 
 script console
 --------------
@@ -264,8 +264,9 @@ registering an event handler:
 
     engine.loop()
 
-this will check to make sure the event is one of the official cobaltstrike
-ones. to register an arbitrary event (e.g. for use with `fireEvent`):
+this will raise an exception if the event isn't one of the official
+cobaltstrike ones. to register an arbitrary event (e.g. for use with
+`fireEvent`):
 
     ...
     @events.event('myevent', official_only=False)
@@ -338,7 +339,7 @@ the list so far:
 sleep functions
 ---------------
 
-you can call arbitrary sleep and aggressor functions like so:
+you can call arbitrary sleep and aggressor functions like this:
 
     engine.call('printAll', [['a', 'b', 'c']])
 
@@ -354,7 +355,7 @@ you can also eval arbitrary sleep code:
 
     engine.eval('println("foo")')
 
-`engine.eval` does not perform any sort of parameter marshalling or callback
+`engine.eval` doesn't perform any sort of parameter marshalling or callback
 serialization.
 
 hack the planet.
