@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
+# so we can use the repo copy of pycobalt
 import sys
-sys.path.insert(0, '..')
+import utils
+sys.path.insert(0, utils.basedir('..'))
 
 import pycobalt.engine as engine
 import pycobalt.events as events
@@ -20,12 +22,12 @@ def event_action(who, contents, time):
 # Command test
 @commands.command('test_command')
 def test_command():
-    engine.message('command called')
+    engine.message('test_command called')
 
 # Alias test
 @aliases.alias('test_alias')
 def test_alias(bid):
-    aggressor.blog(bid, 'alias called for beacon: {}'.format(bid))
+    aggressor.blog(bid, 'test_alias called for beacon: {}'.format(bid))
 
 # Message test
 engine.message('test message')
