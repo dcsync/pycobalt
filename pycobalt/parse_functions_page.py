@@ -14,6 +14,7 @@ out = 'aggressor.py'
 sleep_functions = [
     'print',
     'println',
+    'command',
 ]
 
 def main():
