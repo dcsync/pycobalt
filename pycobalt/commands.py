@@ -23,6 +23,7 @@ def register(name, callback):
     """
     Register a command callback
     """
+
     def command_callback(*args):
         engine.debug('calling callback for command {}'.format(name))
         callback(*args)
@@ -34,6 +35,7 @@ class command:
     """
     Decorator
     """
+
     def __init__(self, name):
         self.name = name
 

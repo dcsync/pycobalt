@@ -33,8 +33,11 @@ _reverse_callbacks = {}
 # for serializing callbacks
 _serialize_prefix = '<<--pycobalt callback-->> '
 
-# Call a function callback
 def call(name, args):
+    """
+    Call a function callback by name
+    """
+
     global _callbacks
     if name in _callbacks:
         callback = _callbacks[name]
@@ -46,16 +49,22 @@ def call(name, args):
     else:
         engine.debug('unknown callback {}'.format(name))
 
-# Get name for function
 def name(func):
+    """
+    Get name for function. Return None if the callback isn't registered.
+    """
+
     global _reverse_callbacks
     if func in _reverse_callbacks:
         return _reverse_callbacks[func]
     else:
         return None
 
-# Register a callback
 def register(func, prefix=None):
+    """
+    Register a callback
+    """
+
     global _callbacks
     global _reverse_callbacks
 
