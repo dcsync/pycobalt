@@ -357,5 +357,3 @@ you can also eval arbitrary sleep code:
 
 `engine.eval` doesn't perform any sort of parameter marshalling or callback
 serialization.
-
-hack the planet.
