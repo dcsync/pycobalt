@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import time
+import sys
+sys.path.insert(0, '..')
 
 import pycobalt.engine as engine
 import pycobalt.events as events

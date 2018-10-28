@@ -4926,3 +4926,9 @@ def println(*args, fork=False):
 
     return engine.call('println', args, fork=fork)
 
+
+def command(*args, fork=False):
+    r""""""
+
+    return engine.call('command', args, fork=fork)
+

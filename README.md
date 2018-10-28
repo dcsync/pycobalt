@@ -26,27 +26,12 @@ you can include pycobalt.cna straight out of there. it comes with its
 dependencies and all. see [usage](#usage) for more info.
 
 pycobalt depends on the
-[`org.json`](https://mvnrepository.com/artifact/org.json/json) java library. a
-copy is included in the repo at `aggressor/jars/json.jar`. you don't have to
-install anything to use it but feel feel to replace the jar. I got the copy in
-this repo from
-[ANGRYPUPPY](https://github.com/vysec/ANGRYPUPPY/tree/master/json) so if it's
-backdoored you can blame vysec.
+[org.json](https://mvnrepository.com/artifact/org.json/json) java library. a
+copy is included in this repo at `aggressor/jars/json.jar`. you can optionally
+replace `json.jar` with a more trusted copy.
 
 usage
 =====
-
-cobaltstrike side
------------------
-
-an aggressor script for pycobalt generally looks like this:
-
-	$pycobalt_path = '/root/tools/pycobalt/aggressor';
-	include($pycobalt_path . '/pycobalt.cna');
-	python(script_resource('my_script.py'));
-
-it's necessary to set the `$pycobalt_path` variable so that pycobalt can find
-its dependencies.
 
 python side
 -----------
@@ -64,11 +49,11 @@ a python script for pycobalt generally looks like this:
     engine.loop()
 
 `engine.loop()` tells pycobalt to read commands from cobaltstrike. it's
-technically only necessary if your script uses callbacks (includes for aliases,
+technically only necessary if your script uses callbacks (for aliases,
 events, etc).
 
 pycobalt uses stdout and stdin to communicate with cobaltstrike. try not to
-print to stdout (e.g. `print`) or read from stdin (e.g. `input) in a pycobalt
+write to stdout (`print`) or read from stdin (`input`) in a pycobalt
 script.
 
 if your script has parser errors cobaltstrike won't show anything in the script
@@ -76,19 +61,34 @@ console. fatal runtime exceptions will show up in the script console.
 
 pycobalt includes the following modules:
 
-  - `engine.py`: main communication code
-  - `aggressor.py`: contains stubs for calling aggressor functions
-  - `aliases.py`: for beacon console alias registration
-  - `commands.py`: for script console command registration
-  - `events.py`: for event handler registration
-  - `gui.py`: for context menu registration
-  - `helpers.py`: assorted helper functions and classes to make writing scripts
-     easier
+  - [engine.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/engine.py): main communication code
+  - [aggressor.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aggressor.py): stubs for calling aggressor functions
+  - [aliases.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aliases.py): for beacon console alias registration
+  - [commands.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/commands.py): for script console command registration
+  - [events.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/events.py): for event handler registration
+  - [gui.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/gui.py): for context menu registration
+  - [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py):
+    assorted helper functions and classes to make writing scripts easier
 
 for more information about each see the [examples](#examples) section.
 
+cobaltstrike side
+-----------------
+
+an aggressor script for pycobalt generally looks like this:
+
+	$pycobalt_path = '/root/tools/pycobalt/aggressor';
+	include($pycobalt_path . '/pycobalt.cna');
+	python(script_resource('my_script.py'));
+
+it's necessary to set the `$pycobalt_path` variable so that pycobalt can find
+its dependencies.
+
 examples
 ========
+
+here are some script examples. for more complete examples see the
+[`examples`](https://github.com/dcsync/pycobalt/tree/master/examples) directory.
 
 script console
 --------------
@@ -317,12 +317,13 @@ aggressor functions for the same reason.
 helpers
 -------
 
-`helpers.py` contains helper functions and classes to make writing scripts
-easier. here's the list so far:
+[helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py)
+contains helper functions and classes to make writing scripts easier. here's
+the list so far:
 
   - `parse_ps(content)`: parses the callback output of `bps`. returns a list of
     dictionaries, each representing a process with all available information
-  - `findprocess(bid, proc_name, callback): calls `bps` to find a process by
+  - `findprocess(bid, proc_name, callback)`: calls `bps` to find a process by
 	its name and calls `callback` with a list of found processes (as returned
     by `parse_ps`)
   - `isAdmin(bid)`: checks if a beacon is SYSTEM or admin (as returned by
@@ -339,7 +340,7 @@ sleep functions
 
 you can call arbitrary sleep and aggressor functions like so:
 
-    engine.call('printAll', args=[['a', 'b', 'c']])
+    engine.call('printAll', [['a', 'b', 'c']])
 
 this turns into:
 
