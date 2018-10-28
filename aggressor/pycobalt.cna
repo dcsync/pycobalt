@@ -1,7 +1,10 @@
+if ($pycobalt_debug_on is $null) {
+	$pycobalt_debug_on = false;
+}
+
 # Write debug message to console
 sub debug {
-	$debug_on = true;
-	if ($debug_on) {
+	if ($pycobalt_debug_on) {
 		println('[pycobalt debug] ' . $1);
 	}
 }
@@ -35,11 +38,11 @@ include($pycobalt_path . '/json.cna');
 
 # For special serialization objects
 # { name: handle }
-%python_objects = %();
+%pycobalt_objects = %();
 
 # Print a stacktrace
 sub stacktrace {
-	local('@stack');
+	local('@stack $frame');
 
 	@stack = [[Thread currentThread] getStackTrace];
 	debug('Stack size: ' . size(@stack));
@@ -50,7 +53,7 @@ sub stacktrace {
 
 # Write a message to a script
 sub write_message {
-	local('$handle $name $message');
+	local('$handle $name $message %wrapper $marshalled');
 	$handle = $1;
 	$name = $2;
 	$message = $3;
@@ -71,7 +74,7 @@ sub write_message {
 # Serialize non-primitive object references. This includes Java objects. Java
 # objects are opaque to the Python side.
 sub serialize_special {
-	local('$arg $item $key $object_prefix $object_name');
+	local('$arg $item $key $object_prefix $object_name @new_list %new_hash');
 
 	$arg = $1;
 
@@ -103,11 +106,11 @@ sub serialize_special {
 	} else {
 		# TODO identityHashCode isn't quite safe enough. we need a better way to do this
 		$object_name = [[$arg getClass] getName] . '_' . [System identityHashCode: $arg];
-		if ($object_name in %python_objects) {
+		if ($object_name in %pycobalt_objects) {
 			debug('using existing java object named ' . $object_name);
 		} else {
 			debug('adding java object ' . $arg . ' with name ' . $object_name);
-			%python_objects[$object_name] = $arg;
+			%pycobalt_objects[$object_name] = $arg;
 		}
 
 		return $object_prefix . $arg;
@@ -117,7 +120,7 @@ sub serialize_special {
 # Deserialize non-primitive object references and Python callbacks.
 sub deserialize_special {
 	local('$arg $item $key $object_prefix $handle $object_name');
-	local('$object $callback_prefix $callback $callback_name @new_list %new_hash');
+	local('$object $callback_prefix $callback @new_list %new_hash @args');
 
 	$arg = $1;
 	$handle = $2;
@@ -129,7 +132,7 @@ sub deserialize_special {
 		if (left($arg, strlen($object_prefix)) eq $object_prefix) {
 			# it's an object
 			$object_name = substr($arg, strlen($object_prefix));
-			$object = %python_objects[$object_name];
+			$object = %pycobalt_objects[$object_name];
 			if (!$object) {
 				msg('could not find object ' . $object_name);
 				return $arg;
@@ -186,7 +189,7 @@ sub deserialize_special {
 #   - insert_menu
 #   - separator
 sub set_menu {
-	local('%menu $child');
+	local('%menu $child $callback @children');
 
 	%menu = $1;
 
@@ -238,7 +241,8 @@ sub set_menu {
 
 # Handle a message
 sub handle_message {
-	local('$name $handle $message');
+	local('$name $message $func $silent $fork');
+	local('$i $ret %menu');
 
 	$handle = $1;
 	$name = $2;
@@ -296,14 +300,13 @@ sub handle_message {
 		if ($fork) {
 			# fork it and call it
 			debug('forking before calling function');
-			fork(&closure_caller, \$closure_text, \@args, \$handle, \$pycobalt_path);
+			fork(&closure_caller, \$closure_text, \@args, \$handle, \$pycobalt_path, \$pycobalt_debug_on);
 		} else {
 			# call it in this thread, and send return value
 			$ret = closure_caller();
 			write_message($handle, 'return', $ret);
 		}
 	} else if ($name eq 'menu') {
-		local('%menu');
 		debug('menu call: ' . $message);
 		%menu = deserialize_special($message, $handle);
 		debug('deserialized: ' . %menu);
@@ -319,6 +322,8 @@ sub handle_message {
 
 # Per-script thread
 sub thread_callback {
+	local('$line $obj');
+
 	while $line (readln($handle)) {
 		$obj = from_json($line);
 
@@ -343,6 +348,8 @@ sub thread_callback {
 
 # Start a Python script
 sub python {
+	local('$error');
+
 	$script = $1;
 
 	msg('executing script ' . $script);
@@ -353,7 +360,7 @@ sub python {
 
 	# run without forking first
 	if (thread_callback()) {
-		fork(&thread_callback, \$handle, \$script, \%python_objects, \$pycobalt_path);
+		fork(&thread_callback, \$handle, \$script, \%pycobalt_objects, \$pycobalt_path, \$pycobalt_debug_on);
 	}
 
 	return $handle;
@@ -361,6 +368,8 @@ sub python {
 
 # Stop a Python script
 sub python_stop {
+	local('$handle');
+
 	$handle = $1;
 
 	closef($handle);
@@ -368,6 +377,8 @@ sub python_stop {
 
 # Eval arbitrary code within a Python script
 sub python_eval {
+	local('$handle $code');
+
 	$handle = $1;
 	$code = $2;
 
