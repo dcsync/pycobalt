@@ -4,6 +4,7 @@ Helper functions for writing pycobalt scripts
 
 import pycobalt.aggressor as aggressor
 import pycobalt.callbacks as callbacks
+import pycobalt.engine as engine
 
 def parse_ps(content):
     """
@@ -16,6 +17,11 @@ def parse_ps(content):
     for line in content.splitlines():
         proc = {}
         proc['name'], proc['ppid'], proc['pid'], *others = line.split('\t')
+
+        # convert numbers
+        proc['pid'] = int(proc['pid'])
+        proc['ppid'] = int(proc['ppid'])
+
         # get arch
         if len(others) > 1:
             proc['arch'] = others[0]
@@ -25,6 +31,9 @@ def parse_ps(content):
             proc['user'] = others[1]
 
         procs.append(proc)
+
+    # sort it
+    procs = list(sorted(procs, key=lambda item: item['pid']))
 
     return procs
 
