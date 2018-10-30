@@ -363,11 +363,6 @@ sub python {
 		msg("failed to execute script '" . $script . "': " . $error);
 	}
 
-	# enable debug in the script
-	#if ($pycobalt_debug_on) {
-	#	write_message($handle, 'debug', true);
-	#}
-
 	# run without forking first
 	if (thread_callback()) {
 		fork(&thread_callback, \$handle, \$script, \%pycobalt_objects, \$pycobalt_path, \$pycobalt_debug_on);

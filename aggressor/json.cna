@@ -66,7 +66,6 @@ sub new_jsonobject {
 			return [$ctor newInstance: @($arg)];
 		} else if ($arg isa typeOf(%())) {
 			# hash/map constructor
-			# TODO fix this shit
 			$ctor = [$class_JSONObject getDeclaredConstructor: @($class_Map)];
 			$casted = casti($arg, $class_Map);
 			return [$ctor newInstance: @($casted)];
