@@ -141,10 +141,6 @@ def alias_l(bid, *dirs):
 def alias_remove(bid):
     aggressor.beacon_remove(bid)
 
-@aliases.alias('show-drives', 'Show drives')
-def alias_show_drives(bid):
-    aggressor.bpowerpick(bid, 'get-psdrive -psprovider filesystem')
-
 @aliases.alias('list-drives', 'Run ls in each drive')
 def alias_list_drives(bid):
     aggressor.bpowerpick(bid, 'get-psdrive -psprovider filesystem | foreach-object { ls $_.root; }')
@@ -207,7 +203,7 @@ def alias_find(bid, directory, pattern=None, days=None):
 def alias_curl(bid, url):
     aggressor.bpowerpick(bid, '(New-Object System.Net.WebClient).DownloadString("{}")'.format(url))
 
-@aliases.alias('head', 'Get response headers for webpage (sends GET request)')
+@aliases.alias('headers', 'Get response headers for webpage (sends GET request)')
 def alias_head(bid, url):
     command = textwrap.dedent(r"""
         $request = [System.Net.WebRequest]::Create('{}')
