@@ -14,21 +14,25 @@ python side
 
 run `setup.py install` to install the pycobalt python library.
 
-or you can run it straight out of the repo if you're familiar with `PYTHONPATH`.
+or you can run it straight out of the repo if you're familiar with
+[PYTHONPATH](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH).
 
 cobaltstrike side
 -----------------
 
-the aggressor library is in the `aggressor` directory. it's also installed by
-`setup.py` at `/usr/lib/python-*/site-packages/pycobalt-*/aggressor`.
+the aggressor library is in the
+[aggressor](https://github.com/dcsync/pycobalt/tree/master/aggressor)
+directory. it's also installed by `setup.py` at
+`/usr/lib/python-*/site-packages/pycobalt-*/aggressor`.
 
 you can include pycobalt.cna straight out of there. it comes with its
-dependencies and all. see [usage](#usage) for more info.
+dependencies and all. see the [usage](#usage) section for more info.
 
 pycobalt depends on the
 [org.json](https://mvnrepository.com/artifact/org.json/json) java library. a
-copy is included in this repo at `aggressor/jars/json.jar`. you can optionally
-replace `json.jar` with a more trusted copy.
+copy is included in this repo at
+[aggressor/jars/json.jar](https://github.com/dcsync/pycobalt/tree/master/aggressor/jars).
+you can optionally replace `json.jar` with a more trusted copy.
 
 usage
 =====
@@ -70,7 +74,7 @@ pycobalt includes the following modules:
   - [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py):
     assorted helper functions and classes to make writing scripts easier
 
-for more information about each see the [examples](#examples) section.
+head over to the [examples](#examples) section for more information about each module.
 
 cobaltstrike side
 -----------------
@@ -323,9 +327,10 @@ contains helper functions and classes to make writing scripts easier. here's
 the list so far:
 
   - `parse_ps(content)`: parses the callback output of `bps`. returns a list of
-    dictionaries, each representing a process with all available information
+	dictionaries. each dictionary represents a process with all available
+    information
   - `findprocess(bid, proc_name, callback)`: calls `bps` to find a process by
-	its name and calls `callback` with a list of found processes (as returned
+	name and calls `callback` with a list of matching processes (as returned
     by `parse_ps`)
   - `isAdmin(bid)`: checks if a beacon is SYSTEM or admin (as returned by
      `isadmin`)
@@ -333,8 +338,8 @@ the list so far:
     first listener if there are none
   - `explorerstomp(bid, file)`: stomps a file timestamp with the modification
     time of explorer.exe
-  - `uploadto(bid, local_file, remote_file)`: like `bupload` but lets you
-    specify the remote file path/name.
+  - `uploadto(bid, local_file, remote_file)`: like `aggressor.bupload` but lets
+    you specify the remote file path/name.
 
 sleep functions
 ---------------
@@ -343,7 +348,7 @@ you can call arbitrary sleep and aggressor functions like this:
 
     engine.call('printAll', [['a', 'b', 'c']])
 
-this turns into:
+which turns into:
 
     printAll(@('a', 'b', 'c'))
 
@@ -357,3 +362,8 @@ you can also eval arbitrary sleep code:
 
 `engine.eval` doesn't perform any sort of parameter marshalling or callback
 serialization.
+
+internals
+=========
+
+
