@@ -35,4 +35,16 @@ engine.message('test message')
 # For testing the error handling on the cobaltstrike side
 #raise RuntimeError('exception test')
 
+#import argparse
+#@aliases.alias('test_alias')
+#def test_alias(bid, *args):
+#    parser = argparse.ArgumentParser()
+#    parser.add_argument('-t', '--test', action='store_true',
+#            help='argparse test')
+#    try: parsed = parser.parse_args(args)
+#    except: return
+#
+#    if parsed.test:
+#        aggressor.blog2(bid, 'test alias called')
+
 engine.loop()

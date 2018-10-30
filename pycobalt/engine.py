@@ -90,6 +90,12 @@ def handle_message(name, message):
     elif name == 'eval':
         # eval python code
         eval(message)
+    elif name == 'debug':
+        # set debug mode
+        if message is True:
+            enable_debug()
+        else:
+            disable_debug()
     else:
         raise RuntimeError('received unhandled or out-of-order message type: {} {}'.format(name, str(message)))
 
@@ -174,7 +180,7 @@ def readiter():
     for line in _in_pipe:
         yield parse_line(line)
 
-def call(name, args, silent=False, fork=False):
+def call(name, args, silent=False, fork=False, sync=True):
     """
     Call a sleep/aggressor function
     """
@@ -183,8 +189,8 @@ def call(name, args, silent=False, fork=False):
     if callbacks.has_callback(args):
         args = callbacks.serialized(args)
 
-        # when there's a callback involved we must fork because the script
-        # thread is busy reading from the script.
+        # when there's a callback involved we usually have to fork because the
+        # main script thread is busy reading from the script.
         debug('forcing fork for call to {}'.format(name))
         fork = True
 
@@ -193,10 +199,11 @@ def call(name, args, silent=False, fork=False):
                 'args': args,
                 'silent': silent,
                 'fork': fork,
+                'sync': sync,
               }
     write('call', message)
 
-    if not fork:
+    if sync:
         # read and handle messages until we get our return value
         while True:
             name, message = read()
@@ -247,6 +254,7 @@ def enable_debug():
 
     global _debug_on
     _debug_on = True
+    debug('enabled debug')
 
 def disable_debug():
     """
@@ -254,6 +262,7 @@ def disable_debug():
     """
 
     global _debug_on
+    debug('disabling debug')
     _debug_on = False
 
 def debug(line):

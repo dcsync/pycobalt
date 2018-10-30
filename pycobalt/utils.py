@@ -22,7 +22,7 @@ def check_args(func, args):
             max_args = 9999
         else:
             # positional, kwarg, etc
-            if not info.default:
+            if info.default == inspect._empty:
                 min_args += 1
 
     return len(args) >= min_args and len(args) <= max_args

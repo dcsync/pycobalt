@@ -113,7 +113,7 @@ sub serialize_special {
 			%pycobalt_objects[$object_name] = $arg;
 		}
 
-		return $object_prefix . $arg;
+		return $object_prefix . $object_name;
 	}
 }
 
@@ -148,6 +148,7 @@ sub deserialize_special {
 				# XXX stack is already overflowing when there are menu options and such
 				# could possibly fork() here to create a new thread/stack
 				#@args = serialize_special(@_);
+				debug('calling callback: ' . $callback_name);
 				%info = %(name => $callback_name, args => @args);
 				write_message($callback_handle, 'callback', %info);
 			}, $callback_handle => $handle, \$callback_name);
@@ -265,6 +266,7 @@ sub handle_message {
 		@args = $message['args'];
 		$silent = $message['silent'];
 		$fork = $message['fork'];
+		$sync = $message['sync'];
 
 		$closure_text = 'return ' . $func;
 
@@ -293,18 +295,21 @@ sub handle_message {
 			$closure = compile_closure($closure_text);
 			$ret = invoke($closure, @args);
 			$ret = serialize_special($ret);
-			return $ret;
+
+			if ($sync) {
+				# write return value
+				write_message($handle, 'return', $ret);
+			}
 		}
 
 		# call it
 		if ($fork) {
 			# fork it and call it
 			debug('forking before calling function');
-			fork(&closure_caller, \$closure_text, \@args, \$handle, \$pycobalt_path, \$pycobalt_debug_on);
+			fork(&closure_caller, \$closure_text, \@args, \$handle, \$pycobalt_path, \%pycobalt_objects, \$pycobalt_debug_on, \$sync);
 		} else {
 			# call it in this thread, and send return value
-			$ret = closure_caller();
-			write_message($handle, 'return', $ret);
+			closure_caller();
 		}
 	} else if ($name eq 'menu') {
 		debug('menu call: ' . $message);
@@ -357,6 +362,11 @@ sub python {
 	if (checkError($error)) {
 		msg("failed to execute script '" . $script . "': " . $error);
 	}
+
+	# enable debug in the script
+	#if ($pycobalt_debug_on) {
+	#	write_message($handle, 'debug', true);
+	#}
 
 	# run without forking first
 	if (thread_callback()) {

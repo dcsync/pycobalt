@@ -95,3 +95,17 @@ def uploadto(bid, local_file, remote_file):
         data = fp.read()
 
     aggressor.bupload_raw(bid, remote_file, data, local_file)
+
+def guessHome(bid):
+    """
+    Guess %userprofile% directory based on beacon user
+    """
+
+    return r'c:\users\{}'.format(aggressor.beacon_info(bid)['user'])
+
+def guessTemp(bid):
+    """
+    Guess %temp% directory based on beacon user
+    """
+
+    return r'{}\AppData\Local\Temp'.format(guessHome(bid))
