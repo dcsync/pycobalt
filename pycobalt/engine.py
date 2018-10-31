@@ -16,6 +16,7 @@ import pycobalt.aggressor as aggressor
 import pycobalt.commands as commands
 import pycobalt.aliases as aliases
 import pycobalt.callbacks as callbacks
+import pycobalt.serialization as serialization
 
 _in_pipe = None
 _out_pipe = None
@@ -32,6 +33,40 @@ def __init__():
     # since cobaltstrike can't read stderr
     sys.stderr = sys.stdout
 
+def enable_debug():
+    """
+    Enable debug messages
+    """
+
+    global _debug_on
+    _debug_on = True
+    debug('enabled debug')
+
+def disable_debug():
+    """
+    Disable debug messages
+    """
+
+    global _debug_on
+    debug('disabling debug')
+    _debug_on = False
+
+def debug(line):
+    """
+    Write script console debug message
+    """
+
+    global _debug_on
+    if _debug_on:
+        write('debug', line)
+
+def _handle_exception_softly(exc):
+    try:
+        raise exc
+    except Exception as e:
+        error('exception: {}\n'.format(str(e)))
+        error('traceback: {}'.format(traceback.format_exc()))
+
 def write(message_type, message=''):
     """
     Write a message to cobaltstrike. Message can be anything serializable by
@@ -43,7 +78,8 @@ def write(message_type, message=''):
                   'name': message_type,
                   'message': message,
               }
-    _out_pipe.write(json.dumps(wrapper) + "\n")
+    serialized = serialization.serialized(wrapper)
+    _out_pipe.write(serialized + "\n")
     _out_pipe.flush()
 
 def fix_dicts(old):
@@ -131,8 +167,7 @@ def loop(fork_first=True):
         except StopIteration as e:
             break
         except Exception as e:
-            error('exception: {}\n'.format(str(e)))
-            error('traceback: {}'.format(traceback.format_exc()))
+            _handle_exception_softly(e)
 
 def stop():
     """
@@ -187,8 +222,6 @@ def call(name, args, silent=False, fork=False, sync=True):
 
     # serialize and register function callbacks if needed
     if callbacks.has_callback(args):
-        args = callbacks.serialized(args)
-
         # when there's a callback involved we usually have to fork because the
         # main script thread is busy reading from the script.
         debug("forcing fork for call to: {}".format(name))
@@ -211,7 +244,10 @@ def call(name, args, silent=False, fork=False, sync=True):
                 # got it
                 return message
             else:
-                handle_message(name, message)
+                try:
+                    handle_message(name, message)
+                except Exception as e:
+                    _handle_exception_softly(e)
 
 def eval(code):
     """
@@ -230,7 +266,6 @@ def menu(menu_items):
     if _has_forked:
         raise RuntimeError('tried to register a menu after forking. this crashes cobaltstrike')
 
-    menu_items = callbacks.serialized(menu_items)
     write('menu', menu_items)
 
 def error(line):
@@ -253,32 +288,5 @@ def delete(handle):
     """
 
     write('delete', handle)
-
-def enable_debug():
-    """
-    Enable debug messages
-    """
-
-    global _debug_on
-    _debug_on = True
-    debug('enabled debug')
-
-def disable_debug():
-    """
-    Disable debug messages
-    """
-
-    global _debug_on
-    debug('disabling debug')
-    _debug_on = False
-
-def debug(line):
-    """
-    Write script console debug message
-    """
-
-    global _debug_on
-    if _debug_on:
-        write('debug', line)
 
 __init__()

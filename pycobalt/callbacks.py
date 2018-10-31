@@ -9,7 +9,7 @@ Usage example:
     aggressor.bps(bid, ps_callback)
 
 When aggressor.bps() serializes its arguments it calls
-callbacks.serialized(args), which will register and serialize all callbacks.
+serialization.serialized(args), which will register and serialize all callbacks.
 
 To register a callback manually (useful for setting the serialized name manually):
 
@@ -29,9 +29,6 @@ import pycobalt.engine as engine
 _callbacks = {}
 # { func: name }
 _reverse_callbacks = {}
-
-# for serializing callbacks
-_serialize_prefix = '<<--pycobalt callback-->> '
 
 def call(name, args):
     """
@@ -78,29 +75,6 @@ def register(func, prefix=None):
     _reverse_callbacks[func] = name
 
     return name
-
-def serialized(item):
-    """
-    Serialize and register callbacks
-    """
-
-    if isinstance(item, list) or isinstance(item, tuple):
-        new_list = []
-        for child in item:
-            new_list.append(serialized(child))
-        return new_list
-    elif isinstance(item, dict):
-        new_dict = {}
-        for key, value in item.items():
-            new_dict[key] = serialized(value)
-        return new_dict
-    elif callable(item):
-        func_name = name(item)
-        if not func_name:
-            func_name = register(item)
-        return _serialize_prefix + func_name
-    else:
-        return item
 
 def has_callback(item):
     """

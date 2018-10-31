@@ -91,7 +91,7 @@ def uploadto(bid, local_file, remote_file):
     Upload local file to a specified remote destination
     """
 
-    with open(local_file, 'r') as fp:
+    with open(local_file, 'rb') as fp:
         data = fp.read()
 
     aggressor.bupload_raw(bid, remote_file, data, local_file)

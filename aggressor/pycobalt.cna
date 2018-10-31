@@ -136,12 +136,14 @@ sub resolve_object_handle {
 sub deserialize_special {
 	local('$arg $item $key $object_prefix $handle $object_name');
 	local('$object $callback_prefix $callback @new_list %new_hash @args');
+	local('$data');
 
 	$arg = $1;
 	$handle = $2;
 
 	$object_prefix = '<<--pycobalt object-->> ';
 	$callback_prefix = '<<--pycobalt callback-->> ';
+	$bytes_prefix = '<<--pycobalt bytes-->> ';
 
 	if ($arg isa ^String) {
 		if (left($arg, strlen($object_prefix)) eq $object_prefix) {
@@ -169,6 +171,13 @@ sub deserialize_special {
 			}, $callback_handle => $handle, \$callback_name);
 
 			return $callback;
+		} else if (left($arg, strlen($bytes_prefix)) eq $bytes_prefix) {
+			# it's a bytes object
+			$data = substr($arg, strlen($bytes_prefix));
+			debug('decoding bytes object: ' . $arg);
+			$data = [[java.util.Base64 getDecoder] decode: $data];
+			debug('decoded to: ' . $data);
+			return $data;
 		} else {
 			return $arg;
 		}
