@@ -9,7 +9,7 @@ usage
 PyCobalt comes in two parts: a Python library and an Aggressor library. The
 Python library provides an API which allows Python scripts to call Aggressor
 functions and register aliases, commands, and event handlers. The Aggressor
-library runs your Python scripts and reads commands from them.
+library runs your Python scripts and performs actions on their behalf.
 
 python side
 -----------
