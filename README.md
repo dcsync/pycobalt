@@ -286,7 +286,7 @@ Cobalt Strike ones. To register an arbitrary event (e.g. for use with
     @events.event('myevent', official_only=False)
     ...
 
-gui
+GUI
 ---
 
 The following menu tree pieces are supported:
