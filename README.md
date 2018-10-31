@@ -164,7 +164,7 @@ beacon console (`!` operator):
     ...
 
 For notes on using non-primitive objects such as dialog objects see the
-[non-primitive objects](#non-primitive-objects).
+[non-primitive objects](#non-primitive-objects) section.
 
 aliases
 -------
