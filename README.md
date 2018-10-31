@@ -1,46 +1,20 @@
 pycobalt
 ========
 
-pycobalt is a python api for cobaltstrike.
-
-installation
-============
-
-pycobalt comes in two parts: a python library and an aggressor library. these
-libraries communicate with each other.
-
-python side
------------
-
-run `setup.py install` to install the pycobalt python library.
-
-or you can run it straight out of the repo if you're familiar with
-[PYTHONPATH](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH).
-
-cobaltstrike side
------------------
-
-the aggressor library is in the
-[aggressor](https://github.com/dcsync/pycobalt/tree/master/aggressor)
-directory. it's also installed by `setup.py` at
-`/usr/lib/python-*/site-packages/pycobalt-*/aggressor`.
-
-you can include pycobalt.cna straight out of there. it comes with its
-dependencies and all. see the [usage](#usage) section for more info.
-
-pycobalt depends on the
-[org.json](https://mvnrepository.com/artifact/org.json/json) java library. a
-copy is included in this repo at
-[aggressor/jars/json.jar](https://github.com/dcsync/pycobalt/tree/master/aggressor/jars).
-you can optionally replace `json.jar` with a more trusted copy.
+PyCobalt is a Python API for Cobalt Strike.
 
 usage
 =====
 
+PyCobalt comes in two parts: a Python library and an Aggressor library. The
+Python library provides an API which allows Python scripts to call Aggressor
+functions and register aliases, commands, and event handlers. The Aggressor
+library runs your Python scripts and reads commands from them.
+
 python side
 -----------
 
-a python script for pycobalt generally looks like this:
+A Python script for PyCobalt generally looks like this:
 
 	#!/usr/bin/env python3
 
@@ -49,21 +23,26 @@ a python script for pycobalt generally looks like this:
     # prints to the script console
     engine.message('script console message')
 
+	# loop over all beacons
+	for beacon in aggressor.beacons():
+		# and write to each beacon's console
+		aggressor.blog2(beacon['bid'], 'example script')
+
     # must be called last
     engine.loop()
 
-`engine.loop()` tells pycobalt to read commands from cobaltstrike. it's
+`engine.loop()` tells PyCobalt to read commands from Cobalt Strike. It's
 technically only necessary if your script uses callbacks (for aliases,
 events, etc).
 
-pycobalt uses stdout and stdin to communicate with cobaltstrike. try not to
-write to stdout (`print`) or read from stdin (`input`) in a pycobalt
+PyCobalt uses stdout and stdin to communicate with Cobalt Strike. Try not to
+write to stdout (`print`) or read from stdin (`input`) in a PyCobalt
 script.
 
-if your script has parser errors cobaltstrike won't show anything in the script
-console. fatal runtime exceptions will show up in the script console.
+If your script has parser errors Cobalt Strike won't show anything in the script
+console. Fatal runtime exceptions will show up in the script console.
 
-pycobalt includes the following modules:
+PyCobalt includes the following modules:
 
   - [engine.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/engine.py): main communication code
   - [aggressor.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aggressor.py): stubs for calling aggressor functions
@@ -74,30 +53,58 @@ pycobalt includes the following modules:
   - [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py):
     assorted helper functions and classes to make writing scripts easier
 
-head over to the [examples](#examples) section for more information about each module.
+Head over to the [examples](#examples) section for more information about each module.
 
-cobaltstrike side
------------------
+cobalt strike side
+------------------
 
-an aggressor script for pycobalt generally looks like this:
+An aggressor script for PyCobalt generally looks like this:
 
 	$pycobalt_path = '/root/tools/pycobalt/aggressor';
 	include($pycobalt_path . '/pycobalt.cna');
 	python(script_resource('my_script.py'));
 
-it's necessary to set the `$pycobalt_path` variable so that pycobalt can find
+It's necessary to set the `$pycobalt_path` variable so that PyCobalt can find
 its dependencies.
+
+installation
+============
+
+python side
+-----------
+
+Run `setup.py install` to install the PyCobalt python library.
+
+Or you can run it straight out of the repo if you're familiar with
+[PYTHONPATH](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH).
+
+cobalt strike side
+------------------
+
+The aggressor library is in the
+[aggressor](https://github.com/dcsync/pycobalt/tree/master/aggressor)
+directory. it's also installed by `setup.py` at
+`/usr/lib/python-*/site-packages/pycobalt-*/aggressor`.
+
+You can include pycobalt.cna straight out of there. It comes with its
+dependencies and all. See the [usage](#usage) section for more info.
+
+PyCobalt depends on the
+[org.json](https://mvnrepository.com/artifact/org.json/json) java library. a
+copy is included in this repo at
+[aggressor/jars/json.jar](https://github.com/dcsync/pycobalt/tree/master/aggressor/jars).
+You can optionally replace `json.jar` with a more trusted copy.
 
 examples
 ========
 
-here are some script examples. for more complete examples see the
+Here are some script examples. For more complete examples see the
 [examples](https://github.com/dcsync/pycobalt/tree/master/examples) directory.
 
 script console
 --------------
 
-to print a message on the script console:
+To print a message on the script console:
 
     import pycobalt.engine as engine
 
@@ -105,7 +112,7 @@ to print a message on the script console:
 
     engine.loop()
 
-to print an error message on the script console:
+To print an error message on the script console:
 
     import pycobalt.engine as engine
 
@@ -113,7 +120,7 @@ to print an error message on the script console:
 
     engine.loop()
 
-to print an debug message to the script console:
+To print an debug message to the script console:
 
     import pycobalt.engine as engine
 
@@ -125,7 +132,7 @@ to print an debug message to the script console:
 aggressor functions
 -------------------
 
-calling an aggressor function:
+Calling an aggressor function:
 
     import pycobalt.engine as engine
     import pycobalt.aggressor as aggressor
@@ -135,7 +142,7 @@ calling an aggressor function:
 
     engine.loop()
 
-calling an aggressor function with a callback:
+Calling an aggressor function with a callback:
 
     import pycobalt.engine as engine
     import pycobalt.aggressor as aggressor
@@ -149,7 +156,7 @@ calling an aggressor function with a callback:
 
     engine.loop()
 
-calling an aggressor function without printing tasking information to the
+Calling an aggressor function without printing tasking information to the
 beacon console (`!` operator):
 
     ...
@@ -159,7 +166,7 @@ beacon console (`!` operator):
 aliases
 -------
 
-registering an alias:
+Registering an alias:
 
     import pycobalt.engine as engine
     import pycobalt.aliases as aliases
@@ -171,33 +178,33 @@ registering an alias:
 
     engine.loop()
 
-registering an alias with help info:
+Registering an alias with help info:
 
     ...
     @aliases.alias('test_alias', short_help='Tests alias registration')
     ...
 
-by default the long help will be based on the short help and python function
-syntax. for example:
+By default the long help will be based on the short help and python function
+syntax. For example:
 
     beacon> help test_alias
     Tests alias registration
     
     Python syntax: test_alias(bid)
 
-or you can specify it yourself:
+Or you can specify it yourself:
 
     ...
     @aliases.alias('test_alias', short_help='Tests alias registration', long_help='Test alias\n\nLong help')
     ...
 
-when the alias is called its arguments will be automagically checked against the
-arguments of the python function. for example:
+When the alias is called its arguments will be automagically checked against the
+arguments of the python function. For example:
 
     beacon> test_alias foo
     [-] Syntax: test_alias(bid)
 
-to bypass this you can use python's `*` operator:
+To bypass this you can use python's `*` operator:
 
     import pycobalt.engine as engine
     import pycobalt.aliases as aliases
@@ -209,8 +216,8 @@ to bypass this you can use python's `*` operator:
 
     engine.loop()
 
-if an unhandled exception occurs in your alias callback pycobalt will catch it
-and print the exception information to the beacon console. for example, while I
+If an unhandled exception occurs in your alias callback PyCobalt will catch it
+and print the exception information to the beacon console. For example, while I
 was writing the previous example I typed `engine.blog2()` instead of
 `aggressor.blog2()` by accident and got this error:
 
@@ -218,7 +225,7 @@ was writing the previous example I typed `engine.blog2()` instead of
     [-] Caught Python exception while executing alias 'test_alias': module 'pycobalt.engine' has no attribute 'blog2'
     [-] See Script Console for more details.
 
-in the script console:
+In the script console:
 
     ...
     [pycobalt script error] exception: module 'pycobalt.engine' has no attribute 'blog2'
@@ -240,7 +247,7 @@ in the script console:
 commands
 --------
 
-script console commands are similar to beacon console aliases.
+Script console commands are similar to beacon console aliases.
 
     import pycobalt.engine as engine
     import pycobalt.commands as commands
@@ -251,13 +258,13 @@ script console commands are similar to beacon console aliases.
 
     engine.loop()
 
-error handling and argument checking is similar. error messages are printed to
+Error handling and argument checking is similar. Error messages are printed to
 the script console.
 
 events
 ------
 
-registering an event handler:
+Registering an event handler:
 
     import pycobalt.engine as engine
     import pycobalt.events as events
@@ -268,8 +275,8 @@ registering an event handler:
 
     engine.loop()
 
-this will raise an exception if the event isn't one of the official
-cobaltstrike ones. to register an arbitrary event (e.g. for use with
+This will raise an exception if the event isn't one of the official
+Cobalt Strike ones. To register an arbitrary event (e.g. for use with
 `fireEvent`):
 
     ...
@@ -279,7 +286,7 @@ cobaltstrike ones. to register an arbitrary event (e.g. for use with
 gui
 ---
 
-the following menu tree pieces are supported:
+The following menu tree pieces are supported:
 
   - popup
   - menu
@@ -287,7 +294,7 @@ the following menu tree pieces are supported:
   - insert_menu
   - separator
 
-here's an example using all of those:
+Here's an example using all of those:
 
     import pycobalt.engine as engine
     import pycobalt.gui as gui
@@ -311,19 +318,19 @@ here's an example using all of those:
 
     engine.loop()
 
-callbacks are called before children are produced.
+Callbacks are called before children are produced.
 
-gui registration must happen before `engine.loop()` is called. `engine.loop()`
-creates a new thread in cobaltstrike and trying to register callbacks for menus
+GUI registration must happen before `engine.loop()` is called. `engine.loop()`
+creates a new thread in Cobalt Strike and trying to register callbacks for menus
 created before that point (e.g. `beacon_top`) will result in a thread safety
-exception within Java. it's not possible to register menus using the regular
+exception within Java. It's not possible to register menus using the regular
 aggressor functions for the same reason.
 
 helpers
 -------
 
 [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py)
-contains helper functions and classes to make writing scripts easier. here's
+contains helper functions and classes to make writing scripts easier. Here's
 the list so far:
 
   - `parse_ps(content)`: parses the callback output of `bps`. returns a list of
@@ -344,26 +351,21 @@ the list so far:
 sleep functions
 ---------------
 
-you can call arbitrary sleep and aggressor functions like this:
+You can call arbitrary sleep and aggressor functions like this:
 
     engine.call('printAll', [['a', 'b', 'c']])
 
-which turns into:
+Which turns into:
 
     printAll(@('a', 'b', 'c'))
 
-to call a sleep function in its own thread without getting its return value:
+To call a sleep function in its own thread without getting its return value:
 
     engine.call('println', args=['printing from another thread'], fork=True)
 
-you can also eval arbitrary sleep code:
+You can also eval arbitrary sleep code:
 
     engine.eval('println("foo")')
 
 `engine.eval` doesn't perform any sort of parameter marshalling or callback
 serialization.
-
-internals
-=========
-
-
