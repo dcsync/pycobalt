@@ -40,7 +40,7 @@ include($pycobalt_path . '/json.cna');
 # { name: handle }
 %pycobalt_objects = %();
 
-# Print a stacktrace
+# Print a stacktrace (for debugging)
 sub stacktrace {
 	local('@stack $frame');
 
@@ -114,6 +114,21 @@ sub serialize_special {
 		}
 
 		return $object_prefix . $object_name;
+	}
+}
+
+# Turn a serialized object handle into the object name
+sub resolve_object_handle {
+	local('$object_prefix $object_name $handle');
+
+	$handle = $1;
+	$object_prefix = '<<--pycobalt object-->> ';
+
+	if (left($handle, strlen($object_prefix)) eq $object_prefix) {
+		$object_name = substr($handle, strlen($object_prefix));
+		return $object_name;
+	} else {
+		return $null;
 	}
 }
 
@@ -312,10 +327,28 @@ sub handle_message {
 			closure_caller();
 		}
 	} else if ($name eq 'menu') {
+		# create a menu
 		debug('menu call: ' . $message);
 		%menu = deserialize_special($message, $handle);
 		debug('deserialized: ' . %menu);
 		set_menu(%menu);
+	} else if ($name eq 'delete') {
+		# remove serialization reference to object. if it's the only reference
+		# the object will be deleted.
+		local('$handle')
+		$handle = resolve_object_handle($message);
+
+		if (!$handle) {
+			debug('tried to delete something that is not an object: ' . $message)
+			return;
+		}
+
+		if ($message in %pycobalt_objects) {
+			debug('deleting object: ' . $handle);
+			%pycobalt_objects[$handle] = $null;
+		} else {
+			debug('tried to delete non-existent object: ' . $handle)
+		}
 	} else if ($name eq 'eval') {
 		# eval some code
 		eval($message);

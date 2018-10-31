@@ -191,7 +191,7 @@ def call(name, args, silent=False, fork=False, sync=True):
 
         # when there's a callback involved we usually have to fork because the
         # main script thread is busy reading from the script.
-        debug('forcing fork for call to {}'.format(name))
+        debug("forcing fork for call to: {}".format(name))
         fork = True
 
     message = {
@@ -246,6 +246,13 @@ def message(line):
     """
 
     write('message', line)
+
+def delete(handle):
+    """
+    Delete an object with its serialized handle
+    """
+
+    write('delete', handle)
 
 def enable_debug():
     """
