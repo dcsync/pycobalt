@@ -1,9 +1,9 @@
-pycobalt
+PyCobalt
 ========
 
 PyCobalt is a Python API for Cobalt Strike.
 
-usage
+Usage
 =====
 
 PyCobalt comes in two parts: a Python library and an Aggressor library. The
@@ -11,7 +11,7 @@ Python library provides an API which allows Python scripts to call Aggressor
 functions and register aliases, commands, and event handlers. The Aggressor
 library runs your Python scripts and performs actions on their behalf.
 
-python side
+Python Side
 -----------
 
 A Python script for PyCobalt generally looks like this:
@@ -55,7 +55,7 @@ PyCobalt includes the following modules:
 
 Head over to the [examples](#examples) section for more information about each module.
 
-cobalt strike side
+Cobalt Strike Side
 ------------------
 
 An aggressor script for PyCobalt generally looks like this:
@@ -67,10 +67,10 @@ An aggressor script for PyCobalt generally looks like this:
 It's necessary to set the `$pycobalt_path` variable so that PyCobalt can find
 its dependencies.
 
-installation
+Installation
 ============
 
-python side
+Python Side
 -----------
 
 Run `setup.py install` to install the PyCobalt python library.
@@ -78,7 +78,7 @@ Run `setup.py install` to install the PyCobalt python library.
 Or you can run it straight out of the repo if you're familiar with
 [PYTHONPATH](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH).
 
-cobalt strike side
+Cobalt Strike Side
 ------------------
 
 The aggressor library is in the
@@ -95,13 +95,13 @@ copy is included in this repo at
 [aggressor/jars/json.jar](https://github.com/dcsync/pycobalt/tree/master/aggressor/jars).
 You can optionally replace `json.jar` with a more trusted copy.
 
-examples
+Examples
 ========
 
 Here are some script examples. For more complete examples see the
 [examples](https://github.com/dcsync/pycobalt/tree/master/examples) directory.
 
-script console
+Script Console
 --------------
 
 To print a message on the script console:
@@ -129,7 +129,7 @@ To print an debug message to the script console:
 
     engine.loop()
 
-aggressor functions
+Aggressor Functions
 -------------------
 
 Calling an aggressor function:
@@ -166,7 +166,7 @@ beacon console (`!` operator):
 For notes on using non-primitive objects such as dialog objects see the
 [non-primitive objects](#non-primitive-objects) section.
 
-aliases
+Aliases
 -------
 
 Registering an alias:
@@ -247,7 +247,7 @@ In the script console:
         engine.blog2(bid, 'test alias called with args: ' + ', '.join(args))
     AttributeError: module 'pycobalt.engine' has no attribute 'blog2'
 
-commands
+Commands
 --------
 
 Script console commands are similar to beacon console aliases.
@@ -264,7 +264,7 @@ Script console commands are similar to beacon console aliases.
 Error handling and argument checking is similar. Error messages are printed to
 the script console.
 
-events
+Events
 ------
 
 Registering an event handler:
@@ -329,7 +329,7 @@ created before that point (e.g. `beacon_top`) will result in a thread safety
 exception within Java. It's not possible to register menus using the regular
 aggressor functions for the same reason.
 
-non-primitive objects
+Non-Primitive Objects
 ---------------------
 
 When passed from Cobalt Strike to Python a non-primitive object's reference is
@@ -349,7 +349,7 @@ reference after you're finished referencing it:
 	aggressor.dialog_show(dialog)
     engine.delete(dialog)
 
-helpers
+Helpers
 -------
 
 [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py)
@@ -371,7 +371,7 @@ the list so far:
   - `uploadto(bid, local_file, remote_file)`: like `aggressor.bupload` but lets
     you specify the remote file path/name.
 
-sleep functions
+Sleep Functions
 ---------------
 
 You can call arbitrary sleep and aggressor functions like this:
