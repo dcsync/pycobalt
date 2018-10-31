@@ -163,6 +163,9 @@ beacon console (`!` operator):
     aggressor.bshell(bid, 'whoami', silent=True)
     ...
 
+For notes on using non-primitive objects such as dialog objects see the
+[non-primitive objects](#non-primitive-objects).
+
 aliases
 -------
 
@@ -325,6 +328,26 @@ creates a new thread in Cobalt Strike and trying to register callbacks for menus
 created before that point (e.g. `beacon_top`) will result in a thread safety
 exception within Java. It's not possible to register menus using the regular
 aggressor functions for the same reason.
+
+non-primitive objects
+---------------------
+
+When passed from Cobalt Strike to Python a non-primitive object's reference is
+stored. A string identifying this stored reference is passed to Python (let's
+call it a "serialized reference"). When passed back to Cobalt Strike the
+serialized reference is deserialized back into the original object reference.
+
+Non-primitive objects are effectively opaque on the Python side.
+
+This also means there's a global reference to every non-primitive object
+sitting around. To save memory PyCobalt allows you to remove an object's global
+reference after you're finished referencing it:
+
+    ...
+    dialog = aggressor.dialog('Test dialog', {}, callback)
+	...
+	aggressor.dialog_show(dialog)
+    engine.delete(dialog)
 
 helpers
 -------
