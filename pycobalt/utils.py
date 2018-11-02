@@ -38,3 +38,11 @@ def basedir(append='', relative=__file__):
     Get base directory relative to 'relative' or __file__
     """
     return os.path.realpath(os.path.dirname(relative)) + '/' + append
+
+def func():
+    """
+    Get function object of caller
+    """
+
+    tup = inspect.stack()[2]
+    return tup[0].f_globals[tup[3]]

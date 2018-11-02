@@ -20,7 +20,7 @@ A Python script for PyCobalt generally looks like this:
 
     import pycobalt.engine as engine
 
-    # prints to the script console
+    # print to the script console
     engine.message('script console message')
 
 	# loop over all beacons
@@ -219,6 +219,9 @@ To bypass this you can use python's `*` operator:
 
     engine.loop()
 
+This also allows you to use Python's argparse with aliases. For more
+information about using argparse see the [helpers](#helpers) section.
+
 If an unhandled exception occurs in your alias callback PyCobalt will catch it
 and print the exception information to the beacon console. For example, while I
 was writing the previous example I typed `engine.blog2()` instead of
@@ -353,8 +356,8 @@ Helpers
 -------
 
 [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py)
-contains helper functions and classes to make writing scripts easier. Here's
-the list so far:
+contains helper functions and classes to make writing scripts easier. Here are
+some of the functions available:
 
   - `parse_ps(content)`: parses the callback output of `bps`. returns a list of
 	dictionaries. each dictionary represents a process with all available
@@ -370,6 +373,40 @@ the list so far:
     time of explorer.exe
   - `uploadto(bid, local_file, remote_file)`: like `aggressor.bupload` but lets
     you specify the remote file path/name.
+
+There's a `helpers.ArgumentParser` class which extends
+`argparse.ArgumentParser` to support printing to the beacon console or script
+console. Here's an example using it with an alias:
+
+    @aliases.alias('outlook', 'Get outlook folder', 'See `outlook -h`')
+    def _(bid, *args):
+        parser = helpers.ArgumentParser(bid=bid, prog='outlook')
+        parser.add_argument('-f', '--folder', help='Folder name to grab')
+        parser.add_argument('-s', '--subject', help='Match subject line (glob)')
+        parser.add_argument('-t', '--top', metavar='N', type=int, help='Only show top N results')
+        parser.add_argument('-d', '--dump', action='store_true', help='Get full dump')
+        parser.add_argument('-o', '--out', help='Output file')
+        try: args = parser.parse_args(args)
+        except: return
+		...
+
+In the beacon console:
+
+    beacon> outlook -h
+    [-] usage: outlook [-h] [-f FOLDER] [-s SUBJECT] [-t N] [-d] [-o OUT]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -f FOLDER, --folder FOLDER
+                            Folder name to grab
+      -s SUBJECT, --subject SUBJECT
+                            Match subject line (glob)
+      -t N, --top N         Only show top N results
+      -d, --dump            Get full dump
+      -o OUT, --out OUT     Output file
+
+    beacon> outlook -z
+    [-] unrecognized arguments: -z
 
 Sleep Functions
 ---------------

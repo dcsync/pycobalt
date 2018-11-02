@@ -2,9 +2,13 @@
 Helper functions for writing pycobalt scripts
 """
 
+import argparse
+import inspect
+
 import pycobalt.aggressor as aggressor
 import pycobalt.callbacks as callbacks
 import pycobalt.engine as engine
+import pycobalt.utils as utils
 
 def parse_ps(content):
     """
@@ -109,3 +113,36 @@ def guessTemp(bid):
     """
 
     return r'{}\AppData\Local\Temp'.format(guessHome(bid))
+
+class ArgumentParser(argparse.ArgumentParser):
+    """
+    Special version of ArgumentParser that prints to beacon console or script
+    console instead of stdout
+    """
+
+    def __init__(self, bid=None, *args, **kwargs):
+        self.bid = bid
+
+        if 'prog' not in kwargs:
+            # fix prog name
+            kwargs['prog'] = 'command'
+
+        super().__init__(*args, **kwargs)
+
+    def error(self, message):
+        if self.bid:
+            # print to beacon console
+            aggressor.berror(self.bid, message)
+        else:
+            # print to script console
+            engine.error(message)
+        raise argparse.ArgumentError('exit')
+
+    def exit(self, status=0, message=None):
+        self.error(message)
+
+    def print_usage(self, file=None):
+        self.error(super().format_usage())
+
+    def print_help(self, file=None):
+        self.error(super().format_help())
