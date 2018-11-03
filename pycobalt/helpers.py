@@ -41,7 +41,7 @@ def parse_ps(content):
 
     return procs
 
-def findprocess(bid, proc_name, callback):
+def find_process(bid, proc_name, callback):
     """
     Find processes by name. Call callback([{name, pid, ppid, arch?, user?}, ...]) with results.
     """
@@ -53,7 +53,7 @@ def findprocess(bid, proc_name, callback):
 
     aggressor.bps(bid, ps_callback)
 
-def isAdmin(bid):
+def is_admin(bid):
     """
     Check if beacon is admin (including SYSTEM)
     """
@@ -67,7 +67,7 @@ def isAdmin(bid):
 
     return False;
 
-def defaultListener():
+def default_listener():
     """
     Make a semi-educated guess at which listener might be the default one
     """
@@ -83,7 +83,7 @@ def defaultListener():
 
     return listeners[0]
 
-def explorerstomp(bid, fname):
+def explorer_stomp(bid, fname):
     """
     Stomp time with time of explorer.exe
     """
@@ -100,19 +100,19 @@ def uploadto(bid, local_file, remote_file):
 
     aggressor.bupload_raw(bid, remote_file, data, local_file)
 
-def guessHome(bid):
+def guess_home(bid):
     """
     Guess %userprofile% directory based on beacon user
     """
 
     return r'c:\users\{}'.format(aggressor.beacon_info(bid)['user'])
 
-def guessTemp(bid):
+def guess_temp(bid):
     """
     Guess %temp% directory based on beacon user
     """
 
-    return r'{}\AppData\Local\Temp'.format(guessHome(bid))
+    return r'{}\AppData\Local\Temp'.format(guess_home(bid))
 
 class ArgumentParser(argparse.ArgumentParser):
     """

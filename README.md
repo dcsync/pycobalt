@@ -362,14 +362,14 @@ some of the functions available:
   - `parse_ps(content)`: parses the callback output of `bps`. returns a list of
 	dictionaries. each dictionary represents a process with all available
     information
-  - `findprocess(bid, proc_name, callback)`: calls `bps` to find a process by
+  - `find_process(bid, proc_name, callback)`: calls `bps` to find a process by
 	name and calls `callback` with a list of matching processes (as returned
     by `parse_ps`)
-  - `isAdmin(bid)`: checks if a beacon is SYSTEM or admin (as returned by
+  - `is_admin(bid)`: checks if a beacon is SYSTEM or admin (as returned by
      `isadmin`)
-  - `defaultListener()`: gets local listener with 'http' in its name or the
+  - `default_listener()`: gets local listener with 'http' in its name or the
     first listener if there are none
-  - `explorerstomp(bid, file)`: stomps a file timestamp with the modification
+  - `explorer_stomp(bid, file)`: stomps a file timestamp with the modification
     time of explorer.exe
   - `uploadto(bid, local_file, remote_file)`: like `aggressor.bupload` but lets
     you specify the remote file path/name.

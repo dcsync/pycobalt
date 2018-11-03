@@ -102,7 +102,7 @@ def alias_killall(bid, proc_name):
             aggressor.berror(bid, 'No processes named {}'.format(proc_name))
 
     aggressor.blog2(bid, 'Tasked beacon to kill processes named {}'.format(proc_name))
-    helpers.findprocess(bid, proc_name, callback)
+    helpers.find_process(bid, proc_name, callback)
 
 @aliases.alias('pgrep')
 def alias_pgrep(bid, proc_name):
@@ -119,7 +119,7 @@ def alias_pgrep(bid, proc_name):
             aggressor.berror(bid, 'No processes named {}'.format(proc_name))
 
     aggressor.blog2(bid, 'Tasked beacon to search for processes named {}'.format(proc_name))
-    helpers.findprocess(bid, proc_name, callback)
+    helpers.find_process(bid, proc_name, callback)
 
 @aliases.alias('cl', 'Alias for cd; ls; pwd')
 def alias_cl(bid, *args):
@@ -162,7 +162,7 @@ def alias_error(bid, *args):
 
 @aliases.alias('estomp')
 def alias_estomp(bid, fname):
-    helpers.explorerstomp(bid, fname)
+    helpers.explorer_stomp(bid, fname)
 
 @aliases.alias('uploadto', 'Upload file to a specified location')
 def alias_uploadto(bid, local_file, remote_file):
