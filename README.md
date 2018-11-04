@@ -198,7 +198,7 @@ syntax. For example:
 Or you can specify it yourself:
 
     ...
-    @aliases.alias('test_alias', short_help='Tests alias registration', long_help='Test alias\n\nLong help')
+    @aliases.alias('test_alias', 'Tests alias registration', 'Test alias\n\nLong help')
     ...
 
 When the alias is called its arguments will be automagically checked against the
@@ -332,25 +332,8 @@ created before that point (e.g. `beacon_top`) will result in a thread safety
 exception within Java. It's not possible to register menus using the regular
 aggressor functions for the same reason.
 
-Non-Primitive Objects
----------------------
-
-When passed from Cobalt Strike to Python a non-primitive object's reference is
-stored. A string identifying this stored reference is passed to Python (let's
-call it a "serialized reference"). When passed back to Cobalt Strike the
-serialized reference is deserialized back into the original object reference.
-
-Non-primitive objects are effectively opaque on the Python side.
-
-This also means there's a global reference to every non-primitive object
-sitting around. To save memory PyCobalt allows you to remove an object's global
-reference after you're finished referencing it:
-
-    ...
-    dialog = aggressor.dialog('Test dialog', {}, callback)
-	...
-	aggressor.dialog_show(dialog)
-    engine.delete(dialog)
+The one downside to this is that you can't generate the menu labels dynamically
+from within the menu callbacks.
 
 Helpers
 -------
@@ -381,7 +364,7 @@ some of the functions available:
 	Encloses in single quotation marks with internal quotation marks escaped.
   - `argument_quote(arg)`/`aq(arg)`: Quote a string for
     cmd.exe and `CommandLineToArgvW`.
-    See [this](http://blogs.msdn.com/b/twistylittlepassagesallalike/archive/2011/04/23/everyone-quotes-arguments-the-wrong-way.aspx).
+    Read [this](https://stackoverflow.com/questions/29213106/how-to-securely-escape-command-line-arguments-for-the-cmd-exe-shell-on-windows).
   - `cmd_quote(arg)`/`cq(arg)`: Quote a string for just cmd.exe (and not `CommandLineToArgvW`).
 
 There's a `helpers.ArgumentParser` class which extends
@@ -417,6 +400,31 @@ In the beacon console:
 
     beacon> outlook -z
     [-] unrecognized arguments: -z
+
+Non-Primitive Objects
+---------------------
+
+When passed from Cobalt Strike to Python a non-primitive object's reference is
+stored. A string identifying this stored reference is passed to Python (let's
+call it a "serialized reference"). When passed back to Cobalt Strike the
+serialized reference is deserialized back into the original object reference.
+
+Non-primitive objects are effectively opaque on the Python side.
+
+This also means there's a global reference to every non-primitive object
+sitting around. To save memory PyCobalt allows you to remove an object's global
+reference after you're finished referencing it:
+
+    ...
+    dialog = aggressor.dialog('Test dialog', {}, callback)
+	...
+	aggressor.dialog_show(dialog)
+    engine.delete(dialog)
+
+I figure passing serialized references around is better than serializing entire
+Java objects. There's a Python library called javaobj which supports
+serializing and deserializing Java objects. It doesn't work well with complex
+Java objects though.
 
 Sleep Functions
 ---------------
