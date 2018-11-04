@@ -21,7 +21,10 @@ import pycobalt.aggressor as aggressor
 
 def register(name, callback):
     """
-    Register a command callback
+    Register a command
+
+    :param name: Name of command
+    :param callback: Callback for command
     """
 
     def command_callback(*args):
@@ -33,10 +36,14 @@ def register(name, callback):
 
 class command:
     """
-    Decorator
+    Decorator for command registration
     """
 
     def __init__(self, name):
+        """
+        :param name: Name of command
+        """
+
         self.name = name
 
     def __call__(self, func):

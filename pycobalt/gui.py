@@ -41,6 +41,11 @@ import pycobalt.aggressor as aggressor
 def popup(name, callback=None, children=None):
     """
     Create a popup { } block
+
+    :param name: Name of menu to associate with
+    :param callback: Callback to call when opened
+    :param children: Child menu items
+    :return: Dictionary representing a popup block
     """
 
     ret = {
@@ -56,6 +61,11 @@ def popup(name, callback=None, children=None):
 def menu(name, callback=None, children=None):
     """
     Create a menu { } block
+
+    :param name: Name/label of menu
+    :param callback: Callback to call when opened
+    :param children: Child menu items
+    :return: Dictionary representing a menu block
     """
 
     ret = {
@@ -71,6 +81,10 @@ def menu(name, callback=None, children=None):
 def item(name, callback=None):
     """
     Create an item
+
+    :param name: Name/label of item
+    :param callback: Callback to call when clicked
+    :return: Dictionary representing an item
     """
 
     ret = {
@@ -84,6 +98,9 @@ def item(name, callback=None):
 def insert_menu(name):
     """
     Create a menu insertion
+
+    :param name: Name of menu insertion
+    :return: Dictionary representing an insert_menu piece
     """
 
     ret = {
@@ -95,6 +112,8 @@ def insert_menu(name):
 def separator():
     """
     Create a separator
+
+    :return: Dictionary representing a separator
     """
 
     ret = {
@@ -105,6 +124,9 @@ def separator():
 def check(menu):
     """
     Check to make sure a menu looks valid
+
+    :param menu: Menu tree to check
+    :return: True if menu tree looks valid
     """
 
     # Check children
@@ -139,15 +161,16 @@ def check(menu):
     
     return True
 
-def register(menu):
+def register(menu, check_menu=True):
     """
-    Check and register a menu
+    Check and register a menu.
 
-    To bypass check() call engine.menu() directly.
+    :param menu: Menu tree to register
+    :param check_menu: Check whether the menu should be checked first
     """
 
     # check it
-    if not check(menu):
+    if check_menu and not check(menu):
         raise RuntimeError('Invalid menu: {}'.format(menu))
 
     engine.menu(menu)

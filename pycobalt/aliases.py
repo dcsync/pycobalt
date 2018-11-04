@@ -1,5 +1,5 @@
 """
-For registering aliasess
+For registering beacon console aliasess
 
 Regular example:
 
@@ -22,6 +22,14 @@ import pycobalt.utils as utils
 def register(name, callback, short_help=None, long_help=None):
     """
     Register an alias
+
+    :param name: Name of alias
+    :param callback: Callback for alias
+    :param short_help: Short version of help, shown when running `help` with no
+                       arguments
+    :param long_help: Long version of help, shown when running `help <alias>`.
+                      By default this is generated based on the short help and syntax of the
+                      Python callback.
     """
 
     def alias_callback(*args):
@@ -35,7 +43,7 @@ def register(name, callback, short_help=None, long_help=None):
                 aggressor.berror(bid, 'See Script Console for more details.')
                 raise e
         else:
-            syntax = '{}{}'.format(name, utils.signature(callback))
+            syntax = '{}{}'.format(name, utils.signature(callback, trim=1))
             aggressor.berror(bid, "Syntax: " + syntax)
             engine.error("Invalid number of arguments passed to alias '{}'. Syntax: {}".format(name, syntax))
 
@@ -47,7 +55,7 @@ def register(name, callback, short_help=None, long_help=None):
         long_help = ''
         if short_help:
             long_help += short_help + '\n\n'
-        long_help += 'Python syntax: {}{}'.format(name, utils.signature(callback))
+        long_help += 'Syntax: {}{}'.format(name, utils.signature(callback, trim=1))
 
     if not short_help:
         short_help = 'Custom python command'
@@ -60,6 +68,15 @@ class alias:
     """
 
     def __init__(self, name, short_help=None, long_help=None):
+        """
+        :param name: Name of alias
+        :param short_help: Short version of help, shown when running `help` with no
+                           arguments
+        :param long_help: Long version of help, shown when running `help <alias>`.
+                          By default this is generated based on the short help and syntax of the
+                          Python callback.
+        """
+
         self.name = name
         self.short_help = short_help
         self.long_help = long_help

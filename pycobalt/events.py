@@ -78,6 +78,9 @@ import pycobalt.callbacks as callbacks
 def official(name):
     """
     Check if an event is one of the official cobaltstrike ones
+
+    :param name: Name of event
+    :return: True if event is an official one
     """
 
     global _official_events
@@ -86,6 +89,11 @@ def official(name):
 def register(name, callback, official_only=True):
     """
     Register an event callback.
+
+    :param name: Name of event
+    :param callback: Event callback
+    :param official_only: Only allow official callbacks
+    :return: Name of registered callback
     """
 
     def event_callback(*args):
@@ -95,24 +103,33 @@ def register(name, callback, official_only=True):
     if official_only and not official(name):
         raise RuntimeError('tried to register an unofficial event: {name}. try events.event("{name}", official_only=False).'.format(name=name))
 
-    callbacks.register(event_callback, prefix='event_{}'.format(name))
+    callback_name = callbacks.register(event_callback, prefix='event_{}'.format(name))
     aggressor.on(name, event_callback)
+    return callback_name
 
 def unregister(callback):
     """
     Unregister an event callback. There's no way to unregister an event with
     aggressor so this will forever leave us with broken callbacks coming back
     from the teamserver.
+
+    :param callback: Callback to unregister
+    :return: Name of unregistered callback
     """
 
-    callbacks.unregister(callback)
+    return callbacks.unregister(callback)
 
 class event:
     """
-    Decorator
+    Decorator for event registration
     """
 
     def __init__(self, name, official_only=True):
+        """
+        :param name: Name of event
+        :param official_only: Only allow official callbacks
+        """
+
         self.name = name
         self.official_only = official_only
 

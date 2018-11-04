@@ -6,10 +6,11 @@ PyCobalt is a Python API for Cobalt Strike.
 Usage
 =====
 
-PyCobalt comes in two parts: a Python library and an Aggressor library. The
-Python library provides an API which allows Python scripts to call Aggressor
+PyCobalt comes in two parts: a Python library and an Aggressor library.
+
+The Python library provides an API for Python scripts to call Aggressor
 functions and register aliases, commands, and event handlers. The Aggressor
-library runs your Python scripts and performs actions on their behalf.
+library runs the Python scripts and performs actions on their behalf.
 
 Python Side
 -----------
@@ -169,7 +170,7 @@ For notes on using non-primitive objects such as dialog objects see the
 Aliases
 -------
 
-Registering an alias:
+Registering a beacon console alias:
 
     import pycobalt.engine as engine
     import pycobalt.aliases as aliases
@@ -193,9 +194,9 @@ syntax. For example:
     beacon> help test_alias
     Tests alias registration
     
-    Python syntax: test_alias(bid)
+    Syntax: test_alias
 
-Or you can specify it yourself:
+Or you can specify the long help yourself:
 
     ...
     @aliases.alias('test_alias', 'Tests alias registration', 'Test alias\n\nLong help')
@@ -205,7 +206,7 @@ When the alias is called its arguments will be automagically checked against the
 arguments of the python function. For example:
 
     beacon> test_alias foo
-    [-] Syntax: test_alias(bid)
+    [-] Syntax: test_alias
 
 To bypass this you can use python's `*` operator:
 

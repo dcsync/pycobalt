@@ -13,9 +13,11 @@ import pycobalt.utils as utils
 
 def parse_ps(content):
     """
-    Parse output of bps()
+    Parse output of `bps()` as passed to the callback.
 
-    Returns: [{name, ppid, pid, arch, user}...]
+    :param content: Output of `bps()`
+    :return: List of dictionaries representing the process list, sorted by PID.
+             Dictionary fields include: name, ppid, pid, arch, and user.
     """
 
     procs = []
@@ -44,9 +46,12 @@ def parse_ps(content):
 
 def parse_jobs(content):
     """
-    Parse output of bjobs() as passed to beacon_output_jobs callback.
+    Parse output of `bjobs()` as passed to `beacon_output_jobs callback`.
 
-    Returns: [{jid, pid, description}...]
+    :param content: Output of `bjobs()` as passed to the `beacon_output_jobs`
+                    event callback.
+    :return: List of dictionaries representing the job list. Dictionary fields
+             include: jid, pid, and description.
     """
 
     jobs = []
@@ -65,7 +70,12 @@ def parse_jobs(content):
 
 def find_process(bid, proc_name, callback):
     """
-    Find processes by name. Call callback([{name, pid, ppid, arch?, user?}, ...]) with results.
+    Find processes by name. Call callback with results.
+
+    :param bid: Beacon to use
+    :param proc_name: Process name to search for
+    :param callback: Callback for results. Syntax is `callback(procs)` where
+                     `procs` is the output of `parse_ps`.
     """
 
     def ps_callback(bid, content):
@@ -78,6 +88,10 @@ def find_process(bid, proc_name, callback):
 def is_admin(bid):
     """
     Check if beacon is admin (including SYSTEM)
+
+    :param bid: Beacon to use
+    :return: True if beacon is elevated (i.e. admin with UAC disabled or
+             SYSTEM)
     """
 
     if aggressor.isadmin(bid):
@@ -92,6 +106,8 @@ def is_admin(bid):
 def default_listener():
     """
     Make a semi-educated guess at which listener might be the default one
+
+    :return: Possble default listener
     """
 
     listeners = aggressor.listeners_local()
@@ -108,6 +124,9 @@ def default_listener():
 def explorer_stomp(bid, fname):
     """
     Stomp time with time of explorer.exe
+
+    :param bid: Beacon to use
+    :param fname: File to stomp
     """
 
     aggressor.btimestomp(bid, fname, r'c:/windows/explorer.exe')
@@ -115,6 +134,10 @@ def explorer_stomp(bid, fname):
 def uploadto(bid, local_file, remote_file):
     """
     Upload local file to a specified remote destination
+
+    :param bid: Beacon to use
+    :param local_file: File to upload
+    :param remote_file: Upload file to this destination
     """
 
     with open(local_file, 'rb') as fp:
@@ -125,6 +148,9 @@ def uploadto(bid, local_file, remote_file):
 def guess_home(bid):
     """
     Guess %userprofile% directory based on beacon user
+
+    :param bid: Beacon to use
+    :return: Possible %userprofile% (home) directory
     """
 
     return r'c:\users\{}'.format(aggressor.beacon_info(bid)['user'])
@@ -132,6 +158,9 @@ def guess_home(bid):
 def guess_temp(bid):
     """
     Guess %temp% directory based on beacon user
+
+    :param bid: Beacon to use
+    :return: Possible %temp$ directory
     """
 
     return r'{}\AppData\Local\Temp'.format(guess_home(bid))
@@ -142,6 +171,9 @@ def powershell_quote(arg):
     marks with internal marks escaped. Also removes newlines.
 
     Can also do a list of strings.
+
+    :param arg: Argument to quote (string or list of strings)
+    :return: Quoted argument
     """
 
     if isinstance(arg, list) or isinstance(item, tuple):
@@ -162,6 +194,9 @@ def powershell_quote(arg):
 def pq(arg):
     """
     Alias for `powershell_quote`
+
+    :param arg: Argument to quote (string or list of strings)
+    :return: Quoted argument
     """
 
     return powershell_quote(arg)
@@ -189,6 +224,9 @@ def argument_quote(arg):
 
     First we escape the quote chars to produce a argument suitable for
     CommandLineToArgvW. We don't need to do this for simple arguments.
+
+    :param arg: Argument to quote
+    :return: Quoted argument
     """
 
     if not arg or re.search(r'(["\s])', arg):
@@ -199,6 +237,9 @@ def argument_quote(arg):
 def aq(arg):
     """
     Alias for argument_quote
+
+    :param arg: Argument to quote
+    :return: Quoted argument
     """
 
     return argument_quote(arg)
@@ -216,9 +257,8 @@ def cmd_quote(arg):
     Any meta-characters will be escaped, removing the ability to e.g. use
     redirects or variables.
 
-    @param arg [String] a single command line argument to escape for cmd.exe
-    @return [String] an escaped string suitable to be passed as a program
-      argument to cmd.exe
+    :param arg: Argument to quote
+    :return: Quoted argument
     """
 
     meta_chars = '()%!^"<>&|'
@@ -234,6 +274,9 @@ def cmd_quote(arg):
 def cq(arg):
     """
     Alias for cmd_quote
+
+    :param arg: Argument to quote
+    :return: Quoted argument
     """
 
     return cmd_quote(arg)
@@ -241,10 +284,18 @@ def cq(arg):
 class ArgumentParser(argparse.ArgumentParser):
     """
     Special version of ArgumentParser that prints to beacon console or script
-    console instead of stdout
+    console instead of stdout.
     """
 
     def __init__(self, bid=None, *args, **kwargs):
+        """
+        With the exception of the `bid` argument all arguments are passed to
+        `argparse.ArgumentParser`.
+
+        :param bid: Print errors to this beacon's console (default: script
+                    console)
+        """
+
         self.bid = bid
 
         if 'prog' not in kwargs:

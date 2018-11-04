@@ -33,6 +33,9 @@ _reverse_callbacks = {}
 def call(name, args):
     """
     Call a function callback by name
+
+    :param name: Name of callback
+    :param args: Arguments to pass to callback (checked by `utils.check_args` first)
     """
 
     global _callbacks
@@ -49,6 +52,9 @@ def call(name, args):
 def name(func):
     """
     Get name for function. Return None if the callback isn't registered.
+
+    :param func: Function to get name for
+    :return: Name of function (or None if it's not registered)
     """
 
     global _reverse_callbacks
@@ -60,6 +66,10 @@ def name(func):
 def register(func, prefix=None):
     """
     Register a callback
+
+    :param func: Function to register
+    :param prefix: Prefix of generated name (default: based on function name)
+    :return: Name of registered callback
     """
 
     global _callbacks
@@ -79,6 +89,9 @@ def register(func, prefix=None):
 def unregister(func):
     """
     Unregister a callback
+
+    :param func: Function to unregister
+    :return: Name of callback (or None if not registered)
     """
 
     func_name = name(func)
@@ -91,7 +104,10 @@ def unregister(func):
 
 def has_callback(item):
     """
-    Recursively check for callbacks in a list/dict
+    Recursively check for callbacks in a list, tuple, or dict
+
+    :param item: Item to check
+    :return: True if item contains a callback
     """
 
     if isinstance(item, list) or isinstance(item, tuple):

@@ -5,6 +5,17 @@
 import inspect
 import os
 
+def basedir(append='', relative=__file__):
+    """
+    Get base directory relative to 'relative' or __file__
+
+    :param append: Text to append to base directory
+    :param relative: Get base directory relative to this
+    :return: The base directory of this script (or relative) with append on the end
+    """
+
+    return os.path.realpath(os.path.dirname(relative)) + '/' + append
+
 def check_args(func, args):
     """
     Check argument list length before calling a function
@@ -12,7 +23,12 @@ def check_args(func, args):
     For functions with *args there is no maximum argument length. The minimum
     argument length is the number of positional and keyword arguments a
     function has.
+
+    :param func: Function to check
+    :param args: Args to check
+    :return: True if function arguments are valid
     """
+
     sig = inspect.signature(func)
     min_args = 0
     max_args = len(sig.parameters)
@@ -27,21 +43,25 @@ def check_args(func, args):
 
     return len(args) >= min_args and len(args) <= max_args
 
-def signature(func):
+def signature(func, trim=0):
     """
     Get stringy function argument signature
-    """
-    return str(inspect.signature(func))
 
-def basedir(append='', relative=__file__):
+    :param func: Function to get signature for
+    :param trim: Trim N arguments from front
+    :return: Stringified function argument signature
     """
-    Get base directory relative to 'relative' or __file__
-    """
-    return os.path.realpath(os.path.dirname(relative)) + '/' + append
+
+    sig = inspect.signature(func))
+    params = list(sig.parameters.values())[trim:]
+    sig = sig.replace(parameters=params)
+    return str(sig)
 
 def func():
     """
     Get function object of caller
+
+    :return: Function object of calling function
     """
 
     tup = inspect.stack()[2]
