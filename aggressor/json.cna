@@ -5,16 +5,27 @@
 # Thanks to @vysec's ANGRYPUPPY for the library suggestion
 #
 
-# load java stuff
+# Load java stuff
 import java.net.*;
 
-if (!$pycobalt_path) {
-	$pycobalt_path = script_resource();
+# Set default $json_path if needed
+if (!$json_path) {
+	$json_path = script_resource();
 }
+
+# Keeping these global so we don't have to re-create them over and over again.
+$json_loader = $null;
+$class_JSONObject = $null;
+$class_JSONArray = $null;
+$class_Map = $null;
+$class_String = $null;
 
 # Explicit toString
 sub tostring {
+	local('$obj');
+
 	$obj = $1;
+
 	return [$obj toString];
 }
 
@@ -22,34 +33,40 @@ sub tostring {
 # implementation changes by Oracle.
 #
 # This makes a new loader which is capable of loading the json library
-sub new_loader {
-	$json_jar_file = 'file://' . $pycobalt_path . '/jars/json.jar';
+sub new_json_loader {
+	local('$json_loader $json_jar_file $json_url');
 
-	if (!-exists ($pycobalt_path . '/json.cna')) {
-		die('could not find ' . $json_jar_file . '. check include path');
+	$json_jar_file = $json_path . '/jars/json.jar';
+	if (!-exists $json_jar_file) {
+		println('[json.cna] could not find ' . $json_jar_file . '. check $json_path');
+		exit();
 	}
 
-	$json_url = [new URL: $json_jar_file];
+	$json_url = [new URL: 'file://' . $json_jar_file];
 	$json_loader = [new URLClassLoader: @($json_url)];
 	return $json_loader;
 }
 
-# Make a new class by name
+# Make a new class by name using the json loader. Caller must initialize
+# $json_loader.
 sub new_class {
-	if (!$json_loader) {
-		$json_loader = new_loader();
-	}
+	local('$name');
+
 	$name = $1;
+
 	return [Class forName: $name, false, $json_loader];
 }
 
-# Make a new JSONObject
-sub new_jsonobject {
+# Initialize $json_loader and the $class_* variables if needed.
+sub init_json_loader {
 	if (!$json_loader) {
-		$json_loader = new_loader();
+		$json_loader = new_json_loader();
 	}
 	if (!$class_JSONObject) {
 		$class_JSONObject = new_class('org.json.JSONObject');
+	}
+	if (!$class_JSONArray) {
+		$class_JSONArray = new_class('org.json.JSONArray');
 	}
 	if (!$class_Map) {
 		$class_Map = new_class('java.util.Map');
@@ -57,8 +74,15 @@ sub new_jsonobject {
 	if (!$class_String) {
 		$class_String = new_class('java.lang.String');
 	}
+}
+
+# Make a new JSONObject object
+sub new_jsonobject {
+	local('$arg $ctor $casted');
 
 	$arg = $1;
+
+	init_json_loader();
 	if ($arg) {
 		if ($arg isa ^String) {
 			# string constructor
@@ -70,8 +94,8 @@ sub new_jsonobject {
 			$casted = casti($arg, $class_Map);
 			return [$ctor newInstance: @($casted)];
 		} else {
-			println("[json] unknown arg type: " . typeOf($arg));
-			println("[json] for message: " . $arg);
+			println("[json.cna] unknown arg type: " . typeOf($arg));
+			println("[json.cna] for message: " . $arg);
 			return $null;
 		}
 	} else {
@@ -80,17 +104,13 @@ sub new_jsonobject {
 	}
 }
 
-# Make a new JSONArray
+# Make a new JSONArray object
 sub new_jsonarray {
-	$json_loader = new_loader();
-	if (!$class_JSONArray) {
-		$class_JSONArray = new_class('org.json.JSONArray');
-	}
-	if (!$class_String) {
-		$class_String = new_class('java.lang.String');
-	}
+	local('$arg $ctor');
 
 	$arg = $1;
+
+	init_json_loader();
 	if ($arg) {
 		$ctor = [$class_JSONArray getDeclaredConstructor: @($class_String)];
 		return [$ctor newInstance: @($arg)];
@@ -104,8 +124,8 @@ sub convert_json {
 	local('$obj $class_name %ret @ret $i $key');
 
 	$obj = $1;
-	$class_name = [[$obj getClass] getName];
 
+	$class_name = [[$obj getClass] getName];
 	if ($class_name eq 'org.json.JSONObject') {
 		%ret = %();
 		foreach $key (json_keys($obj)) {
@@ -125,10 +145,9 @@ sub convert_json {
 
 # Convert json to object
 sub from_json {
-	$json = $1;
+	local('$json $obj');
 
-	$class_Map = new_class('java.util.Map');
-	$class_String = new_class('java.lang.String');
+	$json = $1;
 
 	$obj = new_jsonobject($json);
 	if ($obj) {
@@ -140,6 +159,8 @@ sub from_json {
 
 # Convert object to json
 sub to_json {
+	local('$item $obj');
+
 	$item = $1;
 
 	$obj = new_jsonobject($item);
@@ -152,33 +173,48 @@ sub to_json {
 
 # Get keys from JSONObject
 sub json_keys {
+	local('$obj');
+
 	$obj = $1;
+
 	return [[$obj keySet] toArray];
 }
 
 # Get value from JSONObject
 sub json_value {
+	local('$obj $item');
+
 	$obj = $1;
 	$item = $2;
+
 	return [$obj opt: $item];
 }
 
 # Get value from JSONArray
 sub json_index {
+	local('$arr $index');
+
 	$arr = $1;
 	$index = $2;
+
 	return [$arr get: $index];
 }
 
 # Get length of JSONArray
 sub json_length {
+	local('$arr');
+
 	$arr = $1;
+
 	return [$arr length];
 }
 
-$test = false;
+# Init for including thread
+init_json_loader();
 
-if ($test) {
+# Test stuff
+$json_test = false;
+if ($json_test) {
 	$obj = new_jsonobject();
 	[$obj put: 'a', 'b'];
 	println($obj);

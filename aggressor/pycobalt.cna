@@ -25,13 +25,20 @@ sub die {
 	exit();
 }
 
+# Set default $pycobalt_path
 if (!$pycobalt_path) {
 	$pycobalt_path = script_resource();
 }
-msg('include path is: ' . $pycobalt_path);
+debug('include path is: ' . $pycobalt_path);
 
+# Make sure json.cna exists
 if (!-exists ($pycobalt_path . '/json.cna')) {
-	die('could not find json.cna. check include path');
+	die('could not find json.cna. check $pycobalt_path');
+}
+
+# Set $json_path for json.cna
+if (!$json_path) {
+	$json_path = $pycobalt_path;
 }
 
 include($pycobalt_path . '/json.cna');
@@ -330,7 +337,9 @@ sub handle_message {
 		if ($fork) {
 			# fork it and call it
 			debug('forking before calling function');
-			fork(&closure_caller, \$closure_text, \@args, \$handle, \$pycobalt_path, \%pycobalt_objects, \$pycobalt_debug_on, \$sync);
+			fork(&closure_caller, \$closure_text, \@args, \$handle,
+				 \$pycobalt_path, \$json_path, \%pycobalt_objects,
+				 \$pycobalt_debug_on, \$sync);
 		} else {
 			# call it in this thread, and send return value
 			closure_caller();
@@ -407,7 +416,8 @@ sub python {
 
 	# run without forking first
 	if (thread_callback()) {
-		fork(&thread_callback, \$handle, \$script, \%pycobalt_objects, \$pycobalt_path, \$pycobalt_debug_on);
+		fork(&thread_callback, \$handle, \$script, \%pycobalt_objects,
+			 \$pycobalt_path, \$json_path, \$pycobalt_debug_on);
 	}
 
 	return $handle;
