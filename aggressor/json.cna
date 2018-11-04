@@ -182,12 +182,23 @@ sub json_keys {
 
 # Get value from JSONObject
 sub json_value {
-	local('$obj $item');
+	local('$obj $key');
 
 	$obj = $1;
-	$item = $2;
+	$key = $2;
 
-	return [$obj opt: $item];
+	return [$obj get: $key];
+}
+
+# Get optional value from JSONObject (returns $null instead of throwing
+# exception if item doesn't exit)
+sub json_optional_value {
+	local('$obj $key');
+
+	$obj = $1;
+	$key = $2;
+
+	return [$obj opt: $key];
 }
 
 # Get value from JSONArray
