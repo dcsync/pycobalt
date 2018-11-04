@@ -52,7 +52,7 @@ def signature(func, trim=0):
     :return: Stringified function argument signature
     """
 
-    sig = inspect.signature(func))
+    sig = inspect.signature(func)
     params = list(sig.parameters.values())[trim:]
     sig = sig.replace(parameters=params)
     return str(sig)
