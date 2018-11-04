@@ -85,6 +85,38 @@ def alias_info(bid):
 
     aggressor.blog2(bid, out)
 
+jobkillall_items = collections.defaultdict(list)
+
+@events.event('beacon_output_jobs')
+def jobkillall_callback(bid, text, when):
+    global jobkillall_items
+
+    jobs = helpers.parse_jobs(text)
+
+    if bid not in jobkillall_items:
+        # doesn't concern us
+        return
+
+    for job in jobs:
+        for item in jobkillall_items[bid]:
+            if not item or item.lower() in job['description'].lower():
+                # kill it
+                aggressor.blog2(bid, 'Killing job: {} (JID {}) (PID {})'.format(job['description'], job['jid'], job['pid']))
+                aggressor.bjobkill(bid, job['jid'])
+                break
+
+    del jobkillall_items[bid]
+
+@aliases.alias('jobkillall', 'Kill all jobs matching a description (or all jobs)')
+def _(bid, description=None):
+    global jobkillall_items
+
+    if bid not in jobkillall_items:
+        # trigger jobs command
+        aggressor.bjobs(bid)
+
+    jobkillall_items[bid].append(description)
+
 @aliases.alias('killall')
 def alias_killall(bid, proc_name):
     def callback(procs):
@@ -168,7 +200,7 @@ def alias_estomp(bid, fname):
 def alias_uploadto(bid, local_file, remote_file):
     helpers.uploadto(bid, local_file, remote_file)
 
-@aliases.alias('ls-time', 'List files, sorted by time')
+@aliases.alias('lst', 'List files, sorted by time')
 def alias_ls_time(bid, *dirs):
     # default dir is .
     if not dirs:
@@ -183,19 +215,53 @@ def alias_ls_time(bid, *dirs):
 
     aggressor.bpowerpick(bid, command)
 
-@aliases.alias('find', 'Find a file by pattern and/or number of days old')
-def alias_find(bid, directory, pattern=None, days=None):
-    command = ''
+@aliases.alias('find', 'Find a file', 'See `find -h`')
+def _(bid, *args):
+    parser = helpers.ArgumentParser(bid=bid, prog='find')
+    parser.add_argument('-n', '--name', action='append', help='Name to match')
+    parser.add_argument('-i', '--iname', action='append', help='Name to match (case insensitive)')
+    parser.add_argument('--not', dest='not_', action='store_true', help='Invert --name and --iname')
+    parser.add_argument('-d', '--days', type=int, help='Select files no more than DAYS old')
+    parser.add_argument('--dirs', action='store_true', help='Include directories')
+    parser.add_argument('-o', '--out', help='Output file')
+    parser.add_argument('dir', default='.', help='Directory to search from (default: .)')
+    try: args = parser.parse_args(args)
+    except: return
 
-    if days:
-        command += '$date = (Get-Date).AddDays(-{}); '.format(days)
+    command = 'gci -Recurse -Path "{}" 2>$null'.format(args.dir)
 
-    command += "gci -Recurse -Path '{}' ".format(directory)
-    if pattern:
-        command += "-Include '{}' ".format(pattern)
+    # --dirs
+    if not args.dirs:
+        command += ' | where { ! $_.PSIsContainer }'
 
-    if days:
-        command += '| ? { $_.LastWriteTime -ge $date }'
+    name_matches = []
+
+    # -n/--name
+    if args.name:
+        for name in args.name:
+            name_matches.append('$_.Name -Clike "{}"'.format(name))
+
+    # -i/--iname
+    if args.iname:
+        for iname in args.iname:
+            name_matches.append('$_.Name -Like "{}"'.format(iname))
+
+    if name_matches:
+        where_statement = ' -Or '.join(name_matches)
+
+        # --not
+        if args.not_:
+            where_statement = '-Not ({})'.format(where_statement)
+
+        command += " | Where-Object { " + where_statement + " }"
+
+    # -d/--days
+    if args.days:
+        command += ' | ? { $_.LastWriteTime -Ge (Get-Date).AddDays(-{}) }'
+
+    # -o/--out
+    if args.out:
+        command += ' > "{}"'.format(args.out)
 
     aggressor.bpowerpick(bid, command)
 

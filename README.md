@@ -359,19 +359,23 @@ Helpers
 contains helper functions and classes to make writing scripts easier. Here are
 some of the functions available:
 
-  - `parse_ps(content)`: parses the callback output of `bps`. returns a list of
-	dictionaries. each dictionary represents a process with all available
-    information
-  - `find_process(bid, proc_name, callback)`: calls `bps` to find a process by
+  - `parse_jobs(content)`: Parses the output of `bjobs` as returned by the
+	`beacon_output_jobs` event. Returns a list of dictionaries. Each dictionary
+	represents a job with with fields `jid`, `pid`, and `description`.
+  - `parse_ps(content)`: Parses the callback output of `bps`. Returns a list of
+	dictionaries. Each dictionary represents a process with all available
+	information. The field names are the same as the `ps` headers in all
+    lowercase.
+  - `find_process(bid, proc_name, callback)`: Calls `bps` to find a process by
 	name and calls `callback` with a list of matching processes (as returned
-    by `parse_ps`)
-  - `is_admin(bid)`: checks if a beacon is SYSTEM or admin (as returned by
-     `isadmin`)
-  - `default_listener()`: gets local listener with 'http' in its name or the
-    first listener if there are none
-  - `explorer_stomp(bid, file)`: stomps a file timestamp with the modification
-    time of explorer.exe
-  - `uploadto(bid, local_file, remote_file)`: like `aggressor.bupload` but lets
+    by `parse_ps`).
+  - `is_admin(bid)`: Checks if a beacon is SYSTEM or admin (as returned by
+     `isadmin`).
+  - `default_listener()`: Gets local listener with 'http' in its name or the
+    first listener if there are none.
+  - `explorer_stomp(bid, file)`: Stomps a file timestamp with the modification
+    time of explorer.exe.
+  - `uploadto(bid, local_file, remote_file)`: Like `aggressor.bupload` but lets
     you specify the remote file path/name.
 
 There's a `helpers.ArgumentParser` class which extends

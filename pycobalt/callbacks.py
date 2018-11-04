@@ -76,6 +76,19 @@ def register(func, prefix=None):
 
     return name
 
+def unregister(func):
+    """
+    Unregister a callback
+    """
+
+    func_name = name(func)
+    if func_name:
+        del _reverse_callbacks[func]
+        del _callbacks[func_name]
+        return func_name
+    else:
+        return None
+
 def has_callback(item):
     """
     Recursively check for callbacks in a list/dict

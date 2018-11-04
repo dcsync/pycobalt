@@ -83,7 +83,7 @@ def official(name):
     global _official_events
     return name in _official_events
 
-def register(name, callback):
+def register(name, callback, official_only=True):
     """
     Register an event callback.
     """
@@ -92,8 +92,20 @@ def register(name, callback):
         engine.debug('calling callback for event {}'.format(name))
         callback(*args)
 
+    if official_only and not official(name):
+        raise RuntimeError('tried to register an unofficial event: {name}. try events.event("{name}", official_only=False).'.format(name=name))
+
     callbacks.register(event_callback, prefix='event_{}'.format(name))
     aggressor.on(name, event_callback)
+
+def unregister(callback):
+    """
+    Unregister an event callback. There's no way to unregister an event with
+    aggressor so this will forever leave us with broken callbacks coming back
+    from the teamserver.
+    """
+
+    callbacks.unregister(callback)
 
 class event:
     """
@@ -102,10 +114,8 @@ class event:
 
     def __init__(self, name, official_only=True):
         self.name = name
-
-        if official_only and not official(name):
-            raise RuntimeError('tried to register an unofficial event: {name}. try events.event("{name}", official_only=False).'.format(name=name))
+        self.official_only = official_only
 
     def __call__(self, func):
         self.func = func
-        register(self.name, self.func)
+        register(self.name, self.func, official_only=self.official_only)

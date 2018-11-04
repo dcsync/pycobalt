@@ -41,6 +41,27 @@ def parse_ps(content):
 
     return procs
 
+def parse_jobs(content):
+    """
+    Parse output of bjobs() as passed to beacon_output_jobs callback.
+
+    Returns: [{jid, pid, description}...]
+    """
+
+    jobs = []
+
+    for line in content.splitlines():
+        job = {}
+        job['jid'], job['pid'], job['description'] = line.split('\t')
+
+        # convert numbers
+        job['jid'] = int(job['jid'])
+        job['pid'] = int(job['pid'])
+
+        jobs.append(job)
+
+    return jobs
+
 def find_process(bid, proc_name, callback):
     """
     Find processes by name. Call callback([{name, pid, ppid, arch?, user?}, ...]) with results.
