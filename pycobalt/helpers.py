@@ -135,6 +135,36 @@ def guess_temp(bid):
 
     return r'{}\AppData\Local\Temp'.format(guess_home(bid))
 
+def powershell_quote(item):
+    """
+    Quote a powershell string. Returns a string enclosed in single quotation
+    marks with internal marks escaped. Also removes newlines.
+
+    Can also do a list of strings.
+    """
+
+    if isinstance(item, list) or isinstance(item, tuple):
+        # recurse list
+        return [powershell_quote(child) for child in item]
+    else:
+        # remove newlines
+        new_string = str(item).replace('\n', '').replace('\r', '')
+
+        # quote ' characters
+        new_string = new_string.replace("'", "''")
+
+        # enclose in '
+        new_string = "'{}'".format(new_string)
+
+        return new_string
+
+def pq(item):
+    """
+    Alias for `powershell_quote`
+    """
+
+    return powershell_quote(item)
+
 class ArgumentParser(argparse.ArgumentParser):
     """
     Special version of ArgumentParser that prints to beacon console or script
