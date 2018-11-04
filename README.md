@@ -377,8 +377,12 @@ some of the functions available:
     time of explorer.exe.
   - `uploadto(bid, local_file, remote_file)`: Like `aggressor.bupload` but lets
     you specify the remote file path/name.
-  - `powershell_quote(string)` and `pq(string)`: Quote a Powershell string.
+  - `powershell_quote(arg)`/`pq(arg)`: Quote a Powershell string.
 	Encloses in single quotation marks with internal quotation marks escaped.
+  - `argument_quote(arg)`/`aq(arg)`: Quote a string for
+    cmd.exe and `CommandLineToArgvW`.
+    See [this](http://blogs.msdn.com/b/twistylittlepassagesallalike/archive/2011/04/23/everyone-quotes-arguments-the-wrong-way.aspx).
+  - `cmd_quote(arg)`/`cq(arg)`: Quote a string for just cmd.exe (and not `CommandLineToArgvW`).
 
 There's a `helpers.ArgumentParser` class which extends
 `argparse.ArgumentParser` to support printing to the beacon console or script
