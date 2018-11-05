@@ -135,7 +135,7 @@ sub convert_json {
 	} else if ($class_name eq 'org.json.JSONArray') {
 		@ret = @();
 		for ($i = 0; $i < json_length($obj); $i++) {
-			push(@ret, convert_json(json_index($obj, $i)));
+			push(@ret, convert_json(json_value($obj, $i)));
 		}
 		return @ret;
 	} else {
@@ -180,7 +180,7 @@ sub json_keys {
 	return [[$obj keySet] toArray];
 }
 
-# Get value from JSONObject
+# Get value from JSONObject or JSONArray
 sub json_value {
 	local('$obj $key');
 
@@ -199,16 +199,6 @@ sub json_optional_value {
 	$key = $2;
 
 	return [$obj opt: $key];
-}
-
-# Get value from JSONArray
-sub json_index {
-	local('$arr $index');
-
-	$arr = $1;
-	$index = $2;
-
-	return [$arr get: $index];
 }
 
 # Get length of JSONArray
