@@ -345,11 +345,14 @@ some of the functions available:
 
   - `parse_jobs(content)`: Parses the output of `bjobs` as returned by the
 	`beacon_output_jobs` event. Returns a list of dictionaries. Each dictionary
-	represents a job with with fields `jid`, `pid`, and `description`.
+	represents a job with the following fields: `jid` (job ID), `pid` (process
+    ID), and `description`.
   - `parse_ps(content)`: Parses the callback output of `bps`. Returns a list of
-	dictionaries. Each dictionary represents a process with all available
-	information. The field names are the same as the `ps` headers in all
-    lowercase.
+	dictionaries. Each dictionary represents a process with the following
+	fileds: name, pid, ppid, arch (if available), and user (if available).
+  - `parse_ls(content)`: Parses the callback output of `bls`. Returns a list of
+    dictionaries. Each dictionary represents a file with the following fields:
+    type (D/F), size (in bytes), modified (date and time), and name.
   - `find_process(bid, proc_name, callback)`: Calls `bps` to find a process by
 	name and calls `callback` with a list of matching processes (as returned
     by `parse_ps`).

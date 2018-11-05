@@ -68,6 +68,37 @@ def parse_jobs(content):
 
     return jobs
 
+def parse_ls(content):
+    """
+    Parse output of `bls()` as passed to the callback.
+
+    :param content: Output of `bls()`
+    :return: List of dictionaries representing the file list, sorted by name.
+             Dictionary fields include: type, size, modified, and name
+    """
+
+    files = []
+
+    # skip first line. it's just the directory name
+    lines = content.splitlines()[1:]
+    for line in lines:
+        new = {}
+        new['type'], new['size'], new['modified'], new['name'] = line.split('\t')
+
+        # convert numbers
+        new['size'] = int(new['size'])
+
+        # ignore . and ..
+        if new['name'] in ['.', '..']:
+            continue
+
+        files.append(new)
+
+    # sort it
+    files = list(sorted(files, key=lambda item: item['name']))
+
+    return files
+
 def find_process(bid, proc_name, callback):
     """
     Find processes by name. Call callback with results.
@@ -176,7 +207,7 @@ def powershell_quote(arg):
     :return: Quoted argument
     """
 
-    if isinstance(arg, list) or isinstance(item, tuple):
+    if isinstance(arg, list) or isinstance(arg, tuple):
         # recurse list
         return [powershell_quote(child) for child in arg]
     else:
