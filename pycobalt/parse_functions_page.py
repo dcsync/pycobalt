@@ -19,6 +19,31 @@ sleep_functions = [
     'command',
 ]
 
+# Functions that support the ! operator. May be incomplete.
+silent_functions = [
+    'bdllspawn',
+    'bdownload',
+    'bexecute',
+    'bhashdump',
+    'blogonpasswords',
+    'bmkdir',
+    'bnet',
+    'bpowerpick',
+    'bpowershell',
+    'bpowershell_import',
+    'bpwd',
+    'brm',
+    'bscreenshot',
+    'bshell',
+    'bsleep',
+    'btimestomp',
+    'bupload_raw',
+    'bjobs',
+    'bcp',
+    'bkill',
+    'bkeylogger',
+]
+
 def main():
     print('downloading list')
 
@@ -77,7 +102,7 @@ import pycobalt.engine as engine
             doc = ''
 
         pyname = func.replace('-', '')
-        if func.startswith('b'):
+        if func in silent_functions:
             data += '''
 def {pyname}(*args, silent=False, fork=False):
     r""""{doc}"""

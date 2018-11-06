@@ -87,7 +87,7 @@ You can include pycobalt.cna straight out of there. It comes with its
 dependencies and all. See the [usage](#usage) section for more info.
 
 PyCobalt depends on the
-[org.json](https://mvnrepository.com/artifact/org.json/json) java library. a
+[org.json](https://mvnrepository.com/artifact/org.json/json) java library. A
 copy is included in this repo at
 [aggressor/jars/json.jar](https://github.com/dcsync/pycobalt/tree/master/aggressor/jars).
 You can optionally replace `json.jar` with a more trusted copy.
@@ -180,7 +180,7 @@ Calling an aggressor function with a callback:
     engine.loop()
 
 Calling an aggressor function without printing tasking information to the
-beacon console (`!` operator):
+beacon console (`!` operator, only supported by certain functions):
 
     ...
     aggressor.bshell(bid, 'whoami', silent=True)

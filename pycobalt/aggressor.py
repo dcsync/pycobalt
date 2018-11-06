@@ -330,8 +330,8 @@ def artifact_stageless(*args, fork=False):
     return engine.call('artifact_stageless', args, fork=fork)
 
 
-def base64_decode(*args, silent=False, fork=False):
-    r""""    
+def base64_decode(*args, fork=False):
+    r"""    
     Unwrap a base64-encoded string
     Arguments
     $1 - the string to decode
@@ -342,11 +342,11 @@ def base64_decode(*args, silent=False, fork=False):
     println(base64_decode(base64_encode("this is a test")));
     """
 
-    return engine.call('base64_decode', args, silent=silent, fork=fork)
+    return engine.call('base64_decode', args, fork=fork)
 
 
-def base64_encode(*args, silent=False, fork=False):
-    r""""    
+def base64_encode(*args, fork=False):
+    r"""    
     Base64 encode a string
     Arguments
     $1 - the string to encode
@@ -357,11 +357,11 @@ def base64_encode(*args, silent=False, fork=False):
     println(base64_encode("this is a test"));
     """
 
-    return engine.call('base64_encode', args, silent=silent, fork=fork)
+    return engine.call('base64_encode', args, fork=fork)
 
 
-def bbrowser(*args, silent=False, fork=False):
-    r""""    
+def bbrowser(*args, fork=False):
+    r"""    
     Generate the beacon browser GUI component. Shows only Beacons.
     Returns
     The beacon browser GUI object (a javax.swing.JComponent)
@@ -373,11 +373,11 @@ def bbrowser(*args, silent=False, fork=False):
     &showVisualization
     """
 
-    return engine.call('bbrowser', args, silent=silent, fork=fork)
+    return engine.call('bbrowser', args, fork=fork)
 
 
-def bbrowserpivot(*args, silent=False, fork=False):
-    r""""    
+def bbrowserpivot(*args, fork=False):
+    r"""    
     Start a Browser Pivot
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -388,11 +388,11 @@ def bbrowserpivot(*args, silent=False, fork=False):
     bbrowserpivot($1, 1234, "x86");
     """
 
-    return engine.call('bbrowserpivot', args, silent=silent, fork=fork)
+    return engine.call('bbrowserpivot', args, fork=fork)
 
 
-def bbrowserpivot_stop(*args, silent=False, fork=False):
-    r""""    
+def bbrowserpivot_stop(*args, fork=False):
+    r"""    
     Stop a Browser Pivot
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -401,11 +401,11 @@ def bbrowserpivot_stop(*args, silent=False, fork=False):
     bbrowserpivot_stop($1);
     """
 
-    return engine.call('bbrowserpivot_stop', args, silent=silent, fork=fork)
+    return engine.call('bbrowserpivot_stop', args, fork=fork)
 
 
-def bbypassuac(*args, silent=False, fork=False):
-    r""""    
+def bbypassuac(*args, fork=False):
+    r"""    
     Run the bypass UAC attack.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -420,11 +420,11 @@ def bbypassuac(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bbypassuac', args, silent=silent, fork=fork)
+    return engine.call('bbypassuac', args, fork=fork)
 
 
-def bcancel(*args, silent=False, fork=False):
-    r""""    
+def bcancel(*args, fork=False):
+    r"""    
     Cancel a file download
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -436,11 +436,11 @@ def bcancel(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bcancel', args, silent=silent, fork=fork)
+    return engine.call('bcancel', args, fork=fork)
 
 
-def bcd(*args, silent=False, fork=False):
-    r""""    
+def bcd(*args, fork=False):
+    r"""    
     Ask a Beacon to change it's current working directory.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -454,11 +454,11 @@ def bcd(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bcd', args, silent=silent, fork=fork)
+    return engine.call('bcd', args, fork=fork)
 
 
-def bcheckin(*args, silent=False, fork=False):
-    r""""    
+def bcheckin(*args, fork=False):
+    r"""    
     Ask a Beacon to checkin. This is basically a no-op for Beacon.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -470,11 +470,11 @@ def bcheckin(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bcheckin', args, silent=silent, fork=fork)
+    return engine.call('bcheckin', args, fork=fork)
 
 
-def bclear(*args, silent=False, fork=False):
-    r""""    
+def bclear(*args, fork=False):
+    r"""    
     This is the "oops" command. It clears the queued tasks for the specified beacon.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -483,11 +483,11 @@ def bclear(*args, silent=False, fork=False):
     bclear($1);
     """
 
-    return engine.call('bclear', args, silent=silent, fork=fork)
+    return engine.call('bclear', args, fork=fork)
 
 
-def bcovertvpn(*args, silent=False, fork=False):
-    r""""    
+def bcovertvpn(*args, fork=False):
+    r"""    
     Ask Beacon to deploy a Covert VPN client.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -499,7 +499,7 @@ def bcovertvpn(*args, silent=False, fork=False):
     bcovertvpn($1, "phear0", "172.16.48.18");
     """
 
-    return engine.call('bcovertvpn', args, silent=silent, fork=fork)
+    return engine.call('bcovertvpn', args, fork=fork)
 
 
 def bcp(*args, silent=False, fork=False):
@@ -517,8 +517,8 @@ def bcp(*args, silent=False, fork=False):
     return engine.call('bcp', args, silent=silent, fork=fork)
 
 
-def bdata(*args, silent=False, fork=False):
-    r""""    
+def bdata(*args, fork=False):
+    r"""    
     Get metadata for a Beacon session.
     Arguments
     $1 - the id for the beacon to pull metadata for
@@ -529,11 +529,11 @@ def bdata(*args, silent=False, fork=False):
     println(bdata("1234"));
     """
 
-    return engine.call('bdata', args, silent=silent, fork=fork)
+    return engine.call('bdata', args, fork=fork)
 
 
-def bdcsync(*args, silent=False, fork=False):
-    r""""    
+def bdcsync(*args, fork=False):
+    r"""    
     Use mimikatz's dcsync command to pull a user's password hash from a domain controller.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -544,11 +544,11 @@ def bdcsync(*args, silent=False, fork=False):
     bdcsync($1, "PLAYLAND.testlab", "PLAYLAND\\Administrator");
     """
 
-    return engine.call('bdcsync', args, silent=silent, fork=fork)
+    return engine.call('bdcsync', args, fork=fork)
 
 
-def bdesktop(*args, silent=False, fork=False):
-    r""""    
+def bdesktop(*args, fork=False):
+    r"""    
     Start a VNC session.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -559,11 +559,11 @@ def bdesktop(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bdesktop', args, silent=silent, fork=fork)
+    return engine.call('bdesktop', args, fork=fork)
 
 
-def bdllinject(*args, silent=False, fork=False):
-    r""""    
+def bdllinject(*args, fork=False):
+    r"""    
     Inject a Reflective DLL into a process.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -574,11 +574,11 @@ def bdllinject(*args, silent=False, fork=False):
     bdllinject($1, 1234, script_resource("test.dll"));
     """
 
-    return engine.call('bdllinject', args, silent=silent, fork=fork)
+    return engine.call('bdllinject', args, fork=fork)
 
 
-def bdllload(*args, silent=False, fork=False):
-    r""""    
+def bdllload(*args, fork=False):
+    r"""    
     Call LoadLibrary() in a remote process with the specified DLL.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -591,7 +591,7 @@ def bdllload(*args, silent=False, fork=False):
     bdllload($1, 1234, "c:\\windows\\mystuff.dll");
     """
 
-    return engine.call('bdllload', args, silent=silent, fork=fork)
+    return engine.call('bdllload', args, fork=fork)
 
 
 def bdllspawn(*args, silent=False, fork=False):
@@ -669,8 +669,8 @@ def bdownload(*args, silent=False, fork=False):
     return engine.call('bdownload', args, silent=silent, fork=fork)
 
 
-def bdrives(*args, silent=False, fork=False):
-    r""""    
+def bdrives(*args, fork=False):
+    r"""    
     Ask Beacon to list the drives on the compromised system
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -682,11 +682,11 @@ def bdrives(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bdrives', args, silent=silent, fork=fork)
+    return engine.call('bdrives', args, fork=fork)
 
 
-def beacon_command_describe(*args, silent=False, fork=False):
-    r""""    
+def beacon_command_describe(*args, fork=False):
+    r"""    
     Describe a Beacon command.
     Returns
     A string description of the Beacon command.
@@ -697,11 +697,11 @@ def beacon_command_describe(*args, silent=False, fork=False):
     println(beacon_command_describe("ls"));
     """
 
-    return engine.call('beacon_command_describe', args, silent=silent, fork=fork)
+    return engine.call('beacon_command_describe', args, fork=fork)
 
 
-def beacon_command_detail(*args, silent=False, fork=False):
-    r""""    
+def beacon_command_detail(*args, fork=False):
+    r"""    
     Get the help information for a Beacon command.
     Returns
     A string with helpful information about a Beacon command.
@@ -712,11 +712,11 @@ def beacon_command_detail(*args, silent=False, fork=False):
     println(beacon_command_detail("ls"));
     """
 
-    return engine.call('beacon_command_detail', args, silent=silent, fork=fork)
+    return engine.call('beacon_command_detail', args, fork=fork)
 
 
-def beacon_command_register(*args, silent=False, fork=False):
-    r""""    
+def beacon_command_register(*args, fork=False):
+    r"""    
     Register help information for a Beacon command.
     Arguments
     $1 - the command
@@ -734,11 +734,11 @@ def beacon_command_register(*args, silent=False, fork=False):
     	"Synopsis: echo [arguments]\n\nLog arguments to the beacon console");
     """
 
-    return engine.call('beacon_command_register', args, silent=silent, fork=fork)
+    return engine.call('beacon_command_register', args, fork=fork)
 
 
-def beacon_commands(*args, silent=False, fork=False):
-    r""""    
+def beacon_commands(*args, fork=False):
+    r"""    
     Get a list of Beacon commands.
     Returns
     An array of Beacon commands.
@@ -747,11 +747,11 @@ def beacon_commands(*args, silent=False, fork=False):
     printAll(beacon_commands());
     """
 
-    return engine.call('beacon_commands', args, silent=silent, fork=fork)
+    return engine.call('beacon_commands', args, fork=fork)
 
 
-def beacon_data(*args, silent=False, fork=False):
-    r""""    
+def beacon_data(*args, fork=False):
+    r"""    
     Get metadata for a Beacon session.
     Arguments
     $1 - the id for the beacon to pull metadata for
@@ -762,11 +762,11 @@ def beacon_data(*args, silent=False, fork=False):
     println(beacon_data("1234"));
     """
 
-    return engine.call('beacon_data', args, silent=silent, fork=fork)
+    return engine.call('beacon_data', args, fork=fork)
 
 
-def beacon_execute_job(*args, silent=False, fork=False):
-    r""""    
+def beacon_execute_job(*args, fork=False):
+    r"""    
     Run a command and report its output to the user.
     Arguments
     $1 - the Beacon ID
@@ -788,11 +788,11 @@ def beacon_execute_job(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('beacon_execute_job', args, silent=silent, fork=fork)
+    return engine.call('beacon_execute_job', args, fork=fork)
 
 
-def beacon_exploit_describe(*args, silent=False, fork=False):
-    r""""    
+def beacon_exploit_describe(*args, fork=False):
+    r"""    
     Describe a Beacon exploit
     Returns
     A string description of the Beacon exploit
@@ -805,11 +805,11 @@ def beacon_exploit_describe(*args, silent=False, fork=False):
     See Also
     &beacon_exploit_register, &beacon_exploits, &belevate"""
 
-    return engine.call('beacon_exploit_describe', args, silent=silent, fork=fork)
+    return engine.call('beacon_exploit_describe', args, fork=fork)
 
 
-def beacon_exploit_register(*args, silent=False, fork=False):
-    r""""    
+def beacon_exploit_register(*args, fork=False):
+    r"""    
     Register a Beacon privilege escalation exploit with Cobalt Strike
     Arguments
     $1 - the exploit short name
@@ -846,11 +846,11 @@ def beacon_exploit_register(*args, silent=False, fork=False):
     &beacon_exploit_describe, &beacon_exploits, &belevate
     """
 
-    return engine.call('beacon_exploit_register', args, silent=silent, fork=fork)
+    return engine.call('beacon_exploit_register', args, fork=fork)
 
 
-def beacon_exploits(*args, silent=False, fork=False):
-    r""""    
+def beacon_exploits(*args, fork=False):
+    r"""    
     Get a list of privilege escalation exploits registered with Cobalt Strike.
     Returns
     An array of Beacon exploits.
@@ -862,11 +862,11 @@ def beacon_exploits(*args, silent=False, fork=False):
     &beacon_exploit_describe, &beacon_exploit_register, &belevate
     """
 
-    return engine.call('beacon_exploits', args, silent=silent, fork=fork)
+    return engine.call('beacon_exploits', args, fork=fork)
 
 
-def beacon_host_imported_script(*args, silent=False, fork=False):
-    r""""    
+def beacon_host_imported_script(*args, fork=False):
+    r"""    
     Locally host a previously imported PowerShell script within Beacon and return a short script that will download and invoke this script.
     Arguments
     $1 - the id of the Beacon to host this script with.
@@ -895,11 +895,11 @@ def beacon_host_imported_script(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('beacon_host_imported_script', args, silent=silent, fork=fork)
+    return engine.call('beacon_host_imported_script', args, fork=fork)
 
 
-def beacon_host_script(*args, silent=False, fork=False):
-    r""""    
+def beacon_host_script(*args, fork=False):
+    r"""    
     Locally host a PowerShell script within Beacon and return a short script that will download and invoke this script. This function is a way to run large scripts when there are constraints on the length of your PowerShell one-liner.
     Arguments
     $1 - the id of the Beacon to host this script with.
@@ -918,11 +918,11 @@ def beacon_host_script(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('beacon_host_script', args, silent=silent, fork=fork)
+    return engine.call('beacon_host_script', args, fork=fork)
 
 
-def beacon_ids(*args, silent=False, fork=False):
-    r""""    
+def beacon_ids(*args, fork=False):
+    r"""    
     Get the ID of all Beacons calling back to this Cobalt Strike team server.
     Returns
     An array of beacon IDs
@@ -933,11 +933,11 @@ def beacon_ids(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('beacon_ids', args, silent=silent, fork=fork)
+    return engine.call('beacon_ids', args, fork=fork)
 
 
-def beacon_info(*args, silent=False, fork=False):
-    r""""    
+def beacon_info(*args, fork=False):
+    r"""    
     Get information from a Beacon session's metadata.
     Arguments
     $1 - the id for the beacon to pull metadata for
@@ -950,20 +950,20 @@ def beacon_info(*args, silent=False, fork=False):
     println("PID  is: " . beacon_info("1234", "pid"));
     """
 
-    return engine.call('beacon_info', args, silent=silent, fork=fork)
+    return engine.call('beacon_info', args, fork=fork)
 
 
-def beacon_remove(*args, silent=False, fork=False):
-    r""""    
+def beacon_remove(*args, fork=False):
+    r"""    
     Remove a Beacon from the display.
     Arguments
     $1 - the id for the beacon to remove"""
 
-    return engine.call('beacon_remove', args, silent=silent, fork=fork)
+    return engine.call('beacon_remove', args, fork=fork)
 
 
-def beacons(*args, silent=False, fork=False):
-    r""""    
+def beacons(*args, fork=False):
+    r"""    
     Get information about all Beacons calling back to this Cobalt Strike team server.
     Returns
     An array of dictionary objects with information about each beacon.
@@ -974,11 +974,11 @@ def beacons(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('beacons', args, silent=silent, fork=fork)
+    return engine.call('beacons', args, fork=fork)
 
 
-def belevate(*args, silent=False, fork=False):
-    r""""    
+def belevate(*args, fork=False):
+    r"""    
     Ask Beacon to elevate with a memory corruption exploit.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -997,11 +997,11 @@ def belevate(*args, silent=False, fork=False):
     &beacon_exploit_describe, &beacon_exploit_register, &beacon_exploits
     """
 
-    return engine.call('belevate', args, silent=silent, fork=fork)
+    return engine.call('belevate', args, fork=fork)
 
 
-def berror(*args, silent=False, fork=False):
-    r""""    
+def berror(*args, fork=False):
+    r"""    
     Publish an error message to the Beacon transcript
     Arguments
     $1 - the id for the beacon to post to
@@ -1013,7 +1013,7 @@ def berror(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('berror', args, silent=silent, fork=fork)
+    return engine.call('berror', args, fork=fork)
 
 
 def bexecute(*args, silent=False, fork=False):
@@ -1030,8 +1030,8 @@ def bexecute(*args, silent=False, fork=False):
     return engine.call('bexecute', args, silent=silent, fork=fork)
 
 
-def bexecute_assembly(*args, silent=False, fork=False):
-    r""""    
+def bexecute_assembly(*args, fork=False):
+    r"""    
     Spawns a local .NET executable assembly as a Beacon post-exploitation job.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1050,11 +1050,11 @@ def bexecute_assembly(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bexecute_assembly', args, silent=silent, fork=fork)
+    return engine.call('bexecute_assembly', args, fork=fork)
 
 
-def bexit(*args, silent=False, fork=False):
-    r""""    
+def bexit(*args, fork=False):
+    r"""    
     Ask a Beacon to exit.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1066,11 +1066,11 @@ def bexit(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bexit', args, silent=silent, fork=fork)
+    return engine.call('bexit', args, fork=fork)
 
 
-def bgetprivs(*args, silent=False, fork=False):
-    r""""    
+def bgetprivs(*args, fork=False):
+    r"""    
     Attempts to enable the specified privilege in your Beacon session.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1083,11 +1083,11 @@ def bgetprivs(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bgetprivs', args, silent=silent, fork=fork)
+    return engine.call('bgetprivs', args, fork=fork)
 
 
-def bgetsystem(*args, silent=False, fork=False):
-    r""""    
+def bgetsystem(*args, fork=False):
+    r"""    
     Ask Beacon to attempt to get the SYSTEM token.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1099,11 +1099,11 @@ def bgetsystem(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bgetsystem', args, silent=silent, fork=fork)
+    return engine.call('bgetsystem', args, fork=fork)
 
 
-def bgetuid(*args, silent=False, fork=False):
-    r""""    
+def bgetuid(*args, fork=False):
+    r"""    
     Ask Beacon to print the User ID of the current token
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1111,7 +1111,7 @@ def bgetuid(*args, silent=False, fork=False):
     bgetuid($1);
     """
 
-    return engine.call('bgetuid', args, silent=silent, fork=fork)
+    return engine.call('bgetuid', args, fork=fork)
 
 
 def bhashdump(*args, silent=False, fork=False):
@@ -1130,8 +1130,8 @@ def bhashdump(*args, silent=False, fork=False):
     return engine.call('bhashdump', args, silent=silent, fork=fork)
 
 
-def binfo(*args, silent=False, fork=False):
-    r""""    
+def binfo(*args, fork=False):
+    r"""    
     Get information from a Beacon session's metadata.
     Arguments
     $1 - the id for the beacon to pull metadata for
@@ -1144,11 +1144,11 @@ def binfo(*args, silent=False, fork=False):
     println("PID  is: " . binfo("1234", "pid"));
     """
 
-    return engine.call('binfo', args, silent=silent, fork=fork)
+    return engine.call('binfo', args, fork=fork)
 
 
-def binject(*args, silent=False, fork=False):
-    r""""    
+def binject(*args, fork=False):
+    r"""    
     Ask Beacon to inject a session into a specific process
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1160,11 +1160,11 @@ def binject(*args, silent=False, fork=False):
     binject($1, 1234, "my listener");
     """
 
-    return engine.call('binject', args, silent=silent, fork=fork)
+    return engine.call('binject', args, fork=fork)
 
 
-def binjectsh(*args, silent=False, fork=False):
-    r""""    
+def binjectsh(*args, fork=False):
+    r"""    
     Inject shellcode into a process.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1176,11 +1176,11 @@ def binjectsh(*args, silent=False, fork=False):
     binjectsh($1, 1234, "x86", script_resource("test.bin"));
     """
 
-    return engine.call('binjectsh', args, silent=silent, fork=fork)
+    return engine.call('binjectsh', args, fork=fork)
 
 
-def binput(*args, silent=False, fork=False):
-    r""""    
+def binput(*args, fork=False):
+    r"""    
     Report a command was run to the Beacon console and logs. Scripts that execute commands for the user (e.g., events, popup menus) should use this function to assure operator attribution of automated actions in Beacon's logs.
     Arguments
     $1 - the id for the beacon to post to
@@ -1191,11 +1191,11 @@ def binput(*args, silent=False, fork=False):
     binput($1, "ls");
     """
 
-    return engine.call('binput', args, silent=silent, fork=fork)
+    return engine.call('binput', args, fork=fork)
 
 
-def bipconfig(*args, silent=False, fork=False):
-    r""""    
+def bipconfig(*args, fork=False):
+    r"""    
     Task a Beacon to list network interfaces.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1209,11 +1209,11 @@ def bipconfig(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bipconfig', args, silent=silent, fork=fork)
+    return engine.call('bipconfig', args, fork=fork)
 
 
-def bjobkill(*args, silent=False, fork=False):
-    r""""    
+def bjobkill(*args, fork=False):
+    r"""    
     Ask Beacon to kill a running post-exploitation job
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1223,7 +1223,7 @@ def bjobkill(*args, silent=False, fork=False):
     bjobkill($1, 0);
     """
 
-    return engine.call('bjobkill', args, silent=silent, fork=fork)
+    return engine.call('bjobkill', args, fork=fork)
 
 
 def bjobs(*args, silent=False, fork=False):
@@ -1239,8 +1239,8 @@ def bjobs(*args, silent=False, fork=False):
     return engine.call('bjobs', args, silent=silent, fork=fork)
 
 
-def bkerberos_ccache_use(*args, silent=False, fork=False):
-    r""""    
+def bkerberos_ccache_use(*args, fork=False):
+    r"""    
     Ask beacon to inject a UNIX kerberos ccache file into the user's kerberos tray
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1252,11 +1252,11 @@ def bkerberos_ccache_use(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bkerberos_ccache_use', args, silent=silent, fork=fork)
+    return engine.call('bkerberos_ccache_use', args, fork=fork)
 
 
-def bkerberos_ticket_purge(*args, silent=False, fork=False):
-    r""""    
+def bkerberos_ticket_purge(*args, fork=False):
+    r"""    
     Ask beacon to purge tickets from the user's kerberos tray
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1267,11 +1267,11 @@ def bkerberos_ticket_purge(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bkerberos_ticket_purge', args, silent=silent, fork=fork)
+    return engine.call('bkerberos_ticket_purge', args, fork=fork)
 
 
-def bkerberos_ticket_use(*args, silent=False, fork=False):
-    r""""    
+def bkerberos_ticket_use(*args, fork=False):
+    r"""    
     Ask beacon to inject a mimikatz kirbi file into the user's kerberos tray
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1283,7 +1283,7 @@ def bkerberos_ticket_use(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bkerberos_ticket_use', args, silent=silent, fork=fork)
+    return engine.call('bkerberos_ticket_use', args, fork=fork)
 
 
 def bkeylogger(*args, silent=False, fork=False):
@@ -1315,8 +1315,8 @@ def bkill(*args, silent=False, fork=False):
     return engine.call('bkill', args, silent=silent, fork=fork)
 
 
-def blink(*args, silent=False, fork=False):
-    r""""    
+def blink(*args, fork=False):
+    r"""    
     Ask Beacon to link to a host over a named pipe
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1326,11 +1326,11 @@ def blink(*args, silent=False, fork=False):
     blink($1, "DC");
     """
 
-    return engine.call('blink', args, silent=silent, fork=fork)
+    return engine.call('blink', args, fork=fork)
 
 
-def blog(*args, silent=False, fork=False):
-    r""""    
+def blog(*args, fork=False):
+    r"""    
     Post a message to WordPress.com (just kidding). Publishes an output message to the Beacon transcript.
     Arguments
     $1 - the id for the beacon to post to
@@ -1342,11 +1342,11 @@ def blog(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('blog', args, silent=silent, fork=fork)
+    return engine.call('blog', args, fork=fork)
 
 
-def blog2(*args, silent=False, fork=False):
-    r""""    
+def blog2(*args, fork=False):
+    r"""    
     Publishes an output message to the Beacon transcript. This function has an alternate format from &blog
     Arguments
     $1 - the id for the beacon to post to
@@ -1358,11 +1358,11 @@ def blog2(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('blog2', args, silent=silent, fork=fork)
+    return engine.call('blog2', args, fork=fork)
 
 
-def bloginuser(*args, silent=False, fork=False):
-    r""""    
+def bloginuser(*args, fork=False):
+    r"""    
     Ask Beacon to create a token from the specified credentials. This is the make_token command.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1379,7 +1379,7 @@ def bloginuser(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bloginuser', args, silent=silent, fork=fork)
+    return engine.call('bloginuser', args, fork=fork)
 
 
 def blogonpasswords(*args, silent=False, fork=False):
@@ -1398,8 +1398,8 @@ def blogonpasswords(*args, silent=False, fork=False):
     return engine.call('blogonpasswords', args, silent=silent, fork=fork)
 
 
-def bls(*args, silent=False, fork=False):
-    r""""    
+def bls(*args, fork=False):
+    r"""    
     Task a Beacon to list files
     Variations
     
@@ -1421,11 +1421,11 @@ def bls(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bls', args, silent=silent, fork=fork)
+    return engine.call('bls', args, fork=fork)
 
 
-def bmimikatz(*args, silent=False, fork=False):
-    r""""    
+def bmimikatz(*args, fork=False):
+    r"""    
     Ask Beacon to run a mimikatz command.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1437,7 +1437,7 @@ def bmimikatz(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bmimikatz', args, silent=silent, fork=fork)
+    return engine.call('bmimikatz', args, fork=fork)
 
 
 def bmkdir(*args, silent=False, fork=False):
@@ -1454,8 +1454,8 @@ def bmkdir(*args, silent=False, fork=False):
     return engine.call('bmkdir', args, silent=silent, fork=fork)
 
 
-def bmode(*args, silent=False, fork=False):
-    r""""    
+def bmode(*args, fork=False):
+    r"""    
     Change the data channel for a DNS Beacon.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1468,11 +1468,11 @@ def bmode(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bmode', args, silent=silent, fork=fork)
+    return engine.call('bmode', args, fork=fork)
 
 
-def bmv(*args, silent=False, fork=False):
-    r""""    
+def bmv(*args, fork=False):
+    r"""    
     Ask Beacon to move a file or folder.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1483,7 +1483,7 @@ def bmv(*args, silent=False, fork=False):
     bmv($1, "evil.exe", "\\\\target\\\C$\\evil.exe");
     """
 
-    return engine.call('bmv', args, silent=silent, fork=fork)
+    return engine.call('bmv', args, fork=fork)
 
 
 def bnet(*args, silent=False, fork=False):
@@ -1556,8 +1556,8 @@ def bnet(*args, silent=False, fork=False):
     return engine.call('bnet', args, silent=silent, fork=fork)
 
 
-def bnote(*args, silent=False, fork=False):
-    r""""    
+def bnote(*args, fork=False):
+    r"""    
     Assign a note to the specified Beacon.
     Arguments
     $1 - the id for the beacon to post to
@@ -1567,11 +1567,11 @@ def bnote(*args, silent=False, fork=False):
     bnote($1, "foo");
     """
 
-    return engine.call('bnote', args, silent=silent, fork=fork)
+    return engine.call('bnote', args, fork=fork)
 
 
-def bpassthehash(*args, silent=False, fork=False):
-    r""""    
+def bpassthehash(*args, fork=False):
+    r"""    
     Ask Beacon to create a token that passes the specified hash. This is the pth command in Beacon. It uses mimikatz.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1583,11 +1583,11 @@ def bpassthehash(*args, silent=False, fork=False):
     bpassthehash($1, "GLITTER", "Administrator", $hash);
     """
 
-    return engine.call('bpassthehash', args, silent=silent, fork=fork)
+    return engine.call('bpassthehash', args, fork=fork)
 
 
-def bpause(*args, silent=False, fork=False):
-    r""""    
+def bpause(*args, fork=False):
+    r"""    
     Ask Beacon to pause its execution. This is a one-off sleep.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1599,11 +1599,11 @@ def bpause(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bpause', args, silent=silent, fork=fork)
+    return engine.call('bpause', args, fork=fork)
 
 
-def bportscan(*args, silent=False, fork=False):
-    r""""    
+def bportscan(*args, fork=False):
+    r"""    
     Ask Beacon to run its port scanner.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1616,7 +1616,7 @@ def bportscan(*args, silent=False, fork=False):
     bportscan($1, "192.168.12.0/24", "1-1024,6667", "arp", 1024);
     """
 
-    return engine.call('bportscan', args, silent=silent, fork=fork)
+    return engine.call('bportscan', args, fork=fork)
 
 
 def bpowerpick(*args, silent=False, fork=False):
@@ -1671,8 +1671,8 @@ def bpowershell_import(*args, silent=False, fork=False):
     return engine.call('bpowershell_import', args, silent=silent, fork=fork)
 
 
-def bppid(*args, silent=False, fork=False):
-    r""""    
+def bppid(*args, fork=False):
+    r"""    
     Set a parent process for Beacon's child processes
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1703,11 +1703,11 @@ def bppid(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bppid', args, silent=silent, fork=fork)
+    return engine.call('bppid', args, fork=fork)
 
 
-def bps(*args, silent=False, fork=False):
-    r""""    
+def bps(*args, fork=False):
+    r"""    
     Task a Beacon to list processes
     Variations
     
@@ -1728,11 +1728,11 @@ def bps(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bps', args, silent=silent, fork=fork)
+    return engine.call('bps', args, fork=fork)
 
 
-def bpsexec(*args, silent=False, fork=False):
-    r""""    
+def bpsexec(*args, fork=False):
+    r"""    
     Ask Beacon to spawn a payload on a remote host. This function generates an Artifact Kit executable, copies it to the target, and creates a service to run it. Clean up is included too.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1746,11 +1746,11 @@ def bpsexec(*args, silent=False, fork=False):
     bpsexec($1, "172.16.48.3", "my listener", "ADMIN\$");
     """
 
-    return engine.call('bpsexec', args, silent=silent, fork=fork)
+    return engine.call('bpsexec', args, fork=fork)
 
 
-def bpsexec_command(*args, silent=False, fork=False):
-    r""""    
+def bpsexec_command(*args, fork=False):
+    r"""    
     Ask Beacon to run a command on a remote host. This function creates a service on the remote host, starts it, and cleans it up.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1766,11 +1766,11 @@ def bpsexec_command(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bpsexec_command', args, silent=silent, fork=fork)
+    return engine.call('bpsexec_command', args, fork=fork)
 
 
-def bpsexec_psh(*args, silent=False, fork=False):
-    r""""    
+def bpsexec_psh(*args, fork=False):
+    r"""    
     Ask Beacon to spawn a payload on a remote host. This function creates a service to run a PowerShell one-liner.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1783,11 +1783,11 @@ def bpsexec_psh(*args, silent=False, fork=False):
     bpsexec_psh($1, "172.16.48.3", "my listener");
     """
 
-    return engine.call('bpsexec_psh', args, silent=silent, fork=fork)
+    return engine.call('bpsexec_psh', args, fork=fork)
 
 
-def bpsinject(*args, silent=False, fork=False):
-    r""""    
+def bpsinject(*args, fork=False):
+    r"""    
     Inject Unmanaged PowerShell into a specific process and run the specified cmdlet
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1799,7 +1799,7 @@ def bpsinject(*args, silent=False, fork=False):
     bpsinject($1, 1234, x64, "[System.Diagnostics.Process]::GetCurrentProcess()");
     """
 
-    return engine.call('bpsinject', args, silent=silent, fork=fork)
+    return engine.call('bpsinject', args, fork=fork)
 
 
 def bpwd(*args, silent=False, fork=False):
@@ -1817,8 +1817,8 @@ def bpwd(*args, silent=False, fork=False):
     return engine.call('bpwd', args, silent=silent, fork=fork)
 
 
-def breg_query(*args, silent=False, fork=False):
-    r""""    
+def breg_query(*args, fork=False):
+    r"""    
     Ask Beacon to query a key within the registry.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1831,11 +1831,11 @@ def breg_query(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('breg_query', args, silent=silent, fork=fork)
+    return engine.call('breg_query', args, fork=fork)
 
 
-def breg_queryv(*args, silent=False, fork=False):
-    r""""    
+def breg_queryv(*args, fork=False):
+    r"""    
     Ask Beacon to query a value within a registry key.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1849,11 +1849,11 @@ def breg_queryv(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('breg_queryv', args, silent=silent, fork=fork)
+    return engine.call('breg_queryv', args, fork=fork)
 
 
-def brev2self(*args, silent=False, fork=False):
-    r""""    
+def brev2self(*args, fork=False):
+    r"""    
     Ask Beacon to drop its current token. This calls the RevertToSelf() Win32 API.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1864,7 +1864,7 @@ def brev2self(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('brev2self', args, silent=silent, fork=fork)
+    return engine.call('brev2self', args, fork=fork)
 
 
 def brm(*args, silent=False, fork=False):
@@ -1882,8 +1882,8 @@ def brm(*args, silent=False, fork=False):
     return engine.call('brm', args, silent=silent, fork=fork)
 
 
-def brportfwd(*args, silent=False, fork=False):
-    r""""    
+def brportfwd(*args, fork=False):
+    r"""    
     Ask Beacon to setup a reverse port forward.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1895,11 +1895,11 @@ def brportfwd(*args, silent=False, fork=False):
     brportfwd($1, 80, "192.168.12.88", 80);
     """
 
-    return engine.call('brportfwd', args, silent=silent, fork=fork)
+    return engine.call('brportfwd', args, fork=fork)
 
 
-def brportfwd_stop(*args, silent=False, fork=False):
-    r""""    
+def brportfwd_stop(*args, fork=False):
+    r"""    
     Ask Beacon to stop a reverse port forward
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1909,11 +1909,11 @@ def brportfwd_stop(*args, silent=False, fork=False):
     brportfwd_stop($1, 80);
     """
 
-    return engine.call('brportfwd_stop', args, silent=silent, fork=fork)
+    return engine.call('brportfwd_stop', args, fork=fork)
 
 
-def brunas(*args, silent=False, fork=False):
-    r""""    
+def brunas(*args, fork=False):
+    r"""    
     Ask Beacon to run a command as another user.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1926,11 +1926,11 @@ def brunas(*args, silent=False, fork=False):
     brunas($1, "CORP", "Administrator", "toor", "notepad.exe");
     """
 
-    return engine.call('brunas', args, silent=silent, fork=fork)
+    return engine.call('brunas', args, fork=fork)
 
 
-def brunasadmin(*args, silent=False, fork=False):
-    r""""    
+def brunasadmin(*args, fork=False):
+    r"""    
     Ask Beacon to run a command in a high-integrity context (bypasses UAC).
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1947,11 +1947,11 @@ def brunasadmin(*args, silent=False, fork=False):
     brunasadmin($1, "cmd.exe /C netsh advfirewall set allprofiles state off");
     """
 
-    return engine.call('brunasadmin', args, silent=silent, fork=fork)
+    return engine.call('brunasadmin', args, fork=fork)
 
 
-def brunu(*args, silent=False, fork=False):
-    r""""    
+def brunu(*args, fork=False):
+    r"""    
     Ask Beacon to run a process under another process.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1962,7 +1962,7 @@ def brunu(*args, silent=False, fork=False):
     brunu($1, 1234, "notepad.exe");
     """
 
-    return engine.call('brunu', args, silent=silent, fork=fork)
+    return engine.call('brunu', args, fork=fork)
 
 
 def bscreenshot(*args, silent=False, fork=False):
@@ -1982,8 +1982,8 @@ def bscreenshot(*args, silent=False, fork=False):
     return engine.call('bscreenshot', args, silent=silent, fork=fork)
 
 
-def bsetenv(*args, silent=False, fork=False):
-    r""""    
+def bsetenv(*args, fork=False):
+    r"""    
     Ask Beacon to set an environment variable
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1997,7 +1997,7 @@ def bsetenv(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bsetenv', args, silent=silent, fork=fork)
+    return engine.call('bsetenv', args, fork=fork)
 
 
 def bshell(*args, silent=False, fork=False):
@@ -2017,8 +2017,8 @@ def bshell(*args, silent=False, fork=False):
     return engine.call('bshell', args, silent=silent, fork=fork)
 
 
-def bshinject(*args, silent=False, fork=False):
-    r""""    
+def bshinject(*args, fork=False):
+    r"""    
     Inject shellcode (from a local file) into a specific process
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2030,11 +2030,11 @@ def bshinject(*args, silent=False, fork=False):
     bshinject($1, 1234, "x86", "/path/to/stuff.bin");
     """
 
-    return engine.call('bshinject', args, silent=silent, fork=fork)
+    return engine.call('bshinject', args, fork=fork)
 
 
-def bshspawn(*args, silent=False, fork=False):
-    r""""    
+def bshspawn(*args, fork=False):
+    r"""    
     Spawn shellcode (from a local file) into another process. This function benefits from Beacon's configuration to spawn post-exploitation jobs (e.g., spawnto, ppid, etc.)
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2045,7 +2045,7 @@ def bshspawn(*args, silent=False, fork=False):
     bshspawn($1, "x86", "/path/to/stuff.bin");
     """
 
-    return engine.call('bshspawn', args, silent=silent, fork=fork)
+    return engine.call('bshspawn', args, fork=fork)
 
 
 def bsleep(*args, silent=False, fork=False):
@@ -2066,8 +2066,8 @@ def bsleep(*args, silent=False, fork=False):
     return engine.call('bsleep', args, silent=silent, fork=fork)
 
 
-def bsocks(*args, silent=False, fork=False):
-    r""""    
+def bsocks(*args, fork=False):
+    r"""    
     Start a SOCKS proxy server associated with a beacon.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2079,11 +2079,11 @@ def bsocks(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bsocks', args, silent=silent, fork=fork)
+    return engine.call('bsocks', args, fork=fork)
 
 
-def bsocks_stop(*args, silent=False, fork=False):
-    r""""    
+def bsocks_stop(*args, fork=False):
+    r"""    
     Stop SOCKS proxy servers associated with the specified Beacon.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2094,11 +2094,11 @@ def bsocks_stop(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bsocks_stop', args, silent=silent, fork=fork)
+    return engine.call('bsocks_stop', args, fork=fork)
 
 
-def bspawn(*args, silent=False, fork=False):
-    r""""    
+def bspawn(*args, fork=False):
+    r"""    
     Ask Beacon to spawn a new session
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2114,11 +2114,11 @@ def bspawn(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bspawn', args, silent=silent, fork=fork)
+    return engine.call('bspawn', args, fork=fork)
 
 
-def bspawnas(*args, silent=False, fork=False):
-    r""""    
+def bspawnas(*args, fork=False):
+    r"""    
     Ask Beacon to spawn a session as another user.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2131,11 +2131,11 @@ def bspawnas(*args, silent=False, fork=False):
     bspawnas($1, "CORP", "Administrator", "toor", "my listener");
     """
 
-    return engine.call('bspawnas', args, silent=silent, fork=fork)
+    return engine.call('bspawnas', args, fork=fork)
 
 
-def bspawnto(*args, silent=False, fork=False):
-    r""""    
+def bspawnto(*args, fork=False):
+    r"""    
     Change the default program Beacon spawns to inject capabilities into.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2156,11 +2156,11 @@ def bspawnto(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bspawnto', args, silent=silent, fork=fork)
+    return engine.call('bspawnto', args, fork=fork)
 
 
-def bspawnu(*args, silent=False, fork=False):
-    r""""    
+def bspawnu(*args, fork=False):
+    r"""    
     Ask Beacon to spawn a session under another process. This builds on &brunu and uses powershell.exe.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2171,11 +2171,11 @@ def bspawnu(*args, silent=False, fork=False):
     bspawnu($1, 1234, "my listener");
     """
 
-    return engine.call('bspawnu', args, silent=silent, fork=fork)
+    return engine.call('bspawnu', args, fork=fork)
 
 
-def bssh(*args, silent=False, fork=False):
-    r""""    
+def bssh(*args, fork=False):
+    r"""    
     Ask Beacon to spawn an SSH session.
     Arguments
     $1 - id for the beacon. This may be an array or a single ID.
@@ -2188,11 +2188,11 @@ def bssh(*args, silent=False, fork=False):
     bssh($1, "172.16.20.128", 22, "root", "toor");
     """
 
-    return engine.call('bssh', args, silent=silent, fork=fork)
+    return engine.call('bssh', args, fork=fork)
 
 
-def bssh_key(*args, silent=False, fork=False):
-    r""""    
+def bssh_key(*args, fork=False):
+    r"""    
     Ask Beacon to spawn an SSH session.
     Arguments
     $1 - id for the beacon. This may be an array or a single ID.
@@ -2209,11 +2209,11 @@ def bssh_key(*args, silent=False, fork=False):
     bssh_key($1, "172.16.20.128", 22, "root", $keydata);
     """
 
-    return engine.call('bssh_key', args, silent=silent, fork=fork)
+    return engine.call('bssh_key', args, fork=fork)
 
 
-def bstage(*args, silent=False, fork=False):
-    r""""    
+def bstage(*args, fork=False):
+    r"""    
     This function handles the staging process for a bind listener. If the specified listener is not a bind listener, this function does nothing. Otherwise, it completes the staging protocol over a named pipe or a local socket.
     Arguments
     $1 - the id of the beacon to stage through
@@ -2228,11 +2228,11 @@ def bstage(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bstage', args, silent=silent, fork=fork)
+    return engine.call('bstage', args, fork=fork)
 
 
-def bsteal_token(*args, silent=False, fork=False):
-    r""""    
+def bsteal_token(*args, fork=False):
+    r"""    
     Ask Beacon to steal a token from a process.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2244,11 +2244,11 @@ def bsteal_token(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bsteal_token', args, silent=silent, fork=fork)
+    return engine.call('bsteal_token', args, fork=fork)
 
 
-def bsudo(*args, silent=False, fork=False):
-    r""""    
+def bsudo(*args, fork=False):
+    r"""    
     Ask Beacon to run a command via sudo (SSH sessions only)
     Arguments
     $1 - the id for the session. This may be an array or a single ID.
@@ -2262,11 +2262,11 @@ def bsudo(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('bsudo', args, silent=silent, fork=fork)
+    return engine.call('bsudo', args, fork=fork)
 
 
-def btask(*args, silent=False, fork=False):
-    r""""    
+def btask(*args, fork=False):
+    r"""    
     Report a task acknowledgement for a Beacon. This task acknowledgement will also contribute to the narrative in Cobalt Strike's Activity Report and Sessions Report.
     Arguments
     $1 - the id for the beacon to post to
@@ -2280,7 +2280,7 @@ def btask(*args, silent=False, fork=False):
     }
     """
 
-    return engine.call('btask', args, silent=silent, fork=fork)
+    return engine.call('btask', args, fork=fork)
 
 
 def btimestomp(*args, silent=False, fork=False):
@@ -2304,8 +2304,8 @@ def btimestomp(*args, silent=False, fork=False):
     return engine.call('btimestomp', args, silent=silent, fork=fork)
 
 
-def bunlink(*args, silent=False, fork=False):
-    r""""    
+def bunlink(*args, fork=False):
+    r"""    
     Ask Beacon to delink a Beacon its connected to over a named pipe.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2315,11 +2315,11 @@ def bunlink(*args, silent=False, fork=False):
     bunlink($1, "172.16.48.3");
     """
 
-    return engine.call('bunlink', args, silent=silent, fork=fork)
+    return engine.call('bunlink', args, fork=fork)
 
 
-def bupload(*args, silent=False, fork=False):
-    r""""    
+def bupload(*args, fork=False):
+    r"""    
     Ask a Beacon to upload a file
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2329,7 +2329,7 @@ def bupload(*args, silent=False, fork=False):
     bupload($1, script_resource("evil.exe"));
     """
 
-    return engine.call('bupload', args, silent=silent, fork=fork)
+    return engine.call('bupload', args, fork=fork)
 
 
 def bupload_raw(*args, silent=False, fork=False):
@@ -2349,8 +2349,8 @@ def bupload_raw(*args, silent=False, fork=False):
     return engine.call('bupload_raw', args, silent=silent, fork=fork)
 
 
-def bwdigest(*args, silent=False, fork=False):
-    r""""    
+def bwdigest(*args, fork=False):
+    r"""    
     Ask Beacon to dump in-memory credentials with mimikatz [with the wdigest command]. The &blogonpasswords option is superior to this command.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2364,11 +2364,11 @@ def bwdigest(*args, silent=False, fork=False):
     
     """
 
-    return engine.call('bwdigest', args, silent=silent, fork=fork)
+    return engine.call('bwdigest', args, fork=fork)
 
 
-def bwinrm(*args, silent=False, fork=False):
-    r""""    
+def bwinrm(*args, fork=False):
+    r"""    
     Ask Beacon to spawn a payload on a remote host. This function uses WinRM to run a PowerShell one-liner
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2381,11 +2381,11 @@ def bwinrm(*args, silent=False, fork=False):
     bwinrm($1, "172.16.48.3", "my listener");
     """
 
-    return engine.call('bwinrm', args, silent=silent, fork=fork)
+    return engine.call('bwinrm', args, fork=fork)
 
 
-def bwmi(*args, silent=False, fork=False):
-    r""""    
+def bwmi(*args, fork=False):
+    r"""    
     Ask Beacon to spawn a payload on a remote host. This function uses WMI to run a PowerShell one-liner
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -2398,7 +2398,7 @@ def bwmi(*args, silent=False, fork=False):
     bwmi($1, "172.16.48.3", "my listener");
     """
 
-    return engine.call('bwmi', args, silent=silent, fork=fork)
+    return engine.call('bwmi', args, fork=fork)
 
 
 def call(*args, fork=False):
