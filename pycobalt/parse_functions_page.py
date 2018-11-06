@@ -11,9 +11,11 @@ import re
 url = 'https://www.cobaltstrike.com/aggressor-script/functions.html'
 out = 'aggressor.py'
 
+# Additional sleep/aggressor functions to include
 sleep_functions = [
     'print',
     'println',
+    'printAll',
     'command',
 ]
 

@@ -148,7 +148,7 @@ functions:
     import pycobalt.engine as engine
     import pycobalt.aggressor as aggressor
 
-    aggressor.println('debug message')
+    aggressor.println('raw message')
 
     engine.loop()
 
