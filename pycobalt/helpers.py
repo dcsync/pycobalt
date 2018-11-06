@@ -162,7 +162,7 @@ def explorer_stomp(bid, fname):
 
     aggressor.btimestomp(bid, fname, r'c:/windows/explorer.exe')
 
-def uploadto(bid, local_file, remote_file):
+def upload_to(bid, local_file, remote_file):
     """
     Upload local file to a specified remote destination
 

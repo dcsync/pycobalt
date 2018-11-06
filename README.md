@@ -378,13 +378,9 @@ some of the functions available:
   - `find_process(bid, proc_name, callback)`: Calls `bps` to find a process by
 	name and calls `callback` with a list of matching processes (as returned
     by `parse_ps`).
-  - `is_admin(bid)`: Checks if a beacon is admin (as returned by
-     `aggressor.isadmin`) or SYSTEM.
-  - `default_listener()`: Gets local listener with 'http' in its name or the
-    first listener if there are none.
   - `explorer_stomp(bid, file)`: Stomps a file timestamp with the modification
     time of explorer.exe.
-  - `uploadto(bid, local_file, remote_file)`: Like `aggressor.bupload` but lets
+  - `upload_to(bid, local_file, remote_file)`: Like `aggressor.bupload` but lets
     you specify the remote file path/name.
   - `powershell_quote(arg)`/`pq(arg)`: Quote a Powershell string.
 	Encloses in single quotation marks with internal quotation marks escaped.
