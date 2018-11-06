@@ -109,25 +109,41 @@ To print a message on the script console:
 
     engine.loop()
 
+This shows up in the script console as:
+
+	[pycobalt example.py] test message
+
 To print an error message on the script console:
 
     import pycobalt.engine as engine
 
-    engine.message('test message')
+    engine.error('test error')
 
     engine.loop()
 
-To print an debug message to the script console:
+This shows up in the script console as:
+
+	[pycobalt example.py error] test error
+
+To print debug messages to the script console:
 
     import pycobalt.engine as engine
 
     engine.enable_debug()
-    engine.debug('debug message')
+    engine.debug('debug message 1')
+    engine.debug('debug message 2')
+    engine.disable_debug()
+    engine.debug('debug message 3')
 
     engine.loop()
 
-These all put prefixes on your messages. To print raw stuff to the script
-console you can just call the Aggressor print functions:
+This shows up in the script console as:
+
+	[pycobalt example.py debug] debug message 1
+	[pycobalt example.py debug] debug message 2
+
+To print raw stuff to the script console you can just call the Aggressor print
+functions:
 
     import pycobalt.engine as engine
     import pycobalt.aggressor as aggressor
