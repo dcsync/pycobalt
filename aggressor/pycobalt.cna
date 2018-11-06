@@ -67,7 +67,7 @@ sub write_message {
 
 	if (-eof $handle) {
 		# Handle is closed
-		debug('EOF!');
+		error("tried to write message to closed script handle");
 		return;
 	}
 
@@ -89,10 +89,8 @@ sub serialize_special {
 
 	if (($arg isa ^String) || ($arg isa ^Long) || ($arg isa ^Integer) || ($arg isa ^Double)) {
 		# primitive type, serializable by json
-		#debug('primitive ' . $arg);
 		return $arg;
 	} else if ($arg isa typeOf(@()) || $arg isa ^CollectionWrapper) {
-		#debug('recursing list ' . $arg);
 		# recurse lists
 		@new_list = @();
 		foreach $item ($arg) {
@@ -100,7 +98,6 @@ sub serialize_special {
 		}
 		return @new_list;
 	} else if ($arg isa typeOf(%())) {
-		#debug('recursing map');
 		# recurse hashes
 		%new_hash = %();
 		foreach $key => $item ($arg) {
@@ -108,7 +105,6 @@ sub serialize_special {
 		}
 		return %new_hash;
 	} else if ($arg is $null) {
-		#debug('null');
 		return $arg;
 	} else {
 		# TODO identityHashCode isn't quite safe enough. we need a better way to do this
@@ -477,7 +473,8 @@ sub python {
 	$stderr_thread = fork(&stderr_callback, \$handle, \$script);
 
 	# run without forking first so we can register context menu stuff
-	# TODO make this time out so we don't freeze up cobaltstrike
+	# TODO make this time out so we don't freeze up cobaltstrike if the script
+	# loops without calling engine.fork()
 	if (thread_callback()) {
 		# then fork it
 		$script_thread = fork(&thread_callback, \$handle, \$script, \%pycobalt_objects,

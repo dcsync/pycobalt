@@ -75,7 +75,7 @@ import pycobalt.engine as engine
 import pycobalt.aggressor as aggressor
 import pycobalt.callbacks as callbacks
 
-def official(name):
+def is_official(name):
     """
     Check if an event is one of the official cobaltstrike ones
 
@@ -100,7 +100,7 @@ def register(name, callback, official_only=True):
         engine.debug('calling callback for event {}'.format(name))
         callback(*args)
 
-    if official_only and not official(name):
+    if official_only and not is_official(name):
         raise RuntimeError('tried to register an unofficial event: {name}. try events.event("{name}", official_only=False).'.format(name=name))
 
     callback_name = callbacks.register(event_callback, prefix='event_{}'.format(name))
