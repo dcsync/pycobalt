@@ -39,8 +39,8 @@ def register(name, callback, short_help=None, long_help=None):
                 engine.debug('calling callback for alias {}'.format(name))
                 callback(*args)
             except Exception as e:
-                aggressor.berror(bid, "Caught Python exception while executing alias '{}': {}".format(name, str(e)))
-                aggressor.berror(bid, 'See Script Console for more details.')
+                aggressor.berror(bid,
+                    "Caught Python exception while executing alias '{}': {}\n    See Script Console for more details.".format(name, str(e)))
                 raise e
         else:
             syntax = '{}{}'.format(name, utils.signature(callback, trim=1))

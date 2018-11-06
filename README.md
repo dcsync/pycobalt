@@ -252,7 +252,7 @@ was writing the previous example I typed `engine.blog2()` instead of
 
     beacon> test_alias
     [-] Caught Python exception while executing alias 'test_alias': module 'pycobalt.engine' has no attribute 'blog2'
-    [-] See Script Console for more details.
+        See Script Console for more details.
 
 In the script console:
 
