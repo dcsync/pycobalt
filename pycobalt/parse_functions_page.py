@@ -13,10 +13,23 @@ out = 'aggressor.py'
 
 # Additional sleep/aggressor functions to include
 sleep_functions = [
+    # print-related
     'print',
     'println',
     'printAll',
+    'warn',
+    'debug',
+
+    # aggressor
     'command',
+
+    # other
+    'cast',
+    'casti',
+    'typeOf',
+    'exit',
+    'systemProperties',
+    'cwd',
 ]
 
 # Functions that support the ! operator. May be incomplete.

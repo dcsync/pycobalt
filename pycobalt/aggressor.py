@@ -4933,8 +4933,56 @@ def printAll(*args, fork=False):
     return engine.call('printAll', args, fork=fork)
 
 
+def warn(*args, fork=False):
+    r""""""
+
+    return engine.call('warn', args, fork=fork)
+
+
+def debug(*args, fork=False):
+    r""""""
+
+    return engine.call('debug', args, fork=fork)
+
+
 def command(*args, fork=False):
     r""""""
 
     return engine.call('command', args, fork=fork)
+
+
+def cast(*args, fork=False):
+    r""""""
+
+    return engine.call('cast', args, fork=fork)
+
+
+def casti(*args, fork=False):
+    r""""""
+
+    return engine.call('casti', args, fork=fork)
+
+
+def typeOf(*args, fork=False):
+    r""""""
+
+    return engine.call('typeOf', args, fork=fork)
+
+
+def exit(*args, fork=False):
+    r""""""
+
+    return engine.call('exit', args, fork=fork)
+
+
+def systemProperties(*args, fork=False):
+    r""""""
+
+    return engine.call('systemProperties', args, fork=fork)
+
+
+def cwd(*args, fork=False):
+    r""""""
+
+    return engine.call('cwd', args, fork=fork)
 

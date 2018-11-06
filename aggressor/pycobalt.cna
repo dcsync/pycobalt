@@ -271,16 +271,6 @@ sub set_menu {
 	}
 }
 
-# Get basename of file
-sub basename {
-	local('$file @parts');
-
-	$file = $1;
-
-	@parts = split('/', $file);
-	return @parts[-1];
-}
-
 # Print script message to console
 sub script_message {
 	local('$script $message $script_basename');
@@ -288,7 +278,7 @@ sub script_message {
 	$script = $1;
 	$message = $2;
 
-	$script_basename = basename($script);
+	$script_basename = getFileName($script);
 
 	println('[pycobalt ' . $script_basename . '] ' . $message);
 }
@@ -300,7 +290,7 @@ sub script_error {
 	$script = $1;
 	$message = $2;
 
-	$script_basename = basename($script);
+	$script_basename = getFileName($script);
 
 	println('[pycobalt ' . $script_basename . ' error] ' . $message);
 }
@@ -312,7 +302,7 @@ sub script_debug {
 	$script = $1;
 	$message = $2;
 
-	$script_basename = basename($script);
+	$script_basename = getFileName($script);
 
 	println('[pycobalt ' . $script_basename . ' debug] ' . $message);
 }

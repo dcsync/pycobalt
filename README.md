@@ -42,7 +42,7 @@ console.
 PyCobalt includes the following modules:
 
   - [engine.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/engine.py): main communication code
-  - [aggressor.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aggressor.py): stubs for calling aggressor functions
+  - [aggressor.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aggressor.py): stubs for calling Aggressor functions
   - [aliases.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aliases.py): for beacon console alias registration
   - [commands.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/commands.py): for script console command registration
   - [events.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/events.py): for event handler registration
@@ -55,7 +55,7 @@ Head over to the [examples](#examples) section for more information about each m
 Cobalt Strike Side
 ------------------
 
-An aggressor script for PyCobalt generally looks like this:
+An Aggressor script for PyCobalt generally looks like this:
 
 	$pycobalt_path = '/root/tools/pycobalt/aggressor';
 	include($pycobalt_path . '/pycobalt.cna');
@@ -78,7 +78,7 @@ Or you can run it straight out of the repo if you're familiar with
 Cobalt Strike Side
 ------------------
 
-The aggressor library is in the
+The Aggressor library is in the
 [aggressor](https://github.com/dcsync/pycobalt/tree/master/aggressor)
 directory. it's also installed by `setup.py` at
 `/usr/lib/python-*/site-packages/pycobalt-*/aggressor`.
@@ -155,7 +155,7 @@ functions:
 Aggressor Functions
 -------------------
 
-Calling an aggressor function:
+Calling an Aggressor function:
 
     import pycobalt.engine as engine
     import pycobalt.aggressor as aggressor
@@ -165,7 +165,7 @@ Calling an aggressor function:
 
     engine.loop()
 
-Calling an aggressor function with a callback:
+Calling an Aggressor function with a callback:
 
     import pycobalt.engine as engine
     import pycobalt.aggressor as aggressor
@@ -179,7 +179,7 @@ Calling an aggressor function with a callback:
 
     engine.loop()
 
-Calling an aggressor function without printing tasking information to the
+Calling an Aggressor function without printing tasking information to the
 beacon console (`!` operator, only supported by certain functions):
 
     ...
@@ -353,7 +353,7 @@ GUI registration must happen before `engine.loop()` is called. `engine.loop()`
 creates a new thread in Cobalt Strike and trying to register callbacks for menus
 created before that point (e.g. `beacon_top`) will result in a thread safety
 exception within Java. It's not possible to register menus using the regular
-aggressor functions for the same reason.
+Aggressor functions for the same reason.
 
 The one downside to this is that you can't generate the menu labels dynamically
 from within the menu callbacks.
