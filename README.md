@@ -455,7 +455,8 @@ Java objects though.
 Sleep Functions
 ---------------
 
-You can call arbitrary sleep and aggressor functions like this:
+You can call arbitrary Sleep and Aggressor functions (including your own
+Aggressor functions) like this:
 
     engine.call('printAll', [['a', 'b', 'c']])
 
@@ -463,11 +464,11 @@ Which turns into:
 
     printAll(@('a', 'b', 'c'))
 
-To call a sleep function in its own thread without getting its return value:
+To call a Sleep function in its own thread without getting its return value:
 
     engine.call('println', args=['printing from another thread'], fork=True)
 
-You can also eval arbitrary sleep code:
+You can also eval arbitrary Sleep code:
 
     engine.eval('println("foo")')
 
