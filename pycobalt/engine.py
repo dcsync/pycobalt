@@ -25,7 +25,10 @@ _debug_on = False
 
 def _init_pipes():
     """
-    Configure stdout/err/in for cobaltstrike
+    Configure input and output pipes. At the moment we use stdin/out/err. This
+    just makes configuring scripts a bit easier. It would be pretty easy to use
+    a couple of fifos but then we have to pass them to the Python script.
+    Passing them on argv seems kind of dirty too.
     """
 
     global _in_pipe
@@ -33,9 +36,6 @@ def _init_pipes():
 
     _in_pipe = sys.stdin
     _out_pipe = sys.stdout
-
-    # since cobaltstrike can't read stderr
-    sys.stderr = sys.stdout
 
 def enable_debug():
     """

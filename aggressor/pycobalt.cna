@@ -271,6 +271,52 @@ sub set_menu {
 	}
 }
 
+# Get basename of file
+sub basename {
+	local('$file @parts');
+
+	$file = $1;
+
+	@parts = split('/', $file);
+	return @parts[-1];
+}
+
+# Print script message to console
+sub script_message {
+	local('$script $message $script_basename');
+
+	$script = $1;
+	$message = $2;
+
+	$script_basename = basename($script);
+
+	println('[pycobalt ' . $script_basename . '] ' . $message);
+}
+
+# Print script error message to console
+sub script_error {
+	local('$script $message $script_basename');
+
+	$script = $1;
+	$message = $2;
+
+	$script_basename = basename($script);
+
+	println('[pycobalt ' . $script_basename . ' error] ' . $message);
+}
+
+# Print script debug message to console
+sub script_debug {
+	local('$script $message $script_basename');
+
+	$script = $1;
+	$message = $2;
+
+	$script_basename = basename($script);
+
+	println('[pycobalt ' . $script_basename . ' debug] ' . $message);
+}
+
 # Handle a message
 sub handle_message {
 	local('$name $message $func $silent $fork');
@@ -283,14 +329,11 @@ sub handle_message {
 	if ($name eq 'fork') {
 		return true;
 	} else if ($name eq 'message') {
-		# print message
-		println('[pycobalt script] ' . $message);
-	} else if ($name eq 'debug') {
-		# print debug message
-		println('[pycobalt script debug] ' . $message);
+		script_message($script, $message);
 	} else if ($name eq 'error') {
-		# print error message
-		println('[pycobalt script error] ' . $message);
+		script_error($script, $message);
+	} else if ($name eq 'debug') {
+		script_debug($script, $message);
 	} else if ($name eq 'call') {
 		# call a function
 		$func = $message['name'];
@@ -376,20 +419,46 @@ sub handle_message {
 	return false;
 }
 
-# Per-script thread
+# Get process stderr
+sub get_stderr {
+	local('$handle $source $stream $stderr');
+
+	$handle = $1;
+
+	$source = [$handle getSource];      # java.lang.Process
+	$stream = [$source getErrorStream]; # java.io.InputStream
+
+	$stderr = [SleepUtils getIOHandle: $stream, $null];
+
+	return $stderr;
+}
+
+# Per-script stderr thread. Just prints stderr to Script Console.
+sub stderr_callback {
+	local('$stderr $line');
+
+	$stderr = get_stderr($handle);
+
+	while $line (readln($stderr)) {
+		# print error message
+		script_error($script, $line);
+	}
+}
+
+# Per-script control thread
 sub thread_callback {
 	local('$line $obj');
 
 	while $line (readln($handle)) {
 		$obj = from_json($line);
 
-		if ($obj) {
-			#debug('received ' . $obj);
+		if ($obj && 'name' in $obj && 'message' in $obj) {
 			if (handle_message($handle, $obj['name'], $obj['message'])) {
 				return true;
 			}
 		} else {
-			msg('failed to parse json: ' . $line);
+			# it's not a control message so assume it's a message
+			script_message($script, $line);
 		}
 	}
 
@@ -404,7 +473,7 @@ sub thread_callback {
 
 # Start a Python script
 sub python {
-	local('$error');
+	local('$error $stderr_thread $script_thread');
 
 	$script = $1;
 
@@ -414,9 +483,14 @@ sub python {
 		msg("failed to execute script '" . $script . "': " . $error);
 	}
 
-	# run without forking first
+	# start the stderr handler
+	$stderr_thread = fork(&stderr_callback, \$handle, \$script);
+
+	# run without forking first so we can register context menu stuff
+	# TODO make this time out so we don't freeze up cobaltstrike
 	if (thread_callback()) {
-		fork(&thread_callback, \$handle, \$script, \%pycobalt_objects,
+		# then fork it
+		$script_thread = fork(&thread_callback, \$handle, \$script, \%pycobalt_objects,
 			 \$pycobalt_path, \$json_path, \$pycobalt_debug_on);
 	}
 

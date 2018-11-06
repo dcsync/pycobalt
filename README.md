@@ -36,12 +36,8 @@ A Python script for PyCobalt generally looks like this:
 technically only necessary if your script uses callbacks (for aliases,
 events, etc).
 
-PyCobalt uses stdout and stdin to communicate with Cobalt Strike. Try not to
-write to stdout (`print`) or read from stdin (`input`) in a PyCobalt
-script.
-
-If your script has parser errors Cobalt Strike won't show anything in the script
-console. Fatal runtime exceptions will show up in the script console.
+Fatal runtime exceptions and Python parser errors will show up in the script
+console.
 
 PyCobalt includes the following modules:
 
@@ -127,6 +123,16 @@ To print an debug message to the script console:
 
     engine.enable_debug()
     engine.debug('debug message')
+
+    engine.loop()
+
+These all put prefixes on your messages. To print raw stuff to the script
+console you can just call the Aggressor print functions:
+
+    import pycobalt.engine as engine
+    import pycobalt.aggressor as aggressor
+
+    aggressor.println('debug message')
 
     engine.loop()
 
@@ -356,8 +362,8 @@ some of the functions available:
   - `find_process(bid, proc_name, callback)`: Calls `bps` to find a process by
 	name and calls `callback` with a list of matching processes (as returned
     by `parse_ps`).
-  - `is_admin(bid)`: Checks if a beacon is SYSTEM or admin (as returned by
-     `isadmin`).
+  - `is_admin(bid)`: Checks if a beacon is admin (as returned by
+     `aggressor.isadmin`) or SYSTEM.
   - `default_listener()`: Gets local listener with 'http' in its name or the
     first listener if there are none.
   - `explorer_stomp(bid, file)`: Stomps a file timestamp with the modification
