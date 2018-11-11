@@ -2,8 +2,8 @@
 
 # so we can use the repo copy of pycobalt
 import sys
-import utils
-sys.path.insert(0, utils.basedir('..'))
+import os
+sys.path.insert(0, os.path.realpath(os.path.dirname(__file__)) + '/..')
 
 import textwrap
 
