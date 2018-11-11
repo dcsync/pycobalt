@@ -410,7 +410,7 @@ def chunkup(item, size=75):
 
 def powershell_base64(string):
     """
-    Encode a string as UTF-16LE and base64 it. This makes it compatible with
+    Encode a string as UTF-16LE and base64 it. The output is compatible with
     Powershell's -EncodedCommand.
 
     :param string: String to base64
