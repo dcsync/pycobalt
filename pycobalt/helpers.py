@@ -5,6 +5,8 @@ Helper functions for writing pycobalt scripts
 import argparse
 import inspect
 import re
+import base64
+import subprocess
 
 import pycobalt.aggressor as aggressor
 import pycobalt.callbacks as callbacks
@@ -104,14 +106,22 @@ def find_process(bid, proc_name, callback):
     Find processes by name. Call callback with results.
 
     :param bid: Beacon to use
-    :param proc_name: Process name to search for
+    :param proc_name: Process name(s) to search for. Can be a list of names or
+                      a single name.
     :param callback: Callback for results. Syntax is `callback(procs)` where
                      `procs` is the output of `parse_ps`.
     """
 
+    if isinstance(proc_name, list):
+        # already a list
+        proc_names = proc_name
+    else:
+        # make it a list
+        proc_names = [proc_name]
+
     def ps_callback(bid, content):
         procs = parse_ps(content)
-        ret = filter(lambda p: p['name'] == proc_name, procs)
+        ret = filter(lambda p: p['name'] in proc_names, procs)
         callback(ret)
 
     aggressor.bps(bid, ps_callback)
@@ -311,6 +321,103 @@ def cq(arg):
     """
 
     return cmd_quote(arg)
+
+def capture(command, stdin=None, stderr_null=True):
+    """
+    Run a shell command and capture its output.
+
+    :command: Command to run
+    :stdin: String to write to stdin
+    :stderr_null: Redirect stderr to /dev/null
+
+    :return: If stderr_null is True, returns stdout. Otherwise, returns a tuple
+             containing (stdout, stderr).
+    """
+
+    if stderr_null:
+        # redirect stderr to /dev/null
+        stderr = subprocess.DEVNULL
+    else:
+        # pipe stderr
+        stderr = subprocess.PIPE
+
+    proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
+            stdin=subprocess.PIPE, stderr=stderr)
+
+    stdout, stderr = proc.communicate(input=stdin)
+    if stderr_null:
+        return stdout
+    else:
+        return stdout, stderr
+
+def randstr(minsize=4, maxsize=8):
+    """
+    Generate a random ascii string with a length between `minsize` and `maxsize`.
+    Useful for writing temp files and generating obfuscated scripts on the fly.
+
+    :param minsize: Minimum size of string
+    :param maxsize: Maximum size of string
+    :return: Random string
+    """
+
+    size = random.randint(minsize, maxsize + 1)
+    return ''.join(random.choice(string.ascii_lowercase) for _ in range(size))
+
+def obfuscate_tokens(data, regex=r'%%[^%]+%%'):
+    """
+    Obfuscate tokens in a string. By default it will match all %%foo%% tokens
+    and replace them with random ascii strings (generated with `randstr`).
+    This is useful for generating obfuscated scripts on the fly.
+
+    :data: String containing tokens to obfuscate
+    :regex: Alternative regex to match
+    :return: Obfuscated string
+    """
+
+    # get tokens
+    matches = re.finditer(regex, data)
+    tokens = [m.group(0) for m in matches]
+    unique = set(tokens)
+
+    def gentokens(factor=5):
+        while True:
+            yield randstr(3 * factor, 5 * factor)
+
+    token_iter = iter(unique)
+    replace_iter = gentokens()
+    for token, replace in zip(token_iter, replace_iter):
+        while replace in data:
+            replace = next(replace_iter)
+        data = data.replace(token, replace)
+
+    return data
+
+def chunkup(item, size=75):
+    """
+    Split a string, list, or other indexable object into chunks of size `size`.
+    If the length of `item` is not divisible by `size` the last chunk will be
+    shorter than the others.
+
+    :param item: Item to split
+    :param size: Chunk size
+    :return: List of chunks
+    """
+
+    chunks = [
+	    item[i:i + size] for i in range(0, len(item), size)
+	]
+    return chunks
+
+def powershell_base64(string):
+    """
+    Encode a string as UTF-16LE and base64 it. This makes it compatible with
+    Powershell's -EncodedCommand.
+
+    :param string: String to base64
+    :return: Base64 encoded string
+    """
+
+    return base64.b64encode(string.encode('UTF-16LE')).decode()
 
 class ArgumentParser(argparse.ArgumentParser):
     """

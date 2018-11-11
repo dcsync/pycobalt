@@ -371,10 +371,10 @@ some of the functions available:
     ID), and `description`.
   - `parse_ps(content)`: Parses the callback output of `bps`. Returns a list of
 	dictionaries. Each dictionary represents a process with the following
-	fileds: name, pid, ppid, arch (if available), and user (if available).
+	fileds: `name`, `pid`, `ppid`, `arch` (if available), and `user` (if available).
   - `parse_ls(content)`: Parses the callback output of `bls`. Returns a list of
     dictionaries. Each dictionary represents a file with the following fields:
-    type (D/F), size (in bytes), modified (date and time), and name.
+    `type` (D/F), `size` (in bytes), `modified` (date and time), and `name`.
   - `find_process(bid, proc_name, callback)`: Calls `bps` to find a process by
 	name and calls `callback` with a list of matching processes (as returned
     by `parse_ps`).
@@ -382,18 +382,22 @@ some of the functions available:
     time of explorer.exe.
   - `upload_to(bid, local_file, remote_file)`: Like `aggressor.bupload` but lets
     you specify the remote file path/name.
-  - `powershell_quote(arg)`/`pq(arg)`: Quote a Powershell string.
-	Encloses in single quotation marks with internal quotation marks escaped.
+  - `powershell_quote(arg)`/`pq(arg)`: Quote a string for use as an argument to
+	a Powershell function. Encloses in single quotation marks with internal
+    quotation marks escaped.
   - `argument_quote(arg)`/`aq(arg)`: Quote a string for
-    cmd.exe and `CommandLineToArgvW`.
+	use as an argument to a cmd.exe command that uses `CommandLineToArgvW`.
     Read [this](https://stackoverflow.com/questions/29213106/how-to-securely-escape-command-line-arguments-for-the-cmd-exe-shell-on-windows).
-  - `cmd_quote(arg)`/`cq(arg)`: Quote a string for just cmd.exe (and not `CommandLineToArgvW`).
+  - `cmd_quote(arg)`/`cq(arg)`: Quote a string for use as an arguent to a
+    cmd.exe command that does not use `CommandLineToArgvW`.
+  - `powershell_base64(string)`: Encode a string as UTF-16LE and base64 it, for
+    compatibility with Powershell's -EncodedCommand flag.
 
 There's a `helpers.ArgumentParser` class which extends
 `argparse.ArgumentParser` to support printing to the beacon console or script
 console. Here's an example using it with an alias:
 
-    @aliases.alias('outlook', 'Get outlook folder', 'See `outlook -h`')
+    @aliases.alias('outlook', 'Get an outlook folder', 'See `outlook -h`')
     def _(bid, *args):
         parser = helpers.ArgumentParser(bid=bid, prog='outlook')
         parser.add_argument('-f', '--folder', help='Folder name to grab')
