@@ -8,10 +8,6 @@ Usage
 
 PyCobalt comes in two parts: a Python library and an Aggressor library.
 
-The Python library provides an API for Python scripts to call Aggressor
-functions and register aliases, commands, and event handlers. The Aggressor
-library runs your Python scripts and performs actions on their behalf.
-
 Python Side
 -----------
 
@@ -42,14 +38,16 @@ console.
 
 PyCobalt includes the following modules:
 
-  - [engine.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/engine.py): main communication code
-  - [aggressor.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aggressor.py): stubs for calling Aggressor functions
-  - [aliases.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aliases.py): for beacon console alias registration
-  - [commands.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/commands.py): for script console command registration
-  - [events.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/events.py): for event handler registration
-  - [gui.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/gui.py): for context menu registration
+  - [engine.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/engine.py): Main communication code
+  - [aggressor.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aggressor.py): Stubs for calling Aggressor functions
+  - [aliases.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aliases.py): Beacon console alias registration
+  - [commands.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/commands.py): Script console command registration
+  - [events.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/events.py): Event handler registration
+  - [gui.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/gui.py): Context menu registration
   - [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py):
-    assorted helper functions and classes to make writing scripts easier
+    Assorted helper functions and classes to make writing scripts easier
+  - [sharpgen.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py):
+	Helper functions for using SharpGen with Cobalt Strike
 
 Head over to the [examples](#examples) section for more information about each module.
 
@@ -417,6 +415,51 @@ In the beacon console:
 
     beacon> outlook -z
     [-] unrecognized arguments: -z
+
+SharpGen
+--------
+
+[sharpgen.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py)
+provides helpers for compiling and executing C# code with
+[SharpGen](https://github.com/cobbr/SharpGen). It provides the following functions:
+
+  - `compile_file(source, ...)`: Compile a C# file. By default this creates a
+                                 temporary output file and returns its name.
+  - `compile(code, ...)`: Compile inline C# code. By default this creates a
+                          temporary output file and returns its name.
+  - `execute_file(bid, source, ...)`: Compile and execute a C# file.
+  - `execute(bid, code, ...)`: Compile and execute inline C# code.
+
+These functions have a number of shared keyword arguments. I don't feel like
+copying them out here so see the [`compile_file`]() function's pydoc for the
+full list.
+
+You need a compiled version of SharpGen to use this module. By default it
+points to the repo copy (`pycobalt/third_party/SharpGen`). You can use that copy
+but it's a Git submodule so you'll need to initialize and build it first. To do
+that run:
+
+    git submodule init
+    git submodule update
+    cd third_party/SharpGen
+    dotnet build
+
+You can use your own copy of SharpGen by calling `sharpgen.set_location('<your
+copy>')` or by passing it on the `location=` parameter to any of the four
+compile/execute functions.
+
+Here's a basic usage example:
+
+    import pycobalt.sharpgen
+    sharpgen.set_location('/root/tools/SharpGen')
+
+    @aliases.alias('sharpgen-exec')
+    def _(bid, code):
+        sharpgen.execute(bid, code)
+
+See
+[examples/sharpgen.py](https://github.com/dcsync/pycobalt/tree/master/examples/sharpgen.py)
+for console commands and beacon aliases to go with each compile/execute function.
 
 Non-Primitive Objects
 ---------------------

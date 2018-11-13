@@ -1,6 +1,7 @@
 #
 # org.json from https://mvnrepository.com/artifact/org.json/json
 # Documentation - https://stleary.github.io/JSON-java/
+# Source code - https://github.com/stleary/JSON-java and git submodule ../third_party/JSON-java
 #
 # Thanks to @vysec's ANGRYPUPPY for the library suggestion
 #

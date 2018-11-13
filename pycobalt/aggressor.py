@@ -1030,8 +1030,8 @@ def bexecute(*args, silent=False, fork=False):
     return engine.call('bexecute', args, silent=silent, fork=fork)
 
 
-def bexecute_assembly(*args, fork=False):
-    r"""    
+def bexecute_assembly(*args, silent=False, fork=False):
+    r""""    
     Spawns a local .NET executable assembly as a Beacon post-exploitation job.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
@@ -1050,7 +1050,7 @@ def bexecute_assembly(*args, fork=False):
     }
     """
 
-    return engine.call('bexecute_assembly', args, fork=fork)
+    return engine.call('bexecute_assembly', args, silent=silent, fork=fork)
 
 
 def bexit(*args, fork=False):

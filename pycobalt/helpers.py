@@ -1,17 +1,37 @@
 """
 Helper functions for writing pycobalt scripts
+
+`argument_quote` and `cmd_quote` are from Holger Just
+(https://twitter.com/meineerde, https://github.com/meineerde).
+
+https://stackoverflow.com/questions/29213106/how-to-securely-escape-command-line-arguments-for-the-cmd-exe-shell-on-windows
+
+> The problem with quoting command lines for windows is that there are two
+> layered parsing engines affected by your quotes. At first, there is the Shell
+> (e.g. cmd.exe) which interprets some special characters. Then, there is the
+> called program parsing the command line. This often happens with the
+> CommandLineToArgvW function provided by Windows, but not always.
+
+> That said, for the general case, e.g. using cmd.exe with a program parsing its
+> command line with CommandLineToArgvW, you can use the techniques described by
+> Daniel Colascione in Everyone quotes command line arguments the wrong way. I
+> have originally tried to adapt this to Ruby and now try to translate this to
+> python here.
+
+Thanks Holger!
 """
 
-import argparse
-import inspect
 import re
 import base64
+import inspect
+import argparse
 import subprocess
+import random
 
-import pycobalt.aggressor as aggressor
-import pycobalt.callbacks as callbacks
-import pycobalt.engine as engine
 import pycobalt.utils as utils
+import pycobalt.engine as engine
+import pycobalt.callbacks as callbacks
+import pycobalt.aggressor as aggressor
 
 def parse_ps(content):
     """
@@ -242,22 +262,6 @@ def pq(arg):
 
     return powershell_quote(arg)
 
-# argument_quote and cmd_quote from Holger Just (https://twitter.com/meineerde, https://github.com/meineerde).
-# https://stackoverflow.com/questions/29213106/how-to-securely-escape-command-line-arguments-for-the-cmd-exe-shell-on-windows
-#
-# > The problem with quoting command lines for windows is that there are two
-# > layered parsing engines affected by your quotes. At first, there is the Shell
-# > (e.g. cmd.exe) which interprets some special characters. Then, there is the
-# > called program parsing the command line. This often happens with the
-# > CommandLineToArgvW function provided by Windows, but not always.
-#
-# > That said, for the general case, e.g. using cmd.exe with a program parsing its
-# > command line with CommandLineToArgvW, you can use the techniques described by
-# > Daniel Colascione in Everyone quotes command line arguments the wrong way. I
-# > have originally tried to adapt this to Ruby and now try to translate this to
-# > python here.
-#
-# thanks Holger!
 def argument_quote(arg):
     """
     Escape the argument for the cmd.exe shell.
@@ -270,10 +274,14 @@ def argument_quote(arg):
     :return: Quoted argument
     """
 
-    if not arg or re.search(r'(["\s])', arg):
-        arg = '"' + arg.replace('"', r'\"') + '"'
+    if isinstance(arg, list) or isinstance(arg, tuple):
+        # recurse list
+        return [argument_quote(child) for child in arg]
+    else:
+        if not arg or re.search(r'(["\s])', arg):
+            arg = '"' + arg.replace('"', r'\"') + '"'
 
-    return escape_for_cmd_exe(arg)
+        return escape_for_cmd_exe(arg)
 
 def aq(arg):
     """
@@ -302,15 +310,19 @@ def cmd_quote(arg):
     :return: Quoted argument
     """
 
-    meta_chars = '()%!^"<>&|'
-    meta_re = re.compile('(' + '|'.join(re.escape(char) for char in list(meta_chars)) + ')')
-    meta_map = { char: "^%s" % char for char in meta_chars }
+    if isinstance(arg, list) or isinstance(arg, tuple):
+        # recurse list
+        return [cmd_quote(child) for child in arg]
+    else:
+        meta_chars = '()%!^"<>&|'
+        meta_re = re.compile('(' + '|'.join(re.escape(char) for char in list(meta_chars)) + ')')
+        meta_map = { char: "^%s" % char for char in meta_chars }
 
-    def escape_meta_chars(m):
-        char = m.group(1)
-        return meta_map[char]
+        def escape_meta_chars(m):
+            char = m.group(1)
+            return meta_map[char]
 
-    return meta_re.sub(escape_meta_chars, arg)
+        return meta_re.sub(escape_meta_chars, arg)
 
 def cq(arg):
     """
@@ -322,33 +334,31 @@ def cq(arg):
 
     return cmd_quote(arg)
 
-def capture(command, stdin=None, stderr_null=True):
+def capture(command, stdin=None, shell=False, merge_stderr=False):
     """
-    Run a shell command and capture its output.
+    Run a command and capture its output.
 
-    :command: Command to run
+    :command: Command to run (list of arguments or string)
     :stdin: String to write to stdin
-    :stderr_null: Redirect stderr to /dev/null
+    :shell: Run as a shell command
+    :merge_stderr: Redirect stderr to stdout
 
-    :return: If stderr_null is True, returns stdout. Otherwise, returns a tuple
-             containing (stdout, stderr).
+    :return: Returns a tuple containing code, stdout, stderr
     """
 
-    if stderr_null:
-        # redirect stderr to /dev/null
-        stderr = subprocess.DEVNULL
+    if merge_stderr:
+        # redirect to stdout
+        stderr = subprocess.STDOUT
     else:
-        # pipe stderr
         stderr = subprocess.PIPE
 
-    proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
+    proc = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE,
             stdin=subprocess.PIPE, stderr=stderr)
 
     stdout, stderr = proc.communicate(input=stdin)
-    if stderr_null:
-        return stdout
-    else:
-        return stdout, stderr
+    code = proc.poll()
+
+    return code, stdout, stderr
 
 def randstr(minsize=4, maxsize=8):
     """

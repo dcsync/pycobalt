@@ -55,6 +55,7 @@ silent_functions = [
     'bcp',
     'bkill',
     'bkeylogger',
+    'bexecute_assembly',
 ]
 
 def main():

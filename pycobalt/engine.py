@@ -98,39 +98,6 @@ def write(message_type, message=''):
     _out_pipe.write(serialized + "\n")
     _out_pipe.flush()
 
-def fix_dicts(old):
-    """
-    Fix for sleep's broken Java parameter marshalling
-
-    XXX I think I fucked up actually. If you make a Hash like this: %('foo' =>
-    'bar') the key will include the single quotation marks.
-    """
-
-    if not isinstance(old, dict):
-        return old
-
-    new = {}
-    for key, item in old.items():
-        # make new key
-        m = re.match("'([^']+)'", key)
-        if m:
-            new_key = m.group(1)
-        else:
-            new_key = key
-
-        if isinstance(item, list):
-            # lists
-            new_item = []
-            for piece in item:
-                new_item.append(fix_dicts(piece))
-        elif isinstance(item, dict):
-            # nested dicts
-            new_item = fix_dicts(item)
-        else:
-            new_item = item
-        new[new_key] = new_item
-    return new
-
 def handle_message(name, message):
     """
     Handle a received message according to its name
@@ -168,7 +135,6 @@ def parse_line(line):
     try:
         line = line.strip()
         wrapper = json.loads(line)
-        #wrapper = fix_dicts(wrapper)
         name = wrapper['name']
         if 'message' in wrapper:
             message = wrapper['message']

@@ -3,7 +3,10 @@
 import setuptools
 import os
 
-# how hard could it possibly be to include a fucking directory?
+# change to script directory
+os.chdir(os.path.realpath(os.path.dirname(__file__)))
+
+# how hard could it possibly be to include a directory?
 #
 #  - MANIFEST.in apparently does nothing (even with include_package_data)
 #  - package_data apparently does nothing
@@ -23,16 +26,19 @@ def fucksetuptools(d):
     return ret
 
 data_files = fucksetuptools('aggressor') + \
-             fucksetuptools('examples')
+             fucksetuptools('examples') + \
+             fucksetuptools('third_party') + \
+             fucksetuptools('.git')
+
 print('including data_files: ' + str(data_files))
 
 setuptools.setup(
     name='pycobalt',
-    version='1.0.0',
+    version='1.2.0',
     description='Python API for Cobaltstrike',
     url='no',
-    author='anonymous',
-    author_email='no',
+    author='dcsync',
+    author_email='dcsync@protonmail.com',
     data_files=data_files,
     include_package_data=True,
     packages=['pycobalt'],

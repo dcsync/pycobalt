@@ -1,13 +1,17 @@
-#
-# Utils
-#
+"""
+Internal utilities. helpers.py has helper functions for writing PyCobalt
+scripts.
+"""
 
 import inspect
 import os
+import re
+import collections
 
 def basedir(append='', relative=__file__):
     """
-    Get base directory relative to 'relative' or __file__
+    Get base directory relative to 'relative' or the location of the utils.py
+    file.
 
     :param append: Text to append to base directory
     :param relative: Get base directory relative to this
@@ -66,3 +70,68 @@ def func():
 
     tup = inspect.stack()[2]
     return tup[0].f_globals[tup[3]]
+
+def yaml_basic_load(yaml):
+    """
+    Very rudimentary yaml to list-of-dict loader. It only supports a single
+    list of dictionaries.
+
+    :param yaml: Yaml to load
+    :return: A list of dicts representing the items
+    """
+
+    items = []
+    new_item = collections.OrderedDict()
+
+    for line in yaml.splitlines():
+        line = line.strip()
+
+        # skip blank lines
+        if not line:
+            continue
+
+        if line.startswith('- '):
+            # start new item
+            if new_item:
+                items.append(new_item)
+            line = line[2:]
+            new_item = collections.OrderedDict()
+
+        # key-value pair
+        m = re.match('([^:]+): (.*)', line)
+        if m:
+            key = m.group(1)
+            value = m.group(2)
+            new_item[key] = value
+        else:
+            raise RuntimeError("yaml_basic_read: Could not parse yaml. It's probably too complex")
+
+    if new_item:
+        items.append(new_item)
+
+    return items
+
+def yaml_basic_dump(items):
+    """
+    Very rudimentary list-of-dict to yaml dumper. It only supports a single
+    list of dictionaries.
+
+    :param items: List of dictionaries to dump
+    :return: Yaml representing the items
+    """
+
+    yaml = ''
+
+    for item in items:
+        first = True
+        for key, value in item.items():
+            # choose prefix
+            if first:
+                first = False
+                prefix = '- '
+            else:
+                prefix = '  '
+
+            yaml += '{}{}: {}\n'.format(prefix, key, value)
+
+    return yaml
