@@ -50,17 +50,4 @@ def _(source, out, *args):
     except RuntimeError as e:
         engine.error('SharpGen failed. See above for more details')
 
-@aliases.alias('sharpgen-test', 'Test')
-def _(bid, *args):
-    code = """
-    Console.WriteLine("abc");
-    Console.WriteLine("def");
-    """
-
-    aggressor.btask(bid, 'Tasked beacon to execute C# code: {}'.format(code))
-    try:
-        sharpgen.execute(bid, code, *args, references=['System.dll', 'System.Core.dll', 'mscorlib.dll'], resources=[])
-    except RuntimeError as e:
-        aggressor.berror(bid, 'SharpGen failed. See script console for more details')
-
 engine.loop()

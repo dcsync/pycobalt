@@ -1,5 +1,5 @@
 """
-Helper functions for using coddr's SharpGen
+Helper functions for using cobbr's SharpGen
 
 See examples/sharpgen.py for a working set of compile/exec console commands and
 aliases. Refer to `README.md` for more usage info.

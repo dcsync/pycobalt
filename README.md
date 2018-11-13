@@ -47,7 +47,7 @@ PyCobalt includes the following modules:
   - [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py):
     Assorted helper functions and classes to make writing scripts easier
   - [sharpgen.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py):
-	Helper functions for using SharpGen with Cobalt Strike
+	Helper functions for using [SharpGen](https://github.com/cobbr/SharpGen) with Cobalt Strike
 
 Head over to the [examples](#examples) section for more information about each module.
 
@@ -430,9 +430,9 @@ provides helpers for compiling and executing C# code with
   - `execute_file(bid, source, ...)`: Compile and execute a C# file.
   - `execute(bid, code, ...)`: Compile and execute inline C# code.
 
-These functions have a number of shared keyword arguments. I don't feel like
-copying them out here so see the [`compile_file`]() function's pydoc for the
-full list.
+These functions have a number of shared keyword arguments. See the
+[`compile_file`](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py#L83)
+function's pydoc for the full list.
 
 You need a compiled version of SharpGen to use this module. By default it
 points to the repo copy (`pycobalt/third_party/SharpGen`). You can use that copy
