@@ -9,6 +9,9 @@ For more information about SharpGen see:
   - https://github.com/cobbr/SharpGen
 """
 
+# TODO cache builds
+# TODO add --no-wrapper flag
+
 import tempfile
 import os
 
@@ -202,7 +205,11 @@ def compile_file(
 
         if not out:
             # use a temporary file
-            out = tempfile.NamedTemporaryFile(prefix='pycobalt.sharpgen.', suffix='.exe', delete=False).name
+            if output_type == 'dll':
+                suffix = '.dll'
+            else:
+                suffix = '.exe'
+            out = tempfile.NamedTemporaryFile(prefix='pycobalt.sharpgen.', suffix=suffix, delete=False).name
 
         args += ['--file', out,
                  '--source-file', source]

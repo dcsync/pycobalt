@@ -11,7 +11,7 @@ PyCobalt comes in two parts: a Python library and an Aggressor library.
 Python Side
 -----------
 
-A Python script for PyCobalt generally looks like this:
+A Python script for PyCobalt looks like this:
 
     #!/usr/bin/env python3
 
@@ -19,12 +19,9 @@ A Python script for PyCobalt generally looks like this:
     import pycobalt.aggressor as aggressor
     import pycobalt.aliases as aliases
 
-    # print to the script console
-    engine.message('example script')
-
+	# register this function as a beacon console alias
     @aliases.alias('example-alias')
     def example_alias(bid):
-        # write to the beacon console
         aggressor.blog2(bid, 'example alias')
 
     # read commands from cobaltstrike. must be called last
@@ -54,7 +51,7 @@ Head over to the [examples](#examples) section for more information about each m
 Cobalt Strike Side
 ------------------
 
-An Aggressor script for PyCobalt generally looks like this:
+An Aggressor script for PyCobalt looks like this:
 
     $pycobalt_path = '/root/tools/pycobalt/aggressor';
     include($pycobalt_path . '/pycobalt.cna');
@@ -86,10 +83,11 @@ You can include pycobalt.cna straight out of there. It comes with its
 dependencies and all. See the [usage](#usage) section for more info.
 
 PyCobalt depends on the
-[org.json](https://mvnrepository.com/artifact/org.json/json) java library. A
+[org.json](https://mvnrepository.com/artifact/org.json/json) Java library. A
 copy is included in this repo at
 [aggressor/jars/json.jar](https://github.com/dcsync/pycobalt/tree/master/aggressor/jars).
-You can optionally replace `json.jar` with a more trusted copy.
+You can optionally replace `json.jar` with a more trusted copy. It's PyCobalt's
+only binary dependency.
 
 Examples
 ========
@@ -445,8 +443,8 @@ that run:
     dotnet build
 
 You can use your own copy of SharpGen by calling `sharpgen.set_location('<your
-copy>')` or by passing it on the `location=` parameter to any of the four
-compile/execute functions.
+copy>')` or by passing it on the `sharpgen_location=` parameter to any of the
+four compile/execute functions.
 
 Here's a basic usage example:
 
