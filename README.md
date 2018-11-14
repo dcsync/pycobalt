@@ -36,15 +36,15 @@ console.
 PyCobalt includes the following modules:
 
   - [engine.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/engine.py): Main communication code
-  - [aggressor.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aggressor.py): Stubs for calling Aggressor functions
-  - [aliases.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/aliases.py): Beacon console alias registration
-  - [commands.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/commands.py): Script console command registration
-  - [events.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/events.py): Event handler registration
-  - [gui.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/gui.py): Context menu registration
-  - [bot.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/bot.py): Event Log bot toolkit
-  - [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py):
+  - [aggressor.py](#aggressor): Stubs for calling Aggressor functions
+  - [aliases.py](#aliases): Beacon console alias registration
+  - [commands.py](#commands): Script console command registration
+  - [events.py](#events): Event handler registration
+  - [gui.py](#gui): Context menu registration
+  - [bot.py](#bot): Event Log bot toolkit
+  - [helpers.py](#helpers):
     Assorted helper functions and classes to make writing scripts easier
-  - [sharpgen.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py):
+  - [sharpgen.py](#sharpgen):
 	Helper functions for using [SharpGen](https://github.com/cobbr/SharpGen) with Cobalt Strike
 
 Head over to the [examples](#examples) section for more information about each module.
@@ -142,8 +142,8 @@ functions:
 
     aggressor.println('raw message')
 
-Aggressor Functions
--------------------
+Aggressor
+---------
 
 Calling an Aggressor function:
 
@@ -380,7 +380,7 @@ Using the example:
     10/19 10:24:13 <bot> arg3
 
 See
-[examples/bot.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/examples/bot.py)
+[examples/bot.py](https://github.com/dcsync/pycobalt/blob/master/examples/bot.py)
 for more examples.
 
 Helpers
