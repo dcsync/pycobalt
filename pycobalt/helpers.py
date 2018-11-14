@@ -435,16 +435,18 @@ class ArgumentParser(argparse.ArgumentParser):
     console instead of stdout.
     """
 
-    def __init__(self, bid=None, *args, **kwargs):
+    def __init__(self, bid=None, event_log=False, *args, **kwargs):
         """
         With the exception of the `bid` argument all arguments are passed to
         `argparse.ArgumentParser`.
 
         :param bid: Print errors to this beacon's console (default: script
                     console)
+        :param event_log: Print errors to Event Log
         """
 
         self.bid = bid
+        self.event_log = event_log
 
         if 'prog' not in kwargs:
             # fix prog name
@@ -456,6 +458,8 @@ class ArgumentParser(argparse.ArgumentParser):
         if self.bid:
             # print to beacon console
             aggressor.berror(self.bid, message)
+        elif self.event_log:
+            aggressor.say('\n' + message)
         else:
             # print to script console
             engine.error(message)

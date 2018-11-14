@@ -41,6 +41,7 @@ PyCobalt includes the following modules:
   - [commands.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/commands.py): Script console command registration
   - [events.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/events.py): Event handler registration
   - [gui.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/gui.py): Context menu registration
+  - [bot.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/bot.py): Event Log bot toolkit
   - [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py):
     Assorted helper functions and classes to make writing scripts easier
   - [sharpgen.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py):
@@ -345,6 +346,43 @@ Aggressor functions for the same reason.
 The one downside to this is that you can't generate the menu labels dynamically
 from within the menu callbacks.
 
+Bot
+---
+
+[bot.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/bot.py)
+provides tools for registering Event Log bot commands.
+
+For example:
+
+    import pycobalt.bot as bot
+    import pycobalt.engine as engine
+
+    bot.set_prefix('!')
+    bot.set_triggers(bot.PRIVMSG, bot.PREFIX, bot.ADDRESSED)
+    bot.add_help()
+
+    @bot.command('test-command', 'Tests bot')
+    def _(*args):
+        for arg in args:
+            bot.say(arg)
+
+    engine.loop()
+
+Using the example:
+
+    event> !help test-command
+    10/19 10:21:01 <bot> test-command: Tests bot
+    Syntax: test-command(*args)
+
+    event> !test-command arg1 "arg 2" arg3
+    10/19 10:24:13 <bot> arg1
+    10/19 10:24:13 <bot> arg 2
+    10/19 10:24:13 <bot> arg3
+
+See
+[examples/bot.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/examples/bot.py)
+for more examples.
+
 Helpers
 -------
 
@@ -381,8 +419,8 @@ some of the functions available:
     output is compatible with Powershell's -EncodedCommand flag.
 
 There's a `helpers.ArgumentParser` class which extends
-`argparse.ArgumentParser` to support printing to the beacon console or script
-console. Here's an example using it with an alias:
+`argparse.ArgumentParser` to support printing to the beacon console, script
+console, or event log. Here's an example using it with an alias:
 
     @aliases.alias('outlook', 'Retrieve an outlook folder', 'See `outlook -h`')
     def _(bid, *args):
@@ -413,6 +451,9 @@ In the beacon console:
 
     beacon> outlook -z
     [-] unrecognized arguments: -z
+
+To use `helpers.ArgumentParser` with the event log pass `event_log=True` to the
+constructor. This is useful for creating bots.
 
 SharpGen
 --------
