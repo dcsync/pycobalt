@@ -121,6 +121,36 @@ def parse_ls(content):
 
     return files
 
+def recurse_ls(bid, directory, callback, depth=9999):
+    """
+    Recursively list files. Call callback(path) for each file.
+
+    :param bid: Beacon to list files on
+    :param directory: Directory to list
+    :param callback: Callback to call for each file
+    :param depth: Max depth to recurse
+    """
+
+    if not depth:
+        # max depth reached
+        return
+
+    def ls_callback(bid, directory, content):
+        engine.message('callback in: ' + directory)
+        files = parse_ls(content)
+        for f in files:
+            path = r'{}\{}'.format(directory, f['name'])
+
+            if f['type'] == 'D':
+                # recurse
+                engine.message('recursing: ' + path)
+                recurse_ls(bid, path, callback, depth=depth - 1)
+            else:
+                engine.message('calling for: ' + path)
+                callback(path)
+
+    aggressor.bls(bid, directory, ls_callback)
+
 def find_process(bid, proc_name, callback):
     """
     Find processes by name. Call callback with results.

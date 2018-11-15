@@ -400,6 +400,8 @@ some of the functions available:
   - `parse_ls(content)`: Parses the callback output of `bls`. Returns a list of
     dictionaries. Each dictionary represents a file with the following fields:
     `type` (D/F), `size` (in bytes), `modified` (date and time), and `name`.
+  - `recurse_ls(bid, directory, callback, depth=9999)`: Recursively list files
+    with `bls` and call `callback(path)` for each file.
   - `find_process(bid, proc_name, callback)`: Calls `bps` to find a process by
     name and calls `callback` with a list of matching processes (as returned
     by `parse_ps`).
