@@ -222,11 +222,9 @@ sub set_menu {
 	%menu = $1;
 
 	debug('setting up menu ' . %menu);
-	println();
 
 	sub menu_callback {
 		debug('in callback for ' . %menu);
-		println();
 
 		# Call the callback
 		if ('callback' in %menu) {
@@ -241,7 +239,6 @@ sub set_menu {
 			debug('children: ' . @children);
 			foreach $child (@children) {
 				debug('dealing with child ' . $child);
-				println();
 				set_menu($child);
 			}
 		}
