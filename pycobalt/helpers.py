@@ -27,6 +27,7 @@ import inspect
 import argparse
 import subprocess
 import random
+import string
 
 import pycobalt.utils as utils
 import pycobalt.engine as engine
@@ -188,7 +189,7 @@ def is_admin(bid):
     if aggressor.isadmin(bid):
         return True
 
-    user = aggressor.beacon_info(bid, 'user')
+    user = real_user(bid)
     if user.lower() == 'system':
         return True
 
@@ -222,19 +223,30 @@ def explorer_stomp(bid, fname):
 
     aggressor.btimestomp(bid, fname, r'c:/windows/explorer.exe')
 
-def upload_to(bid, local_file, remote_file):
+def upload_to(bid, local_file, remote_file, silent=False):
     """
     Upload local file to a specified remote destination
 
     :param bid: Beacon to use
     :param local_file: File to upload
     :param remote_file: Upload file to this destination
+    :param silent: Passed to `bupload_raw`
     """
 
     with open(local_file, 'rb') as fp:
         data = fp.read()
 
-    aggressor.bupload_raw(bid, remote_file, data, local_file)
+    aggressor.bupload_raw(bid, remote_file, data, local_file, silent=silent)
+
+def real_user(bid):
+    """
+    Get just the username of a beacon.
+
+    :param bid: Bid to check
+    :return: Username of beacon
+    """
+
+    return aggressor.beacon_info(bid)['user'].replace(' *', '')
 
 def guess_home(bid):
     """
@@ -244,7 +256,7 @@ def guess_home(bid):
     :return: Possible %userprofile% (home) directory
     """
 
-    return r'c:\users\{}'.format(aggressor.beacon_info(bid)['user'])
+    return r'c:\users\{}'.format(real_user(bid))
 
 def guess_temp(bid):
     """
