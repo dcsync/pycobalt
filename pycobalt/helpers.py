@@ -137,17 +137,14 @@ def recurse_ls(bid, directory, callback, depth=9999):
         return
 
     def ls_callback(bid, directory, content):
-        engine.message('callback in: ' + directory)
         files = parse_ls(content)
         for f in files:
             path = r'{}\{}'.format(directory, f['name'])
 
             if f['type'] == 'D':
                 # recurse
-                engine.message('recursing: ' + path)
                 recurse_ls(bid, path, callback, depth=depth - 1)
             else:
-                engine.message('calling for: ' + path)
                 callback(path)
 
     aggressor.bls(bid, directory, ls_callback)
@@ -258,12 +255,23 @@ def guess_home(bid):
 
     return r'c:\users\{}'.format(real_user(bid))
 
+def guess_appdata(bid):
+    """
+    Guess %appdata% directory based on beacon user
+
+    :param bid: Beacon to use
+    :return: Possible %appdata% directory
+    """
+
+    return r'{}\AppData\Roaming'.format(guess_home(bid))
+
+
 def guess_temp(bid):
     """
     Guess %temp% directory based on beacon user
 
     :param bid: Beacon to use
-    :return: Possible %temp$ directory
+    :return: Possible %temp% directory
     """
 
     return r'{}\AppData\Local\Temp'.format(guess_home(bid))
