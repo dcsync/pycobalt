@@ -265,6 +265,15 @@ def guess_appdata(bid):
 
     return r'{}\AppData\Roaming'.format(guess_home(bid))
 
+def guess_localappdata(bid):
+    """
+    Guess %localappdata% directory based on beacon user
+
+    :param bid: Beacon to use
+    :return: Possible %localappdata% directory
+    """
+
+    return r'{}\AppData\Local'.format(guess_home(bid))
 
 def guess_temp(bid):
     """
