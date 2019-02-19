@@ -464,6 +464,7 @@ sub python {
 	$handle = exec($script);
 	if (checkError($error)) {
 		msg("failed to execute script '" . $script . "': " . $error);
+		return $null;
 	}
 
 	# start the stderr handler
