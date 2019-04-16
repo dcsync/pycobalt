@@ -44,8 +44,6 @@ PyCobalt includes the following modules:
   - [bot.py](#bot): Event Log bot toolkit
   - [helpers.py](#helpers):
     Assorted helper functions and classes to make writing scripts easier
-  - [sharpgen.py](#sharpgen):
-	Helper functions for using [SharpGen](https://github.com/cobbr/SharpGen) with Cobalt Strike
 
 Head over to the [examples](#examples) section for more information about each module.
 
@@ -456,51 +454,6 @@ In the beacon console:
 
 To use `helpers.ArgumentParser` with the event log pass `event_log=True` to the
 constructor. This is useful for creating bots.
-
-SharpGen
---------
-
-[sharpgen.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py)
-provides helpers for compiling and executing C# code with
-[SharpGen](https://github.com/cobbr/SharpGen). It provides the following functions:
-
-  - `compile_file(source, ...)`: Compile a C# file. By default this creates a
-                                 temporary output file and returns its name.
-  - `compile(code, ...)`: Compile inline C# code. By default this creates a
-                          temporary output file and returns its name.
-  - `execute_file(bid, source, ...)`: Compile and execute a C# file.
-  - `execute(bid, code, ...)`: Compile and execute inline C# code.
-
-These functions have a number of shared keyword arguments. See the
-[`compile_file`](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py#L83)
-function's pydoc for the full list.
-
-You need a compiled version of SharpGen to use this module. By default it
-points to the repo copy (`pycobalt/third_party/SharpGen`). You can use that copy
-but it's a Git submodule so you'll need to initialize and build it first. To do
-that run:
-
-    git submodule init
-    git submodule update
-    cd third_party/SharpGen
-    dotnet build
-
-You can use your own copy of SharpGen by calling `sharpgen.set_location('<your
-copy>')` or by passing it on the `sharpgen_location=` parameter to any of the
-four compile/execute functions.
-
-Here's a basic usage example:
-
-    import pycobalt.sharpgen
-    sharpgen.set_location('/root/tools/SharpGen')
-
-    @aliases.alias('sharpgen-exec')
-    def _(bid, code):
-        sharpgen.execute(bid, code)
-
-See
-[examples/sharpgen.py](https://github.com/dcsync/pycobalt/tree/master/examples/sharpgen.py)
-for console commands and beacon aliases to go with each compile/execute function.
 
 Non-Primitive Objects
 ---------------------

@@ -1,4 +1,0 @@
-$pycobalt_path = script_resource('../aggressor');
-include($pycobalt_path . '/pycobalt.cna');
-
-python(script_resource('sharpgen.py'));
