@@ -3,25 +3,25 @@ if ($pycobalt_debug_on is $null) {
 }
 
 # Write debug message to console
-sub debug {
+sub _pycobalt_debug {
 	if ($pycobalt_debug_on) {
 		println('[pycobalt debug] ' . $1);
 	}
 }
 
 # Write message to console
-sub msg {
+sub _pycobalt_msg {
 	println('[pycobalt] ' . $1);
 }
 
 # Write error message to console
-sub error {
+sub _pycobalt_error {
 	println('[pycobalt error] ' . $1);
 }
 
 # Write error message to console and exit
-sub die {
-	error($1);
+sub _pycobalt_die {
+	_pycobalt_error($1);
 	exit();
 }
 
@@ -29,11 +29,11 @@ sub die {
 if (!$pycobalt_path) {
 	$pycobalt_path = script_resource();
 }
-debug('include path is: ' . $pycobalt_path);
+_pycobalt_debug('include path is: ' . $pycobalt_path);
 
 # Make sure json.cna exists
 if (!-exists ($pycobalt_path . '/json.cna')) {
-	die('could not find json.cna. check $pycobalt_path');
+	_pycobalt_die('could not find json.cna. check $pycobalt_path');
 }
 
 # Set $json_path for json.cna
@@ -48,18 +48,18 @@ include($pycobalt_path . '/json.cna');
 %pycobalt_objects = %();
 
 # Print a stacktrace (for debugging)
-sub stacktrace {
+sub _pycobalt_stacktrace {
 	local('@stack $frame');
 
 	@stack = [[Thread currentThread] getStackTrace];
-	debug('Stack size: ' . size(@stack));
+	_pycobalt_debug('Stack size: ' . size(@stack));
 	for $frame (@stack) {
-		debug($frame);
+		_pycobalt_debug($frame);
 	}
 }
 
 # Write a message to a script
-sub write_message {
+sub _pycobalt_write_message {
 	local('$handle $name $message %wrapper $marshalled');
 	$handle = $1;
 	$name = $2;
@@ -67,7 +67,7 @@ sub write_message {
 
 	if (-eof $handle) {
 		# Handle is closed
-		error("tried to write message to closed script handle");
+		_pycobalt_error("tried to write message to closed script handle");
 		return;
 	}
 
@@ -80,7 +80,7 @@ sub write_message {
 
 # Serialize non-primitive object references. This includes Java objects. Java
 # objects are opaque to the Python side.
-sub serialize_special {
+sub _pycobalt_serialize_special {
 	local('$arg $item $key $object_prefix $object_name @new_list %new_hash');
 
 	$arg = $1;
@@ -94,14 +94,14 @@ sub serialize_special {
 		# recurse lists
 		@new_list = @();
 		foreach $item ($arg) {
-			push(@new_list, serialize_special($item));
+			push(@new_list, _pycobalt_serialize_special($item));
 		}
 		return @new_list;
 	} else if ($arg isa typeOf(%())) {
 		# recurse hashes
 		%new_hash = %();
 		foreach $key => $item ($arg) {
-			%new_hash[$key] = serialize_special($item);
+			%new_hash[$key] = _pycobalt_serialize_special($item);
 		}
 		return %new_hash;
 	} else if ($arg is $null) {
@@ -110,9 +110,9 @@ sub serialize_special {
 		# TODO identityHashCode isn't quite safe enough. we need a better way to do this
 		$object_name = [[$arg getClass] getName] . '_' . [System identityHashCode: $arg];
 		if ($object_name in %pycobalt_objects) {
-			debug('using existing java object named ' . $object_name);
+			_pycobalt_debug('using existing java object named ' . $object_name);
 		} else {
-			debug('adding java object ' . $arg . ' with name ' . $object_name);
+			_pycobalt_debug('adding java object ' . $arg . ' with name ' . $object_name);
 			%pycobalt_objects[$object_name] = $arg;
 		}
 
@@ -121,7 +121,7 @@ sub serialize_special {
 }
 
 # Turn a serialized object handle into the object name
-sub resolve_object_handle {
+sub _pycobalt_resolve_object_handle {
 	local('$object_prefix $object_name $handle');
 
 	$handle = $1;
@@ -136,7 +136,7 @@ sub resolve_object_handle {
 }
 
 # Deserialize non-primitive object references and Python callbacks.
-sub deserialize_special {
+sub _pycobalt_deserialize_special {
 	local('$arg $item $key $object_prefix $handle $object_name');
 	local('$object $callback_prefix $callback @new_list %new_hash @args');
 	local('$data');
@@ -154,10 +154,10 @@ sub deserialize_special {
 			$object_name = substr($arg, strlen($object_prefix));
 			$object = %pycobalt_objects[$object_name];
 			if (!$object) {
-				msg('could not find object ' . $object_name);
+				_pycobalt_msg('could not find object ' . $object_name);
 				return $arg;
 			}
-			debug('found object: ' . $object_name . ' - ' . $object);
+			_pycobalt_debug('found object: ' . $object_name . ' - ' . $object);
 			return $object;
 		} else if (left($arg, strlen($callback_prefix)) eq $callback_prefix) {
 			# it's a callback
@@ -167,19 +167,19 @@ sub deserialize_special {
 				@args = @_;
 				# XXX stack is already overflowing when there are menu options and such
 				# could possibly fork() here to create a new thread/stack
-				#@args = serialize_special(@_);
-				debug('calling callback: ' . $callback_name);
+				#@args = _pycobalt_serialize_special(@_);
+				_pycobalt_debug('calling callback: ' . $callback_name);
 				%info = %(name => $callback_name, args => @args);
-				write_message($callback_handle, 'callback', %info);
+				_pycobalt_write_message($callback_handle, 'callback', %info);
 			}, $callback_handle => $handle, \$callback_name);
 
 			return $callback;
 		} else if (left($arg, strlen($bytes_prefix)) eq $bytes_prefix) {
 			# it's a bytes object
 			$data = substr($arg, strlen($bytes_prefix));
-			debug('decoding bytes object: ' . $arg);
+			_pycobalt_debug('decoding bytes object: ' . $arg);
 			$data = [[java.util.Base64 getDecoder] decode: $data];
-			debug('decoded to: ' . $data);
+			_pycobalt_debug('decoded to: ' . $data);
 			return $data;
 		} else {
 			return $arg;
@@ -188,14 +188,14 @@ sub deserialize_special {
 		# recurse lists
 		@new_list = @();
 		foreach $item ($arg) {
-			push(@new_list, deserialize_special($item, $handle));
+			push(@new_list, _pycobalt_deserialize_special($item, $handle));
 		}
 		return @new_list;
 	} else if ($arg isa typeOf(%())) {
 		# recurse hashes
 		%new_hash = %();
 		foreach $key => $item ($arg) {
-			%new_hash[$key] = deserialize_special($item, $handle);
+			%new_hash[$key] = _pycobalt_deserialize_special($item, $handle);
 		}
 		return %new_hash;
 	} else {
@@ -216,56 +216,56 @@ sub deserialize_special {
 #   - item
 #   - insert_menu
 #   - separator
-sub set_menu {
+sub _pycobalt_set_menu {
 	local('%menu $child $callback @children');
 
 	%menu = $1;
 
-	debug('setting up menu ' . %menu);
+	_pycobalt_debug('setting up menu ' . %menu);
 
 	sub menu_callback {
-		debug('in callback for ' . %menu);
+		_pycobalt_debug('in callback for ' . %menu);
 
 		# Call the callback
 		if ('callback' in %menu) {
 			$callback = %menu['callback'];
-			debug('calling callback ' . $callback);
+			_pycobalt_debug('calling callback ' . $callback);
 			invoke($callback, @_);
 		}
 
 		# Deal with children
 		if ('children' in %menu) {
 			@children = %menu['children'];
-			debug('children: ' . @children);
+			_pycobalt_debug('children: ' . @children);
 			foreach $child (@children) {
-				debug('dealing with child ' . $child);
-				set_menu($child);
+				_pycobalt_debug('dealing with child ' . $child);
+				_pycobalt_set_menu($child);
 			}
 		}
 	}
 
 	if (%menu['type'] eq 'popup') {
-		debug('making popup');
+		_pycobalt_debug('making popup');
 		popup(%menu['name'], lambda(&menu_callback, \%menu));
 	} else if (%menu['type'] eq 'menu') {
-		debug('making menu');
+		_pycobalt_debug('making menu');
 		menu(%menu['name'], lambda(&menu_callback, \%menu));
 	} else if (%menu['type'] eq 'item') {
-		debug('making item');
+		_pycobalt_debug('making item');
 		item(%menu['name'], lambda(&menu_callback, \%menu));
 	} else if (%menu['type'] eq 'insert_menu') {
-		debug('making insert');
+		_pycobalt_debug('making insert');
 		insert_menu(%menu['name'], $1, $2, $3, $4, $5, $6);
 	} else if (%menu['type'] eq 'separator') {
-		debug('making separator');
+		_pycobalt_debug('making separator');
 		separator();
 	} else {
-		error('invalid menu type: ' . %menu['type']);
+		_pycobalt_error('invalid menu type: ' . %menu['type']);
 	}
 }
 
 # Print script message to console
-sub script_message {
+sub _pycobalt_script_message {
 	local('$script $message $script_basename');
 
 	$script = $1;
@@ -277,7 +277,7 @@ sub script_message {
 }
 
 # Print script error message to console
-sub script_error {
+sub _pycobalt_script_error {
 	local('$script $message $script_basename');
 
 	$script = $1;
@@ -289,7 +289,7 @@ sub script_error {
 }
 
 # Print script debug message to console
-sub script_debug {
+sub _pycobalt_script_debug {
 	local('$script $message $script_basename');
 
 	$script = $1;
@@ -301,7 +301,7 @@ sub script_debug {
 }
 
 # Handle a message
-sub handle_message {
+sub _pycobalt_handle_message {
 	local('$name $message $func $silent $fork');
 	local('$i $ret %menu');
 
@@ -312,11 +312,11 @@ sub handle_message {
 	if ($name eq 'fork') {
 		return true;
 	} else if ($name eq 'message') {
-		script_message($script, $message);
+		_pycobalt_script_message($script, $message);
 	} else if ($name eq 'error') {
-		script_error($script, $message);
+		_pycobalt_script_error($script, $message);
 	} else if ($name eq 'debug') {
-		script_debug($script, $message);
+		_pycobalt_script_debug($script, $message);
 	} else if ($name eq 'call') {
 		# call a function
 		$func = $message['name'];
@@ -340,70 +340,70 @@ sub handle_message {
 		$closure_text .= '$' . $i . ');';
 
 		# this deserializes special objects and callbacks and calls the closure
-		sub closure_caller {
+		sub _pycobalt_closure_caller {
 			# deserialize special objects
 			# must be performed here so that the callback closures are created
 			# in this thread.
-			@args = deserialize_special(@args, $handle);
+			@args = _pycobalt_deserialize_special(@args, $handle);
 
-			debug('closure call: ' . $closure_text);
-			debug('closure args: ' . @args);
+			_pycobalt_debug('closure call: ' . $closure_text);
+			_pycobalt_debug('closure args: ' . @args);
 
 			$closure = compile_closure($closure_text);
 			$ret = invoke($closure, @args);
-			$ret = serialize_special($ret);
+			$ret = _pycobalt_serialize_special($ret);
 
 			if ($sync) {
 				# write return value
-				write_message($handle, 'return', $ret);
+				_pycobalt_write_message($handle, 'return', $ret);
 			}
 		}
 
 		# call it
 		if ($fork) {
 			# fork it and call it
-			debug('forking before calling function');
-			fork(&closure_caller, \$closure_text, \@args, \$handle,
+			_pycobalt_debug('forking before calling function');
+			fork(&_pycobalt_closure_caller, \$closure_text, \@args, \$handle,
 				 \$pycobalt_path, \$json_path, \%pycobalt_objects,
 				 \$pycobalt_debug_on, \$sync);
 		} else {
 			# call it in this thread, and send return value
-			closure_caller();
+			_pycobalt_closure_caller();
 		}
 	} else if ($name eq 'menu') {
 		# create a menu
-		debug('menu call: ' . $message);
-		%menu = deserialize_special($message, $handle);
-		debug('deserialized: ' . %menu);
-		set_menu(%menu);
+		_pycobalt_debug('menu call: ' . $message);
+		%menu = _pycobalt_deserialize_special($message, $handle);
+		_pycobalt_debug('deserialized: ' . %menu);
+		_pycobalt_set_menu(%menu);
 	} else if ($name eq 'delete') {
 		# remove serialization reference to object. if it's the only reference
 		# the object will be deleted.
 		local('$handle')
-		$handle = resolve_object_handle($message);
+		$handle = _pycobalt_resolve_object_handle($message);
 
 		if (!$handle) {
-			debug('tried to delete something that is not an object: ' . $message)
+			_pycobalt_debug('tried to delete something that is not an object: ' . $message)
 			return;
 		}
 
 		if ($message in %pycobalt_objects) {
-			debug('deleting object: ' . $handle);
+			_pycobalt_debug('deleting object: ' . $handle);
 			%pycobalt_objects[$handle] = $null;
 		} else {
-			debug('tried to delete non-existent object: ' . $handle)
+			_pycobalt_debug('tried to delete non-existent object: ' . $handle)
 		}
 	} else if ($name eq 'eval') {
 		# eval some code
 		eval($message);
 	} else {
-		msg("unhandled message of type $name - " . $message);
+		_pycobalt_msg("unhandled message of type $name - " . $message);
 	}
 	return false;
 }
 
 # Get process stderr
-sub get_stderr {
+sub _pycobalt_get_stderr {
 	local('$handle $source $stream $stderr');
 
 	$handle = $1;
@@ -417,35 +417,35 @@ sub get_stderr {
 }
 
 # Per-script stderr thread. Just prints stderr to Script Console.
-sub stderr_callback {
+sub _pycobalt_stderr_callback {
 	local('$stderr $line');
 
-	$stderr = get_stderr($handle);
+	$stderr = _pycobalt_get_stderr($handle);
 
 	while $line (readln($stderr)) {
 		# print error message
-		script_error($script, $line);
+		_pycobalt_script_error($script, $line);
 	}
 }
 
 # Per-script control thread
-sub thread_callback {
+sub _pycobalt_thread_callback {
 	local('$line $obj');
 
 	while $line (readln($handle)) {
 		$obj = from_json($line);
 
 		if ($obj && 'name' in $obj && 'message' in $obj) {
-			if (handle_message($handle, $obj['name'], $obj['message'])) {
+			if (_pycobalt_handle_message($handle, $obj['name'], $obj['message'])) {
 				return true;
 			}
 		} else {
 			# it's not a control message so assume it's a message
-			script_message($script, $line);
+			_pycobalt_script_message($script, $line);
 		}
 	}
 
-	msg('closing script ' . $script);
+	_pycobalt_msg('closing script ' . $script);
 
 	if (!-eof $handle) {
 		closef($handle);
@@ -460,22 +460,22 @@ sub python {
 
 	$script = $1;
 
-	msg('executing script ' . $script);
+	_pycobalt_msg('executing script ' . $script);
 	$handle = exec($script);
 	if (checkError($error)) {
-		msg("failed to execute script '" . $script . "': " . $error);
+		_pycobalt_msg("failed to execute script '" . $script . "': " . $error);
 		return $null;
 	}
 
 	# start the stderr handler
-	$stderr_thread = fork(&stderr_callback, \$handle, \$script);
+	$stderr_thread = fork(&_pycobalt_stderr_callback, \$handle, \$script);
 
 	# run without forking first so we can register context menu stuff
 	# TODO make this time out so we don't freeze up cobaltstrike if the script
 	# loops without calling engine.fork()
-	if (thread_callback()) {
+	if (_pycobalt_thread_callback()) {
 		# then fork it
-		$script_thread = fork(&thread_callback, \$handle, \$script, \%pycobalt_objects,
+		$script_thread = fork(&_pycobalt_thread_callback, \$handle, \$script, \%pycobalt_objects,
 			 \$pycobalt_path, \$json_path, \$pycobalt_debug_on);
 	}
 
@@ -498,5 +498,5 @@ sub python_eval {
 	$handle = $1;
 	$code = $2;
 
-	write_message($handle, 'eval', $code);
+	_pycobalt_write_message($handle, 'eval', $code);
 }
