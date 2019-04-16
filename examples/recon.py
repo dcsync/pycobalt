@@ -14,7 +14,7 @@ import pycobalt.aliases as aliases
 import pycobalt.aggressor as aggressor
 import pycobalt.callbacks as callbacks
 
-@aliases.alias('basic', 'Perform some basic initial recon')
+@aliases.alias('initial-recon', 'Perform some basic initial recon')
 def _(bid):
     command = textwrap.dedent("""
         echo "--- Host ---"
@@ -51,7 +51,7 @@ def _(bid):
     aggressor.btask(bid, 'Tasked beacon to get environmental variables')
     aggressor.bpowerpick(bid, command, silent=True)
 
-@aliases.alias('network', 'Perform some basic network-related recon')
+@aliases.alias('network-recon', 'Perform some basic network-related recon')
 def _(bid):
     command = textwrap.dedent("""
         echo "--- Hostname ---"
@@ -87,7 +87,7 @@ def _(bid):
     aggressor.btask(bid, 'Tasked beacon to get patch status')
     aggressor.bpowerpick(bid, command, silent=True)
 
-@aliases.alias('domain', 'Get basic domain info')
+@aliases.alias('domain-recon', 'Get basic domain info')
 def _(bid):
     command = textwrap.dedent(r"""
         echo "--- Domain ---"
