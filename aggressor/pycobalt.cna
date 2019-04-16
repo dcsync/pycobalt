@@ -73,7 +73,7 @@ sub _pycobalt_write_message {
 
 	%wrapper = %(name => $name, message => $message);
 	$marshalled = '';
-	$marshalled = tostring(new_jsonobject(%wrapper)) . "\n";
+	$marshalled = tostring(json_new_jsonobject(%wrapper)) . "\n";
 	#debug('sending ' . $marshalled);
 	writeb($handle, $marshalled);
 }
@@ -433,7 +433,7 @@ sub _pycobalt_thread_callback {
 	local('$line $obj');
 
 	while $line (readln($handle)) {
-		$obj = from_json($line);
+		$obj = json_loads($line);
 
 		if ($obj && 'name' in $obj && 'message' in $obj) {
 			if (_pycobalt_handle_message($handle, $obj['name'], $obj['message'])) {

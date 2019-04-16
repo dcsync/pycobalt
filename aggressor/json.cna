@@ -22,7 +22,7 @@ $class_Map = $null;
 $class_String = $null;
 
 # Explicit toString
-sub tostring {
+sub _json_tostring {
 	local('$obj');
 
 	$obj = $1;
@@ -34,7 +34,7 @@ sub tostring {
 # implementation changes by Oracle.
 #
 # This makes a new loader which is capable of loading the json library
-sub new_json_loader {
+sub _json_new_loader {
 	local('$json_loader $json_jar_file $json_url');
 
 	$json_jar_file = $json_path . '/jars/json.jar';
@@ -50,7 +50,7 @@ sub new_json_loader {
 
 # Make a new class by name using the json loader. Caller must initialize
 # $json_loader.
-sub new_class {
+sub _json_new_class {
 	local('$name');
 
 	$name = $1;
@@ -59,31 +59,31 @@ sub new_class {
 }
 
 # Initialize $json_loader and the $class_* variables if needed.
-sub init_json_loader {
+sub _json_init_loader {
 	if (!$json_loader) {
-		$json_loader = new_json_loader();
+		$json_loader = _json_new_loader();
 	}
 	if (!$class_JSONObject) {
-		$class_JSONObject = new_class('org.json.JSONObject');
+		$class_JSONObject = _json_new_class('org.json.JSONObject');
 	}
 	if (!$class_JSONArray) {
-		$class_JSONArray = new_class('org.json.JSONArray');
+		$class_JSONArray = _json_new_class('org.json.JSONArray');
 	}
 	if (!$class_Map) {
-		$class_Map = new_class('java.util.Map');
+		$class_Map = _json_new_class('java.util.Map');
 	}
 	if (!$class_String) {
-		$class_String = new_class('java.lang.String');
+		$class_String = _json_new_class('java.lang.String');
 	}
 }
 
 # Make a new JSONObject object
-sub new_jsonobject {
+sub json_new_jsonobject {
 	local('$arg $ctor $casted');
 
 	$arg = $1;
 
-	init_json_loader();
+	_json_init_loader();
 	if ($arg) {
 		if ($arg isa ^String) {
 			# string constructor
@@ -106,12 +106,12 @@ sub new_jsonobject {
 }
 
 # Make a new JSONArray object
-sub new_jsonarray {
+sub json_new_jsonarray {
 	local('$arg $ctor');
 
 	$arg = $1;
 
-	init_json_loader();
+	_json_init_loader();
 	if ($arg) {
 		$ctor = [$class_JSONArray getDeclaredConstructor: @($class_String)];
 		return [$ctor newInstance: @($arg)];
@@ -121,7 +121,7 @@ sub new_jsonarray {
 }
 
 # Convert JSONObjects and JSONArrays to native types
-sub convert_json {
+sub json_native {
 	local('$obj $class_name %ret @ret $i $key');
 
 	$obj = $1;
@@ -130,13 +130,13 @@ sub convert_json {
 	if ($class_name eq 'org.json.JSONObject') {
 		%ret = %();
 		foreach $key (json_keys($obj)) {
-			%ret[$key] = convert_json(json_value($obj, $key));
+			%ret[$key] = json_native(json_value($obj, $key));
 		}
 		return %ret;
 	} else if ($class_name eq 'org.json.JSONArray') {
 		@ret = @();
 		for ($i = 0; $i < json_length($obj); $i++) {
-			push(@ret, convert_json(json_value($obj, $i)));
+			push(@ret, json_native(json_value($obj, $i)));
 		}
 		return @ret;
 	} else {
@@ -145,28 +145,28 @@ sub convert_json {
 }
 
 # Convert json to object
-sub from_json {
+sub json_loads {
 	local('$json $obj');
 
 	$json = $1;
 
-	$obj = new_jsonobject($json);
+	$obj = json_new_jsonobject($json);
 	if ($obj) {
-		return convert_json($obj);
+		return json_native($obj);
 	} else {
 		return $null;
 	}
 }
 
 # Convert object to json
-sub to_json {
+sub json_dumps {
 	local('$item $obj');
 
 	$item = $1;
 
-	$obj = new_jsonobject($item);
+	$obj = json_new_jsonobject($item);
 	if ($obj) {
-		return tostring($obj);
+		return _json_tostring($obj);
 	} else {
 		return $null;
 	}
@@ -212,12 +212,12 @@ sub json_length {
 }
 
 # Init for including thread
-init_json_loader();
+_json_init_loader();
 
 # Test stuff
 $json_test = false;
 if ($json_test) {
-	$obj = new_jsonobject();
+	$obj = json_new_jsonobject();
 	[$obj put: 'a', 'b'];
 	println($obj);
 
@@ -226,24 +226,24 @@ if ($json_test) {
 	println(json_keys($obj));
 	println(json_value($obj, 'a'));
 
-	$obj2 = new_jsonobject('{"t": "z"}');
+	$obj2 = json_new_jsonobject('{"t": "z"}');
 	println($obj2);
 
-	$obj2 = new_jsonarray('[1]');
+	$obj2 = json_new_jsonarray('[1]');
 	println($obj2);
 
 	$v2 = [$obj stringToValue: '[2]'];
 	println($v2);
 
-	$obj = new_jsonobject(%('ll' => 'bb'));
-	println(tostring($obj));
+	$obj = json_new_jsonobject(%('ll' => 'bb'));
+	println(_json_tostring($obj));
 	println(json_keys($obj));
 
-	$obj = new_jsonobject('{1: {"b": "c"}}');
+	$obj = json_new_jsonobject('{1: {"b": "c"}}');
 	println(json_value($obj, 1));
 
-	println('from_json tests');
-	println(from_json('{"a": 1}'));
-	println(from_json('{"b": [1, 2, 3]}'));
-	println(convert_json(new_jsonarray('[1, 2]')));
+	println('json_loads tests');
+	println(json_loads('{"a": 1}'));
+	println(json_loads('{"b": [1, 2, 3]}'));
+	println(json_native(json_new_jsonarray('[1, 2]')));
 }
