@@ -43,7 +43,7 @@ def register(name, callback, short_help=None, long_help=None):
                     "Caught Python exception while executing alias '{}': {}\n    See Script Console for more details.".format(name, str(e)))
                 raise e
         else:
-            syntax = '{}{}'.format(name, utils.signature(callback, trim=1))
+            syntax = '{} {}'.format(name, utils.signature_command(callback, trim=1))
             aggressor.berror(bid, "Syntax: " + syntax)
             engine.error("Invalid number of arguments passed to alias '{}'. Syntax: {}".format(name, syntax))
 
@@ -55,7 +55,7 @@ def register(name, callback, short_help=None, long_help=None):
         long_help = ''
         if short_help:
             long_help += short_help + '\n\n'
-        long_help += 'Syntax: {}{}'.format(name, utils.signature(callback, trim=1))
+        long_help += 'Syntax: {} {}'.format(name, utils.signature_command(callback, trim=1))
 
     if not short_help:
         short_help = 'Custom python command'

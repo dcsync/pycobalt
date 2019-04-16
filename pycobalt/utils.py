@@ -61,6 +61,37 @@ def signature(func, trim=0):
     sig = sig.replace(parameters=params)
     return str(sig)
 
+def signature_command(func, trim=0):
+    """
+    Get stringy function argument signature, in unix command form
+
+    '(a, b, c=None, *d)' turns into 'a b [c=None] [d...]'
+
+    :param func: Function to get signature for
+    :param trim: Trim N arguments from front
+    :return: Stringified function argument signature
+    """
+
+    sig = inspect.signature(func)
+    params = list(sig.parameters.values())[trim:]
+
+    parsed = []
+    for param in params:
+        if param.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD:
+            # arg or arg=None
+            if param.default == param.empty:
+                # no default
+                parsed.append(param.name)
+            else:
+                # default
+                parsed.append('[{}={}]'.format(param.name, str(param.default)))
+        elif param.kind == inspect.Parameter.VAR_POSITIONAL:
+            # *arg
+            parsed.append('[{}...]'.format(param.name))
+
+    return ' '.join(parsed)
+
+
 def func():
     """
     Get function object of caller
