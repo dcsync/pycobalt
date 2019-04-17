@@ -3,15 +3,15 @@ PyCobalt
 
 PyCobalt is a Python API for Cobalt Strike.
 
-Usage
-=====
+Quick Start
+===========
 
-PyCobalt comes in two parts: a Python library and an Aggressor library.
+First you're going to install the PyCobalt Python library. To do that run
+`python3 setup.py install`. If you need more installation help head over to the
+[Installation](#installation) section.
 
-Python Side
------------
-
-A Python script for PyCobalt looks like this:
+Now you're ready to start writing PyCobalt scripts. A Python script for
+PyCobalt looks like this:
 
     #!/usr/bin/env python3
 
@@ -27,13 +27,56 @@ A Python script for PyCobalt looks like this:
     # read commands from cobaltstrike. must be called last
     engine.loop()
 
-`engine.loop()` tells PyCobalt to read commands from Cobalt Strike. It's
-only necessary if your script uses callbacks (for aliases, events, etc).
+You need to execute this Python script from an Aggressor script. An Aggressor
+script for PyCobalt looks like this:
 
-Fatal runtime exceptions and Python parser errors will show up in the script
-console.
+    $pycobalt_path = '/root/pycobalt/aggressor';
+    include($pycobalt_path . '/pycobalt.cna');
+    python(script_resource('example.py'));
 
-PyCobalt includes the following modules:
+It's necessary to set the `$pycobalt_path` variable so that PyCobalt can find
+its dependencies.
+
+Now load this Aggressor script into Cobalt Strike. Open up the Cobalt Strike
+Script Console and you'll see this:
+
+    [pycobalt] Executing script /root/pycobalt/example.py
+
+PyCobalt comes with some Script Console commands:
+
+    aggressor> python-list
+    [pycobalt] Running scripts:
+     -  /root/pycobalt/example.py
+
+    aggressor> python-stop /root/pycobalt/example.py
+    [pycobalt] Asking script to stop: /root/pycobalt/example.py
+    [pycobalt] Script process exited: /root/pycobalt/example.py
+
+    aggressor> python /root/pycobalt/example.py
+    [pycobalt] Executing script /root/pycobalt/example.py
+
+    aggressor> python-stop-all
+    [pycobalt] Asking script to stop: /root/pycobalt/example.py
+    [pycobalt] Script process exited: /root/pycobalt/example.py
+
+When you reload your Aggressor script you should explicitly stop the Python
+scripts first. Otherwise they'll run forever doing nothing.
+
+    aggressor> python-stop-all
+    [pycobalt] Asking script to stop: /root/pycobalt/example.py
+    [pycobalt] Script process exited: /root/pycobalt/example.py
+
+    aggressor> reload example.cna
+    [pycobalt] Executing script /root/pycobalt/example.py
+
+For these commands to work properly you can only call PyCobalt in one Aggressor
+script. Personally I have a single all.cna file with a bunch of calls to
+`python()` and  `include()`.
+
+PyCobalt Python Library
+=======================
+
+PyCobalt includes several Python modules. Here's the full list, with links to examples:
 
   - [engine.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/engine.py): Main communication code
   - [aggressor.py](#aggressor): Stubs for calling Aggressor functions
@@ -41,52 +84,9 @@ PyCobalt includes the following modules:
   - [commands.py](#commands): Script console command registration
   - [events.py](#events): Event handler registration
   - [gui.py](#gui): Context menu registration
-  - [bot.py](#bot): Event Log bot toolkit
   - [helpers.py](#helpers):
     Assorted helper functions and classes to make writing scripts easier
-
-Head over to the [examples](#examples) section for more information about each module.
-
-Cobalt Strike Side
-------------------
-
-An Aggressor script for PyCobalt looks like this:
-
-    $pycobalt_path = '/root/tools/pycobalt/aggressor';
-    include($pycobalt_path . '/pycobalt.cna');
-    python(script_resource('my_script.py'));
-
-It's necessary to set the `$pycobalt_path` variable so that PyCobalt can find
-its dependencies.
-
-Installation
-============
-
-Python Side
------------
-
-Run `setup.py install` to install the PyCobalt python library.
-
-Or you can run it straight out of the repo if you're familiar with
-[PYTHONPATH](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH).
-
-Cobalt Strike Side
-------------------
-
-The Aggressor library is in the
-[aggressor](https://github.com/dcsync/pycobalt/tree/master/aggressor)
-directory. it's also installed by `setup.py` at
-`/usr/lib/python-*/site-packages/pycobalt-*/aggressor`.
-
-You can include pycobalt.cna straight out of there. It comes with its
-dependencies and all. See the [usage](#usage) section for more info.
-
-PyCobalt depends on the
-[org.json](https://mvnrepository.com/artifact/org.json/json) Java library. A
-copy is included in this repo at
-[aggressor/jars/json.jar](https://github.com/dcsync/pycobalt/tree/master/aggressor/jars).
-You can optionally replace `json.jar` with a more trusted copy. It's PyCobalt's
-only binary dependency.
+  - [bot.py](#bot): Event Log bot toolkit
 
 Examples
 ========
@@ -502,3 +502,32 @@ You can also eval arbitrary Sleep code:
 
 `engine.eval` doesn't perform any sort of parameter marshalling or callback
 serialization.
+
+Installation
+============
+
+Python Side
+-----------
+
+Run `setup.py install` to install the PyCobalt python library.
+
+Or you can run it straight out of the repo if you're familiar with
+[PYTHONPATH](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH).
+
+Cobalt Strike Side
+------------------
+
+The Aggressor library is in the
+[aggressor](https://github.com/dcsync/pycobalt/tree/master/aggressor)
+directory. It's also installed by `setup.py` at
+`/usr/lib/python-*/site-packages/pycobalt-*/aggressor`.
+
+You can include pycobalt.cna straight out of the repo. It comes with its
+dependencies and all.
+
+PyCobalt depends on the
+[org.json](https://mvnrepository.com/artifact/org.json/json) Java library. A
+copy is included in this repo at
+[aggressor/jars/json.jar](https://github.com/dcsync/pycobalt/tree/master/aggressor/jars).
+You can optionally replace `json.jar` with a more trusted copy. It's PyCobalt's
+only binary dependency.
