@@ -47,6 +47,10 @@ include($pycobalt_path . '/json.cna');
 # { name: handle }
 %_pycobalt_objects = %();
 
+# For managing running scripts
+# { file: handle }
+%_pycobalt_handles = %();
+
 # Print a stacktrace (for debugging)
 sub _pycobalt_stacktrace {
 	local('@stack $frame');
@@ -61,6 +65,7 @@ sub _pycobalt_stacktrace {
 # Write a message to a script
 sub _pycobalt_write_message {
 	local('$handle $name $message %wrapper $marshalled');
+
 	$handle = $1;
 	$name = $2;
 	$message = $3;
@@ -312,11 +317,11 @@ sub _pycobalt_handle_message {
 	if ($name eq 'fork') {
 		return true;
 	} else if ($name eq 'message') {
-		_pycobalt_script_message($script, $message);
+		_pycobalt_script_message($_pycobalt_script, $message);
 	} else if ($name eq 'error') {
-		_pycobalt_script_error($script, $message);
+		_pycobalt_script_error($_pycobalt_script, $message);
 	} else if ($name eq 'debug') {
-		_pycobalt_script_debug($script, $message);
+		_pycobalt_script_debug($_pycobalt_script, $message);
 	} else if ($name eq 'call') {
 		# call a function
 		$func = $message['name'];
@@ -420,11 +425,11 @@ sub _pycobalt_get_stderr {
 sub _pycobalt_stderr_callback {
 	local('$stderr $line');
 
-	$stderr = _pycobalt_get_stderr($handle);
+	$stderr = _pycobalt_get_stderr($_pycobalt_handle);
 
 	while $line (readln($stderr)) {
 		# print error message
-		_pycobalt_script_error($script, $line);
+		_pycobalt_script_error($_pycobalt_script, $line);
 	}
 }
 
@@ -432,66 +437,137 @@ sub _pycobalt_stderr_callback {
 sub _pycobalt_thread_callback {
 	local('$line $obj');
 
-	while $line (readln($handle)) {
+	while $line (readln($_pycobalt_handle)) {
 		$obj = json_loads($line);
 
 		if ($obj && 'name' in $obj && 'message' in $obj) {
-			if (_pycobalt_handle_message($handle, $obj['name'], $obj['message'])) {
+			if (_pycobalt_handle_message($_pycobalt_handle, $obj['name'], $obj['message'])) {
 				return true;
 			}
 		} else {
 			# it's not a control message so assume it's a message
-			_pycobalt_script_message($script, $line);
+			_pycobalt_script_message($_pycobalt_script, $line);
 		}
 	}
 
-	_pycobalt_msg('Closing script ' . $script);
+	_pycobalt_msg('Script process exited: ' . $_pycobalt_script);
 
-	if (!-eof $handle) {
-		closef($handle);
+	if (!-eof $_pycobalt_handle) {
+		closef($_pycobalt_handle);
 	}
 
 	return false;
 }
 
+# Return a filename for a handle
+sub python_handle_to_file {
+	local('$find_handle $file $handle');
+
+	$find_handle = $1;
+
+	foreach $file => $handle (%_pycobalt_handles) {
+		if ($find_handle eq $handle) {
+			return $file;
+		}
+	}
+
+	return $null;
+}
+
+# Return handle for a filename
+sub python_file_to_handle {
+	local('$find_name');
+
+	$find_name = $1;
+
+	if ($find_name in %_pycobalt_handles) {
+		return %_pycobalt_handles[$find_name];
+	} else {
+		return $null;
+	}
+}
+
 # Start a Python script
 sub python {
-	local('$error $stderr_thread $script_thread');
+	local('$error $stderr_thread $script_thread $existing_handle');
 
-	$script = $1;
+	$_pycobalt_script = $1;
 
-	_pycobalt_msg('Executing script ' . $script);
-	$handle = exec($script);
+	# check if it's already running
+	$existing_handle = python_file_to_handle($_pycobalt_script);
+	if ($existing_handle) {
+		_pycobalt_msg($_pycobalt_script . ' is already running. Restarting.');
+		python_stop($existing_handle);
+	}
+
+	# execute it
+	_pycobalt_msg('Executing script ' . $_pycobalt_script);
+	$_pycobalt_handle = exec($_pycobalt_script);
 	if (checkError($error)) {
-		_pycobalt_msg("Failed to execute script '" . $script . "': " . $error);
+		_pycobalt_msg("Failed to execute script '" . $_pycobalt_script . "': " . $error);
 		return $null;
 	}
 
 	# start the stderr handler
-	$stderr_thread = fork(&_pycobalt_stderr_callback, \$handle, \$script);
+	$stderr_thread = fork(&_pycobalt_stderr_callback, \$_pycobalt_handle, \$_pycobalt_script);
 
 	# run without forking first so we can register context menu stuff
 	# TODO make this time out so we don't freeze up cobaltstrike if the script
 	# loops without calling engine.fork()
 	if (_pycobalt_thread_callback()) {
 		# then fork it
-		$script_thread = fork(&_pycobalt_thread_callback, \$handle, \$script, \%_pycobalt_objects,
+		$script_thread = fork(&_pycobalt_thread_callback, \$_pycobalt_handle, \$_pycobalt_script, \%_pycobalt_objects,
 			 \$pycobalt_path, \$json_path, \$pycobalt_debug_on);
 	}
 
-	return $handle;
+	%_pycobalt_handles[$_pycobalt_script] = $_pycobalt_handle;
+
+	return $_pycobalt_handle;
 }
 
-# Stop a Python script
+# Stop a Python script with its handle
 sub python_stop {
-	local('$handle');
+	local('$handle $file');
 
 	$handle = $1;
 
-	closef($handle);
+	$file = python_handle_to_file($handle);
+	if ($file) {
+		_pycobalt_msg("Asking script to stop: " . $file);
+		_pycobalt_write_message($handle, 'stop');
+		remove(%_pycobalt_handles, $handle);
+		return true;
+	} else {
+		_pycobalt_error("Called python_stop on an unrecognized handle");
+		return false;
+	}
 }
 
-# Eval arbitrary code within a Python script
+# Stop a Python script with its filename
+# The filename must exactly match the filename passed to python()
+sub python_stop_file {
+	local('$handle $handle $file');
+
+	$file = $1;
+
+	$handle = python_file_to_handle($file);
+	if ($handle) {
+		python_stop($handle);
+	} else {
+		_pycobalt_error("Didn't find a handle for " . $file);
+	}
+}
+
+# Stop all Python scripts
+sub python_stop_all {
+	local('$handle');
+
+	foreach $handle (values(%_pycobalt_handles)) {
+		python_stop($handle);
+	}
+}
+
+# Eval arbitrary code within the context of a Python script
 sub python_eval {
 	local('$handle $code');
 
@@ -499,4 +575,61 @@ sub python_eval {
 	$code = $2;
 
 	_pycobalt_write_message($handle, 'eval', $code);
+}
+
+# Get a list of running filenames
+sub python_files {
+	return keys(%_pycobalt_handles);
+}
+
+# Get a list of running handles
+sub python_handles {
+	return values(%_pycobalt_handles);
+}
+#
+# Start a Python script
+command python {
+	local('$file');
+
+	$file = $1;
+
+	python($file);
+}
+
+# Stop a Python script by its filename
+command python-stop {
+	local('$file');
+
+	$file = $1;
+
+	python_stop_file($file);
+}
+
+# Stop all Python scripts
+command python-stop-all {
+	python_stop_all();
+}
+
+# List filenames for running scripts. These filenames may be passed to
+# python-stop and python-eval.
+command python-list {
+	_pycobalt_msg("Running scripts:")
+	foreach $file (python_files()) {
+		println(" - " . $file);
+	}
+}
+
+# Eval arbitrary code within the context of a Python script
+command python-eval {
+	local('$file $code $handle');
+
+	$file = $1;
+	$code = $2;
+
+	$handle = python_file_to_handle($file);
+	if ($handle) {
+		python_eval($handle, $code);
+	} else {
+		_pycobalt_error("Didn't find a handle for " . $file);
+	}
 }

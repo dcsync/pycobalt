@@ -11,10 +11,13 @@ _serialize_bytes_prefix = '<<--pycobalt bytes-->> '
 def _serialize_special(item):
     """
     Serialize and register callbacks and other special objects
+
+    :param item: Item to serialize
+    :return: Serialized item
     """
 
     if isinstance(item, list) or isinstance(item, tuple):
-        # recurse lists
+        # recurse lists. tuples turn into lists
         new_list = []
         for child in item:
             new_list.append(_serialize_special(child))
@@ -42,6 +45,9 @@ def serialized(item):
     """
     Serialize messages. This serializes special objects before serializing with
     json.
+
+    :param item: Item to serialize
+    :return: Serialized item
     """
 
     return json.dumps(_serialize_special(item))

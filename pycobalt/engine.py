@@ -121,6 +121,9 @@ def handle_message(name, message):
             enable_debug()
         else:
             disable_debug()
+    elif name == 'stop':
+        # stop script
+        stop()
     else:
         raise RuntimeError('received unhandled or out-of-order message type: {} {}'.format(name, str(message)))
 
