@@ -78,7 +78,7 @@ PyCobalt Python Library
 
 PyCobalt includes several Python modules. Here's the full list, with links to examples:
 
-  - [engine.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/engine.py): Main communication code
+  - [engine.py](#script-console): Main communication code
   - [aggressor.py](#aggressor): Stubs for calling Aggressor functions
   - [aliases.py](#aliases): Beacon console alias registration
   - [commands.py](#commands): Script console command registration
@@ -103,6 +103,8 @@ To print a message on the script console:
 
     engine.message('test message')
 
+    engine.loop()
+
 This shows up in the script console as:
 
     [pycobalt example.py] test message
@@ -112,6 +114,8 @@ To print an error message on the script console:
     import pycobalt.engine as engine
 
     engine.error('test error')
+
+    engine.loop()
 
 This shows up in the script console as:
 
@@ -127,6 +131,8 @@ To print debug messages to the script console:
     engine.disable_debug()
     engine.debug('debug message 3')
 
+    engine.loop()
+
 This shows up in the script console as:
 
     [pycobalt example.py debug] debug message 1
@@ -140,6 +146,8 @@ functions:
 
     aggressor.println('raw message')
 
+    engine.loop()
+
 Aggressor
 ---------
 
@@ -150,6 +158,8 @@ Calling an Aggressor function:
 
     for beacon in aggressor.beacons():
         engine.message(beacon['user'])
+
+    engine.loop()
 
 Calling an Aggressor function with a callback:
 
