@@ -21,15 +21,6 @@ $class_JSONArray = $null;
 $class_Map = $null;
 $class_String = $null;
 
-# Explicit toString
-sub _json_tostring {
-	local('$obj');
-
-	$obj = $1;
-
-	return [$obj toString];
-}
-
 # Cobaltstrike's jar loading is broken in jre9+ thanks to some
 # implementation changes by Oracle.
 #
@@ -75,6 +66,15 @@ sub _json_init_loader {
 	if (!$class_String) {
 		$class_String = _json_new_class('java.lang.String');
 	}
+}
+#
+# Explicit toString
+sub json_tostring {
+	local('$obj');
+
+	$obj = $1;
+
+	return [$obj toString];
 }
 
 # Make a new JSONObject object
@@ -166,7 +166,7 @@ sub json_dumps {
 
 	$obj = json_new_jsonobject($item);
 	if ($obj) {
-		return _json_tostring($obj);
+		return json_tostring($obj);
 	} else {
 		return $null;
 	}
@@ -236,7 +236,7 @@ if ($json_test) {
 	println($v2);
 
 	$obj = json_new_jsonobject(%('ll' => 'bb'));
-	println(_json_tostring($obj));
+	println(json_tostring($obj));
 	println(json_keys($obj));
 
 	$obj = json_new_jsonobject('{1: {"b": "c"}}');

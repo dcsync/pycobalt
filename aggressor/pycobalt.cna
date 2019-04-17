@@ -73,7 +73,7 @@ sub _pycobalt_write_message {
 
 	%wrapper = %(name => $name, message => $message);
 	$marshalled = '';
-	$marshalled = tostring(json_new_jsonobject(%wrapper)) . "\n";
+	$marshalled = json_tostring(json_new_jsonobject(%wrapper)) . "\n";
 	#debug('sending ' . $marshalled);
 	writeb($handle, $marshalled);
 }
@@ -223,7 +223,7 @@ sub _pycobalt_set_menu {
 
 	_pycobalt_debug('setting up menu ' . %menu);
 
-	sub menu_callback {
+	sub _pycobalt_menu_callback {
 		_pycobalt_debug('in callback for ' . %menu);
 
 		# Call the callback
@@ -246,13 +246,13 @@ sub _pycobalt_set_menu {
 
 	if (%menu['type'] eq 'popup') {
 		_pycobalt_debug('making popup');
-		popup(%menu['name'], lambda(&menu_callback, \%menu));
+		popup(%menu['name'], lambda(&_pycobalt_menu_callback, \%menu));
 	} else if (%menu['type'] eq 'menu') {
 		_pycobalt_debug('making menu');
-		menu(%menu['name'], lambda(&menu_callback, \%menu));
+		menu(%menu['name'], lambda(&_pycobalt_menu_callback, \%menu));
 	} else if (%menu['type'] eq 'item') {
 		_pycobalt_debug('making item');
-		item(%menu['name'], lambda(&menu_callback, \%menu));
+		item(%menu['name'], lambda(&_pycobalt_menu_callback, \%menu));
 	} else if (%menu['type'] eq 'insert_menu') {
 		_pycobalt_debug('making insert');
 		insert_menu(%menu['name'], $1, $2, $3, $4, $5, $6);
