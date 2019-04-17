@@ -45,7 +45,7 @@ include($pycobalt_path . '/json.cna');
 
 # For special serialization objects
 # { name: handle }
-%pycobalt_objects = %();
+%_pycobalt_objects = %();
 
 # Print a stacktrace (for debugging)
 sub _pycobalt_stacktrace {
@@ -109,11 +109,11 @@ sub _pycobalt_serialize_special {
 	} else {
 		# TODO identityHashCode isn't quite safe enough. we need a better way to do this
 		$object_name = [[$arg getClass] getName] . '_' . [System identityHashCode: $arg];
-		if ($object_name in %pycobalt_objects) {
+		if ($object_name in %_pycobalt_objects) {
 			_pycobalt_debug('Using existing java object named ' . $object_name);
 		} else {
 			_pycobalt_debug('Adding Java object ' . $arg . ' with name ' . $object_name);
-			%pycobalt_objects[$object_name] = $arg;
+			%_pycobalt_objects[$object_name] = $arg;
 		}
 
 		return $object_prefix . $object_name;
@@ -152,7 +152,7 @@ sub _pycobalt_deserialize_special {
 		if (left($arg, strlen($object_prefix)) eq $object_prefix) {
 			# it's an object
 			$object_name = substr($arg, strlen($object_prefix));
-			$object = %pycobalt_objects[$object_name];
+			$object = %_pycobalt_objects[$object_name];
 			if (!$object) {
 				_pycobalt_msg('Could not find object ' . $object_name);
 				return $arg;
@@ -364,7 +364,7 @@ sub _pycobalt_handle_message {
 			# fork it and call it
 			_pycobalt_debug('Forking before calling function');
 			fork(&_pycobalt_closure_caller, \$closure_text, \@args, \$handle,
-				 \$pycobalt_path, \$json_path, \%pycobalt_objects,
+				 \$pycobalt_path, \$json_path, \%_pycobalt_objects,
 				 \$pycobalt_debug_on, \$sync);
 		} else {
 			# call it in this thread, and send return value
@@ -387,9 +387,9 @@ sub _pycobalt_handle_message {
 			return;
 		}
 
-		if ($message in %pycobalt_objects) {
+		if ($message in %_pycobalt_objects) {
 			_pycobalt_debug('Deleting object: ' . $handle);
-			%pycobalt_objects[$handle] = $null;
+			%_pycobalt_objects[$handle] = $null;
 		} else {
 			_pycobalt_debug('Tried to delete non-existent object: ' . $handle)
 		}
@@ -475,7 +475,7 @@ sub python {
 	# loops without calling engine.fork()
 	if (_pycobalt_thread_callback()) {
 		# then fork it
-		$script_thread = fork(&_pycobalt_thread_callback, \$handle, \$script, \%pycobalt_objects,
+		$script_thread = fork(&_pycobalt_thread_callback, \$handle, \$script, \%_pycobalt_objects,
 			 \$pycobalt_path, \$json_path, \$pycobalt_debug_on);
 	}
 
