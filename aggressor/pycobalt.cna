@@ -44,7 +44,7 @@ if (!$json_path) {
 include($pycobalt_path . '/json.cna');
 
 # For special serialization objects
-# { name: handle }
+# { name: script_handle }
 %_pycobalt_objects = %();
 
 # For managing running scripts
@@ -451,6 +451,7 @@ sub _pycobalt_thread_callback {
 	}
 
 	_pycobalt_msg('Script process exited: ' . $_pycobalt_script);
+	remove(%_pycobalt_handles, $_pycobalt_handle);
 
 	if (!-eof $_pycobalt_handle) {
 		closef($_pycobalt_handle);
@@ -491,17 +492,19 @@ sub python_file_to_handle {
 sub python {
 	local('$error $stderr_thread $script_thread $existing_handle');
 
+	# global variable
 	$_pycobalt_script = $1;
 
-	# check if it's already running
+	# check if this script is already running
 	$existing_handle = python_file_to_handle($_pycobalt_script);
 	if ($existing_handle) {
 		_pycobalt_msg($_pycobalt_script . ' is already running. Restarting.');
 		python_stop($existing_handle);
 	}
 
-	# execute it
+	# execute the script
 	_pycobalt_msg('Executing script ' . $_pycobalt_script);
+	# global variable
 	$_pycobalt_handle = exec($_pycobalt_script);
 	if (checkError($error)) {
 		_pycobalt_msg("Failed to execute script '" . $_pycobalt_script . "': " . $error);
@@ -516,8 +519,9 @@ sub python {
 	# loops without calling engine.fork()
 	if (_pycobalt_thread_callback()) {
 		# then fork it
-		$script_thread = fork(&_pycobalt_thread_callback, \$_pycobalt_handle, \$_pycobalt_script, \%_pycobalt_objects,
-			 \$pycobalt_path, \$json_path, \$pycobalt_debug_on);
+		$script_thread = fork(&_pycobalt_thread_callback, \$_pycobalt_handle,
+			\$_pycobalt_script, \%_pycobalt_objects, \$pycobalt_path,
+			\$json_path, \$pycobalt_debug_on);
 	}
 
 	%_pycobalt_handles[$_pycobalt_script] = $_pycobalt_handle;
@@ -535,7 +539,6 @@ sub python_stop {
 	if ($file) {
 		_pycobalt_msg("Asking script to stop: " . $file);
 		_pycobalt_write_message($handle, 'stop');
-		remove(%_pycobalt_handles, $handle);
 		return true;
 	} else {
 		_pycobalt_error("Called python_stop on an unrecognized handle");
@@ -613,6 +616,8 @@ command python-stop-all {
 # List filenames for running scripts. These filenames may be passed to
 # python-stop and python-eval.
 command python-list {
+	local('$file');
+
 	_pycobalt_msg("Running scripts:")
 	foreach $file (python_files()) {
 		println(" - " . $file);
