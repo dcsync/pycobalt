@@ -19,7 +19,7 @@ PyCobalt looks like this:
     import pycobalt.aggressor as aggressor
     import pycobalt.aliases as aliases
 
-	# register this function as a beacon console alias
+    # register this function as a beacon console alias
     @aliases.alias('example-alias')
     def example_alias(bid):
         aggressor.blog2(bid, 'example alias')
@@ -270,6 +270,23 @@ In the script console:
       File "/sandboxed/tools/cobaltstrike/scripts/recon.py", line 170, in test_alias
         engine.blog2(bid, 'test alias called with args: ' + ', '.join(args))
     AttributeError: module 'pycobalt.engine' has no attribute 'blog2'
+
+Cobalt Strike's beacon console allows you to pass arguments containing spaces
+if they're enclosed in double quotes. There's no way to escape double quotes
+and pass arguments containing both spaces and double quotes though. As a bit of
+a workaround PyCobalt includes an optional quote replacement mechanism.
+
+To use it simply pass `quote_replacement=<string>` to the alias registration
+function or decorator. For example:
+
+    ...
+    @aliases.alias('test_alias', quote_replacement='^')
+    def test_alias(bid, *args):
+        aggressor.blog2(bid, 'test alias called with args: ' + ', '.join(args))
+    ...
+
+    beacon> test_alias "a ^b^" ^c^
+    test alias called with args: a "b", "c"
 
 Commands
 --------
