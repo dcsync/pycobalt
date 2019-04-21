@@ -72,15 +72,17 @@ sub _pycobalt_write_message {
 
 	if (-eof $handle) {
 		# Handle is closed
-		_pycobalt_error("Tried to write message to closed script handle");
-		return;
+		_pycobalt_debug("Tried to write message to closed script handle");
+		return false;
 	}
 
 	%wrapper = %(name => $name, message => $message);
 	$marshalled = '';
 	$marshalled = json_tostring(json_new_jsonobject(%wrapper)) . "\n";
-	#debug('sending ' . $marshalled);
+	#_pycobalt_debug('sending ' . $marshalled);
 	writeb($handle, $marshalled);
+
+	return true;
 }
 
 # Serialize non-primitive object references. This includes Java objects. Java
@@ -143,8 +145,8 @@ sub _pycobalt_resolve_object_handle {
 # Deserialize non-primitive object references and Python callbacks.
 sub _pycobalt_deserialize_special {
 	local('$arg $item $key $object_prefix $handle $object_name');
-	local('$object $callback_prefix $callback @new_list %new_hash @args');
-	local('$data');
+	local('$object $callback_name $callback_prefix $callback @new_list %new_hash');
+	local('$data @args');
 
 	$arg = $1;
 	$handle = $2;
@@ -175,7 +177,9 @@ sub _pycobalt_deserialize_special {
 				#@args = _pycobalt_serialize_special(@_);
 				_pycobalt_debug('Calling callback: ' . $callback_name);
 				%info = %(name => $callback_name, args => @args);
-				_pycobalt_write_message($callback_handle, 'callback', %info);
+				if (!_pycobalt_write_message($callback_handle, 'callback', %info)) {
+					_pycobalt_debug("Callback belongs to a closed script: " . $callback_name);
+				}
 			}, $callback_handle => $handle, \$callback_name);
 
 			return $callback;
@@ -589,7 +593,7 @@ sub python_files {
 sub python_handles {
 	return values(%_pycobalt_handles);
 }
-#
+
 # Start a Python script
 command python {
 	local('$file');
