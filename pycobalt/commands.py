@@ -28,6 +28,12 @@ def register(name, callback):
     """
 
     def command_callback(*args):
+        # check arguments
+        if not utils.check_args(callback, args):
+            syntax = '{} {}'.format(name, utils.signature_command(callback))
+            engine.error("Syntax: " + syntax)
+            return
+
         engine.debug('calling callback for command {}'.format(name))
         callback(*args)
 
