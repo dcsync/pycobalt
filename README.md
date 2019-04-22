@@ -82,7 +82,8 @@ script. Personally I have a single all.cna file with a bunch of calls to
 
 # PyCobalt Python Library
 
-PyCobalt includes several Python modules. Here's the full list, with links to examples:
+PyCobalt includes several Python modules. Here's the full list, with links to
+usage and examples:
 
   - [pycobalt.engine](#script-console): Main communication code
   - [pycobalt.aggressor](#aggressor): Stubs for calling Aggressor functions
@@ -94,7 +95,10 @@ PyCobalt includes several Python modules. Here's the full list, with links to ex
     Assorted helper functions and classes to make writing scripts easier
   - [pycobalt.bot](#bot): Event Log bot toolkit
   - [pycobalt.sharpgen](#sharpgen):
-       Helper functions for using [SharpGen](https://github.com/cobbr/SharpGen) with Cobalt Strike
+       Helper functions for using [SharpGen](https://github.com/cobbr/SharpGen)
+
+For full pydoc documentation head over to the
+[`docs`](https://github.com/dcsync/pycobalt/docs) directory.
 
 # Usage and Examples
 
