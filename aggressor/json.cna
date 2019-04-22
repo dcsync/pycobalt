@@ -5,14 +5,13 @@
 #
 # Thanks to @vysec's ANGRYPUPPY for the library suggestion
 #
+# Configuration variables:
+#  - $json_path: Directory containing json.cna (default: script_resource())
+#  - $json_jar_file: File json.jar (default: $json_path . '/jars/json.jar')
+#
 
 # Load java stuff
 import java.net.*;
-
-# Set default $json_path if needed
-if (!$json_path) {
-	$json_path = script_resource();
-}
 
 # Keeping these global so we don't have to re-create them over and over again.
 $json_loader = $null;
@@ -26,11 +25,21 @@ $class_String = $null;
 #
 # This makes a new loader which is capable of loading the json library
 sub _json_new_loader {
-	local('$json_loader $json_jar_file $json_url');
+	local('$json_loader $json_url');
 
-	$json_jar_file = $json_path . '/jars/json.jar';
+	# Set default $json_path if needed. This is a directory where we may find
+	# jars/json.jar.
+	if (!$json_path) {
+		$json_path = script_resource();
+	}
+
+	# Set $json_jar_file if needed
+	if (!$json_jar_file) {
+		$json_jar_file = $json_path . '/jars/json.jar';
+	}
+
 	if (!-exists $json_jar_file) {
-		println('[json.cna] could not find ' . $json_jar_file . '. check $json_path');
+		println('[json.cna] Could not find ' . $json_jar_file . '. Check $json_path');
 		exit();
 	}
 
@@ -95,8 +104,8 @@ sub json_new_jsonobject {
 			$casted = casti($arg, $class_Map);
 			return [$ctor newInstance: @($casted)];
 		} else {
-			println("[json.cna] unknown arg type: " . typeOf($arg));
-			println("[json.cna] for message: " . $arg);
+			println("[json.cna] Unknown arg type: " . typeOf($arg));
+			println("[json.cna] For message: " . $arg);
 			return $null;
 		}
 	} else {

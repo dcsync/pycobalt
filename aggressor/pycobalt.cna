@@ -1,5 +1,18 @@
+# Configuration variables:
+#  - $pycobalt_path: Directory containing pycobalt.cna
+#  - $pycobalt_python: Location of the Python interpreter (default: /usr/bin/env python3)
+#  - $pycobalt_debug_on: Enable debug messages (boolean, default: false)
+# 
+# Configuration variables for json.cna:
+#  - $json_path: Directory containing json.cna (default: $pycobalt_path)
+#  - $json_jar_file: File json.jar (default: $json_path . '/jars/json.jar')
+
 if ($pycobalt_debug_on is $null) {
 	$pycobalt_debug_on = false;
+}
+
+if (!$pycobalt_python) {
+	$pycobalt_python = '/usr/bin/env python3'
 }
 
 # Write debug message to console
@@ -31,17 +44,17 @@ if (!$pycobalt_path) {
 }
 _pycobalt_debug('Include path is: ' . $pycobalt_path);
 
-# Make sure json.cna exists
-if (!-exists ($pycobalt_path . '/json.cna')) {
-	_pycobalt_die('Could not find json.cna. Check $pycobalt_path and/or $json_path');
-}
-
-# Set $json_path for json.cna
+# Set $json_path for json.cna. This is the location of json.cna.
 if (!$json_path) {
 	$json_path = $pycobalt_path;
 }
 
-include($pycobalt_path . '/json.cna');
+# Make sure json.cna exists
+if (!-exists ($json_path . '/json.cna')) {
+	_pycobalt_die('Could not find json.cna. Check $pycobalt_path or $json_path');
+}
+
+include($json_path . '/json.cna');
 
 # For special serialization objects
 # { name: script_handle }
@@ -373,7 +386,7 @@ sub _pycobalt_handle_message {
 			# fork it and call it
 			_pycobalt_debug('Forking before calling function');
 			fork(&_pycobalt_closure_caller, \$closure_text, \@args, \$handle,
-				 \$pycobalt_path, \$json_path, \%_pycobalt_objects,
+				 \$pycobalt_path, \$json_path, \$json_jar_file, \%_pycobalt_objects,
 				 \$pycobalt_debug_on, \$sync);
 		} else {
 			# call it in this thread, and send return value
@@ -509,7 +522,7 @@ sub python {
 	# execute the script
 	_pycobalt_msg('Executing script ' . $_pycobalt_script);
 	# global variable
-	$_pycobalt_handle = exec($_pycobalt_script);
+	$_pycobalt_handle = exec($pycobalt_python . ' ' . $_pycobalt_script);
 	if (checkError($error)) {
 		_pycobalt_msg("Failed to execute script '" . $_pycobalt_script . "': " . $error);
 		return $null;
@@ -525,7 +538,7 @@ sub python {
 		# then fork it
 		$script_thread = fork(&_pycobalt_thread_callback, \$_pycobalt_handle,
 			\$_pycobalt_script, \%_pycobalt_objects, \$pycobalt_path,
-			\$json_path, \$pycobalt_debug_on);
+			\$json_path, \$json_jar_file, \$pycobalt_debug_on, \%_pycobalt_handles);
 	}
 
 	%_pycobalt_handles[$_pycobalt_script] = $_pycobalt_handle;
@@ -620,11 +633,16 @@ command python-stop-all {
 # List filenames for running scripts. These filenames may be passed to
 # python-stop and python-eval.
 command python-list {
-	local('$file');
+	local('$file @files');
 
-	_pycobalt_msg("Running scripts:")
-	foreach $file (python_files()) {
-		println(" - " . $file);
+	@files = python_files();
+	if (size(@files)) {
+		_pycobalt_msg("Running scripts:")
+		foreach $file (python_files()) {
+			println(" - " . $file);
+		}
+	} else {
+		_pycobalt_msg("No running scripts")
 	}
 }
 
