@@ -287,21 +287,24 @@ def guess_temp(bid):
 
 def powershell_quote(arg):
     """
-    Quote a powershell string. Returns a string enclosed in single quotation
-    marks with internal marks escaped. Also removes newlines.
+    Quote a string or list of strings for PowerShell. Returns a string enclosed
+    in single quotation marks with internal marks escaped. Also removes
+    newlines.
 
     Can also do a list of strings.
 
     :param arg: Argument to quote (string or list of strings)
-    :return: Quoted argument
+    :return: Quoted string or list of strings
     """
 
-    if isinstance(arg, list) or isinstance(arg, tuple):
-        # recurse list
+    if utils.is_iterable(arg):
+        # recurse iterable
         return [powershell_quote(child) for child in arg]
     else:
+        new_string = str(arg)
+
         # remove newlines
-        new_string = str(arg).replace('\n', '').replace('\r', '')
+        new_string = new_string.replace('\n', '').replace('\r', '')
 
         # quote ' characters
         new_string = new_string.replace("'", "''")
@@ -316,10 +319,36 @@ def pq(arg):
     Alias for `powershell_quote`
 
     :param arg: Argument to quote (string or list of strings)
-    :return: Quoted argument
+    :return: Quoted string or list of strings
     """
 
     return powershell_quote(arg)
+
+def csharp_quote(arg):
+    """
+    Turn a string or list of strings into C# string literals. Returns a @""
+    string literal with internal double quotes escaped. Also removes newlines.
+
+    :param arg: Argument to quote (string or list of strings)
+    :return: Quoted string or list of strings
+    """
+
+    if utils.is_iterable(arg):
+        # recurse iterable
+        return [csharp_quote(child) for child in arg]
+    else:
+        new_string = str(arg)
+
+        # remove newlines
+        new_string = new_string.replace('\n', '').replace('\r', '')
+
+        # quote " characters
+        new_string = new_string.replace('"', '""')
+
+        # enclose in @""
+        new_string = '@"{}"'.format(new_string)
+
+        return new_string
 
 def argument_quote(arg):
     """

@@ -129,10 +129,10 @@ def yaml_basic_load(yaml):
             new_item = collections.OrderedDict()
 
         # key-value pair
-        m = re.match('([^:]+): (.*)', line)
+        m = re.match('([^:]+):(.*)', line)
         if m:
-            key = m.group(1)
-            value = m.group(2)
+            key = m.group(1).strip()
+            value = m.group(2).strip()
             new_item[key] = value
         else:
             raise RuntimeError("yaml_basic_read: Could not parse yaml. It's probably too complex")
@@ -166,3 +166,17 @@ def yaml_basic_dump(items):
             yaml += '{}{}: {}\n'.format(prefix, key, value)
 
     return yaml
+
+def is_iterable(var):
+    """
+    Determine if a variable is an Iterable.
+
+    :param var: Variable to check
+    :return: Boolean specifying whether 'var' is iterable
+    """
+
+    try:
+        iterator = iter(item)
+        return True
+    except TypeError:
+        return False
