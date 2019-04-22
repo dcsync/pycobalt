@@ -20,7 +20,7 @@ sharpgen.enable_cache()
 def _(bid, code, *args):
     aggressor.btask(bid, 'Tasked beacon to execute C# code: {}'.format(code))
     try:
-        from_cache = sharpgen.execute(bid, code, *args)
+        from_cache = sharpgen.execute(bid, code, args)
         aggressor.blog2(bid, 'Build was executed from the cache')
     except RuntimeError as e:
         aggressor.berror(bid, 'SharpGen failed. See Script Console for more details.')
@@ -29,7 +29,7 @@ def _(bid, code, *args):
 def _(bid, source, *args):
     aggressor.btask(bid, 'Tasked beacon to execute C# code from: {}'.format(source))
     try:
-        from_cache = sharpgen.execute_file(bid, source, *args)
+        from_cache = sharpgen.execute_file(bid, source, args)
         aggressor.blog2(bid, 'Build was executed from the cache')
     except RuntimeError as e:
         aggressor.berror(bid, 'SharpGen failed. See Script Console for more details.')

@@ -3,10 +3,12 @@ Internal utilities. helpers.py has helper functions for writing PyCobalt
 scripts.
 """
 
+import collections
 import inspect
+import random
+import string
 import os
 import re
-import collections
 
 def basedir(append='', relative=__file__):
     """
@@ -176,7 +178,19 @@ def is_iterable(var):
     """
 
     try:
-        iterator = iter(item)
+        iterator = iter(var)
         return True
     except TypeError:
         return False
+
+def random_string(minsize=4, maxsize=8, choices=string.ascii_uppercase):
+    """
+    Generate a random ASCII string
+
+    :param minsize: Minimum string size
+    :param maxsize: Maximum string size
+    :param choices: Character choices (default: ASCII uppercase letters)
+    """
+
+    size = random.randint(minsize, maxsize + 1)
+    return ''.join(random.choice(choices) for _ in range(size))

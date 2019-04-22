@@ -9,8 +9,7 @@ For more information about SharpGen see:
   - https://github.com/cobbr/SharpGen
 """
 
-# TODO cache builds
-
+import textwrap
 import tempfile
 import hashlib
 import os
@@ -20,6 +19,25 @@ import pycobalt.engine as engine
 import pycobalt.callbacks as callbacks
 import pycobalt.aggressor as aggressor
 import pycobalt.helpers as helpers
+
+# Some directly configurable defaults
+default_libraries = [
+    'System',
+    'System.IO',
+    'System.Text',
+    'System.Linq',
+    'System.Security.Principal',
+    'System.Collections.Generic',
+    'SharpSploit.Credentials',
+    'SharpSploit.Enumeration',
+    'SharpSploit.Execution',
+    'SharpSploit.LateralMovement',
+    'SharpSploit.Generic',
+    'SharpSploit.Misc',
+]
+default_runner = 'dotnet'
+default_build_paths = ['bin/Release/netcoreapp2.1/SharpGen.dll',
+                       'bin/Debug/netcoreapp2.1/SharpGen.dll']
 
 # Location of the sharpgen directory
 _sharpgen_location = utils.basedir('../third_party/SharpGen')
@@ -236,7 +254,7 @@ def cache_source_hash(source):
     :return: MD5 hash of source code
     """
 
-    return hashlib.md5(source).hexdigest()
+    return hashlib.md5(source.encode()).hexdigest()
 
 def cache_file_hash(source_file):
     """
@@ -246,14 +264,16 @@ def cache_file_hash(source_file):
     :return: MD5 hash of source code
     """
 
-    with open(source_file, 'rb') as fp:
+    with open(source_file, 'r') as fp:
         return cache_source_hash(fp.read())
 
-def _find_sharpgen_dll(location):
+def _find_sharpgen_dll(location, paths=None):
     """
     Find a SharpGen DLL in a SharpGen directory
 
     :param location: Location of SharpGen directory
+    :param paths: Paths to search within the SharpGen directory (default:
+                  sharpgen.default_build_paths)
     :return: Location of SharpGen DLL
     :raises: RuntimeError: If a copy of the DLL isn't found
     """
@@ -262,12 +282,14 @@ def _find_sharpgen_dll(location):
     if not location or not os.path.isdir(location):
         raise RuntimeError("SharpGen directory '{}' does not exist".format(_sharpgen_location))
 
-    candidates = ['bin/Release/netcoreapp2.1/SharpGen.dll',
-                  'bin/Debug/netcoreapp2.1/SharpGen.dll']
+    if not paths:
+        # default paths are sharpgen.default_build_paths
+        global default_build_paths
+        paths = default_build_paths
 
     # look for dlls
-    for candidate in candidates:
-        full_path = '{}/{}'.format(location, candidate)
+    for path in paths:
+        full_path = '{}/{}'.format(location, path)
         if os.path.isfile(full_path):
             # found one
             return full_path
@@ -275,15 +297,75 @@ def _find_sharpgen_dll(location):
     # couldn't find it
     raise RuntimeError("Didn't find any copies of SharpGen.dll in {}/bin. Did you build it?".format(location))
 
-def compile_file(
+def wrap_code(source, function_name='Main', function_type='void',
+              class_name=None, libraries=None):
+    """
+    Wrap a piece of source code in a class and function, similar to what
+    SharpGen does. We perform the function wrapping here in order to have more
+    control over the final product.
+
+    :param source: Source to wrap
+    :param function_name: Function name (default: Main)
+    :param function_type: Function type (default: void)
+    :param class_name: Class name (default: random)
+    :param libraries: List of librares to use (default: sharpgen.default_libraries)
+    """
+
+    if not class_name:
+        # default class_name is random
+        class_name = utils.random_string(5, 10)
+
+    if not libraries:
+        # default libraries are sharpgen.default_libraries
+        global default_libraries
+        libraries = default_libraries
+
+    out = ''
+
+    # add libraries
+    for library in libraries:
+        out += 'using {};\n'.format(library)
+
+    # add return statement. not sure why this is necessary.
+    if function_type == 'void' and 'return;' not in source:
+        source += '\nreturn;'
+
+    # indent the code
+    source = '\n'.join([' ' * 12 + line for line in source.splitlines()])
+
+    # wrap the code
+    out += textwrap.dedent("""\
+    public static class {class_name}
+    {{
+        static {function_type} {function_name}(string[] args)
+        {{
+            {source}
+        }}
+    }}
+    """.format(source=source, function_name=function_name,
+               class_name=class_name, function_type=function_type))
+
+    return out
+
+def compile(
                     # Input options
                     source,
 
-                    # SharpGen options
-                    wrapper=True,
-                    dotnet_framework='net35', output_kind='console', platform='x86',
-                    optimization=True, assembly_name=None, class_name=None,
-                    confuse=None, out=None,
+                    # Wrapper options
+                    use_wrapper=True,
+                    assembly_name=None,
+                    class_name=None,
+                    function_name=None,
+                    function_type=None,
+                    libraries=None,
+
+                    # Compilation options
+                    output_kind='console',
+                    platform='x86',
+                    confuse=None,
+                    dotnet_framework='net35', 
+                    optimization=True,
+                    out=None,
 
                     # Additional SharpGen options (passed through raw)
                     additional_options=None,
@@ -298,51 +380,73 @@ def compile_file(
                     no_cache_write=False,
 
                     # Dependency info
-                    sharpgen_location=None
+                    sharpgen_location=None,
+                    sharpgen_runner=None
                 ):
     """
-    Compile a file using SharpGen.
+    Compile some C# code using SharpGen.
 
-    :param source: File name to compile
-    :param wrapper: Use SharpGen's code wrapper (inverse of the dcsync/SharpGen fork's --no-wrapper)
-    :param dotnet_framework: .NET version to compile against (net35 or net40) (SharpGen's --dotnet-framework)
-    :param output_kind: Type of output (console or dll) (SharpGen's --output-kind)
-    :param platform: Platform to compile for (any/AnyCpy, x86, or x64) (SharpGen's --platform)
-    :param optimization: Perform code optimization (inverse of SharpGen's --no-optimization)
-    :param assembly_name: Name of generated assembly (SharpGen's --assembly-name)
-    :param class_name: Name of generated class (SharpGen's --class-name)
-    :param confuse: ConfuserEx configuration file (SharpGen's --confuse). Set a
-                    default for this option with `set_confuse(<file>)`.
-    :param out: Output file (SharpGen's --file)
+    :param source: Source to compile
+
+    :param use_wrapper: Use a class and function Main code wrapper (default: True)
+    :param class_name: Name of generated class (default: random)
+    :param function_name: Name of function for wrapper (default: Main for .exe, Execute for .dll)
+    :param function_type: Function return type (default: void for .exe, object for .dll)
+    :param libraries: Libraries to use in the wrapper (default: sharpgen.default_libraries)
+
+    :param assembly_name: Name of generated assembly (default: random)
+    :param output_kind: Type of output (exe/console or dll/library) (default: console)
+    :param platform: Platform to compile for (any/AnyCpy, x86, or x64) (default: x86)
+    :param confuse: ConfuserEx configuration file. Set a default for this
+                    option with `set_confuse(<file>)`.
+    :param dotnet_framework: .NET version to compile against (net35 or net40) (default: net35)
+    :param optimization: Perform code optimization (default: True)
+    :param out: Output file (default: file in /tmp)
+
     :param additional_options: List of additional SharpGen options/flags
                                (passed through raw)
 
-    :param resources: List of resources to include (by Name). These must be
+    :param resources: List of resources to whitelist (by Name). These must be
                       present in your resources.yml file.
-    :param references: List of references to include (by File). These must be
+    :param references: List of references to whitelist (by File). These must be
                        present in your references.yml file.
 
     :param cache: Use the build cache. Not setting this option will use the
-                  global settings (`enable_cache()`/`disable_cache()`).
+                  global settings (`enable_cache()`/`disable_cache()`). By
+                  default the build cache is off.
     :param overwrite_cache: Force overwriting this build in the cache (disable
                             cache retrieval but not writing)
     :param no_cache_write: Allow for cache retrieval but not cache writing
 
     :param sharpgen_location: Location of SharpGen directory (default: location
                               passed to `set_location()` or PyCobalt repo copy)
+    :param sharpgen_runner: Program used to run the SharpGen dll (default:
+                            sharpgen.default_runner or 'dotnet')
 
     :return: Tuple containing (out, cached) where `out` is the name of the
              output file and `cached` is a boolean containing True if the build
              is from the build cache
-    :raises: RuntimeError: If one of the options is invalid
+    :raises RuntimeError: If one of the options is invalid
     """
+
+    # check output_kind
+    if output_kind not in ('exe', 'console', 'dll', 'library'):
+        raise RuntimeError('output_kind must be exe/console or dll/library')
+    if output_kind == 'exe':
+        output_kind = 'console'
+    if output_kind == 'library':
+        output_kind = 'dll'
+
+    # check dotnet_framework
+    if dotnet_framework not in ('net35', 'net40'):
+        raise RuntimeError('dotnet_framework must be net35 or net40')
 
     if not out:
         # use a temporary output file
         if output_kind == 'dll':
-            suffix = '.dll'
+            suffix = 'build.dll'
         else:
-            suffix = '.exe'
+            suffix = 'build.exe'
         out = tempfile.NamedTemporaryFile(prefix='pycobalt.sharpgen.', suffix=suffix, delete=False).name
 
     # build cache settings
@@ -358,12 +462,13 @@ def compile_file(
 
     if cache_retrieval or cache_write:
         # get source hash for build cache
-        source_hash = cache_file_hash(source)
+        source_hash = cache_source_hash(source)
 
     if cache_retrieval:
         # try to retrieve build from cache
         if cache_retrieve(source_hash, out):
             # successfully retrieved file from the cache
+            engine.debug('Retrieved {} from the SharpGen cache'.format(source_hash))
             return out, True
 
     # default sharpgen_location
@@ -374,30 +479,37 @@ def compile_file(
     # find SharpGen.dll
     sharpgen_dll = _find_sharpgen_dll(_sharpgen_location)
 
-    # python 3.5 typing is still too new so I do this instead
-    # check dotnet_framework
-    if dotnet_framework not in ('net35', 'net40'):
-        raise RuntimeError('compile_file: dotnet_framework must be net35 or net40')
+    # wrapper options
+    if use_wrapper:
+        if not function_name:
+            if output_kind == 'dll':
+                function_name = 'Execute'
+            else:
+                function_name = 'Main'
 
-    # check output_kind
-    if output_kind not in ('console', 'dll'):
-        raise RuntimeError('compile_file: output_kind must be console or dll')
+        if not function_type:
+            if output_kind == 'dll':
+                function_type = 'object'
+            else:
+                function_type = 'void'
+
+        source = wrap_code(source, function_name=function_name,
+                           function_type=function_type, class_name=class_name,
+                           libraries=libraries)
 
     # check platform
     platform = platform.lower()
     if platform not in ('any', 'anycpy', 'x86', 'x64'):
-        raise RuntimeError('compile_file: platform must be any/AnyCpy, x86, or x64')
+        raise RuntimeError('platform must be any/AnyCpy, x86, or x64')
     if platform in ('any', 'anycpy'):
         platform = 'AnyCpy'
 
-    args = ['dotnet', sharpgen_dll,
-            '--dotnet-framework', dotnet_framework,
-            '--output-kind', output_kind,
-            '--platform', platform]
+    args = []
 
-    # other options
-    if not wrapper:
-        args.append('--no-wrapper')
+    # compiler options
+    args += ['--dotnet-framework', dotnet_framework,
+             '--output-kind', output_kind,
+             '--platform', platform]
 
     if not optimization:
         args.append('--no-optimization')
@@ -405,9 +517,7 @@ def compile_file(
     if assembly_name:
         args += ['--assembly-name', assembly_name]
 
-    if class_name:
-        args += ['--class-name', class_name]
-
+    # ConfuserEx config
     global _confuserex_config
     if confuse:
         args += ['--confuse', confuse]
@@ -415,6 +525,7 @@ def compile_file(
         # see `set_confuse()`
         args += ['--confuse', _confuserex_config]
 
+    # additional options
     if additional_options:
         args += additional_options
 
@@ -475,11 +586,27 @@ def compile_file(
             with open(references_yaml_file, 'w+') as fp:
                 fp.write(new_yaml)
 
-        args += ['--file', out,
-                 '--source-file', source]
+        # write source to a file and build it
+        with tempfile.NamedTemporaryFile('w+', prefix='pycobalt.sharpgen.', suffix='code.cs') as source_file:
+            source_file.write(source)
+            source_file.flush()
 
-        engine.debug('running SharpGen: ' + ' '.join(args)) 
-        code, output, _ = helpers.capture(args, merge_stderr=True)
+            # in and out
+            args += ['--file', out,
+                     '--source-file', source_file.name]
+
+            if not sharpgen_runner:
+                # default sharpgen_runner is default_runner ('dotnet' by
+                # default)
+                global default_runner
+                sharpgen_runner = default_runner
+
+            # call the SharpGen dll
+            args = [sharpgen_runner, sharpgen_dll] + args
+            engine.debug('Compiling code: ' + source)
+            engine.debug('Running SharpGen: ' + ' '.join(args)) 
+            code, output, _ = helpers.capture(args, merge_stderr=True)
+            engine.debug('Finished running SharpGen')
 
         # debug
         #output = output.decode()
@@ -507,37 +634,49 @@ def compile_file(
 
     if cache_write and os.path.isfile(out):
         # copy build to the cache
+        engine.debug('Adding {} to SharpGen cache'.format(source_hash))
         _cache_add(source_hash, out)
 
     return out, False
 
-def compile(code, **kwargs):
+def compile_file(source_file, **kwargs):
     """
-    Compile some C# code
+    Compile a file using SharpGen.
 
-    :param code: Code to compile
-    :param **kwargs: Compilation arguments passed to `compile_file`
+    :param source_file: Source file to compile
+    :param use_wrapper: Use wrapper (default: False)
+    :param **kwargs: Other compilation arguments passed to `compile`.
     :return: Tuple containing (out, cached) where `out` is the name of the
              output file and `cached` is a boolean containing True if the build
              is from the build cache
+    :raises RuntimeError: If one of the options is invalid
     """
 
-    with tempfile.NamedTemporaryFile('w+', prefix='pycobalt.sharpgen.', suffix='.cs') as temp:
-        temp.write(code)
-        temp.flush()
-        return compile_file(temp.name, **kwargs)
+    # change default use_wrapper value to False
+    if 'use_wrapper' not in kwargs:
+        kwargs['use_wrapper'] = False
 
-def execute_file(bid, source, *args, **kwargs):
+    # read source file
+    with open(source_file, 'r') as fp:
+        source = fp.read()
+
+    return compile(source, **kwargs)
+
+def execute_file(bid, source, args, **kwargs):
     """
     Compile and execute a C# file
 
     :param bid: Beacon to execute on
     :param source: Source file to compile
-    :param *args: Arguments used for execution
-    :param **kwargs: Compilation arguments passed to `compile_file`. Don't use
-                     the `out` flag because this will delete the exe after.
+    :param args: Arguments used for execution
+    :param **kwargs: Compilation arguments passed to `compile_file`.
     :return: True if the executed build was from the build cache
+    :raises RuntimeError: If one of the options is invalid
     """
+
+    # check for `out` argument
+    if 'out' in kwargs:
+        raise RuntimeError('do not use the out parameter with execute_file()')
 
     compiled, from_cache = compile_file(source, **kwargs)
     # TODO quote args correctly
@@ -547,21 +686,26 @@ def execute_file(bid, source, *args, **kwargs):
 
     return from_cache
 
-def execute(bid, code, *args, **kwargs):
+def execute(bid, code, args, **kwargs):
     """
     Compile and execute some C# code
 
     :param bid: Beacon to execute on
     :param code: Code to compile
-    :param *args: Arguments used for execution
-    :param **kwargs: Compilation arguments passed to `compile_file`. Don't use
-                     the `out` flag because this will delete the exe after.
+    :param args: Arguments used for execution
+    :param **kwargs: Compilation arguments passed to `compile_file`.
     :return: True if the executed build was from the build cache
+    :raises RuntimeError: If one of the options is invalid
     """
+
+    # check for `out` argument
+    if 'out' in kwargs:
+        raise RuntimeError('do not use the out parameter with execute()')
 
     compiled, from_cache = compile(code, **kwargs)
     # TODO is there a way to quote arguments
     quoted_args = ' '.join(args)
+    engine.debug('SharpGen executing assembly')
     aggressor.bexecute_assembly(bid, compiled, quoted_args, silent=True)
     os.remove(compiled)
 

@@ -106,7 +106,7 @@ def handle_message(name, message):
     :param message: Message body
     """
 
-    debug('handling message of type {}: {}'.format(name, message))
+    #debug('handling message of type {}: {}'.format(name, message))
     if name == 'callback':
         # dispatch callback
         callback_name = message['name']
@@ -240,7 +240,7 @@ def call(name, args=None, silent=False, fork=False, sync=True):
     if callbacks.has_callback(args):
         # when there's a callback involved we usually have to fork because the
         # main script thread is busy reading from the script.
-        debug("forcing fork for call to: {}".format(name))
+        #debug("forcing fork for call to: {}".format(name))
         fork = True
 
     message = {

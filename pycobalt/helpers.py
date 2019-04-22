@@ -297,7 +297,7 @@ def powershell_quote(arg):
     :return: Quoted string or list of strings
     """
 
-    if utils.is_iterable(arg):
+    if isinstance(arg, list) or isinstance(arg, tuple):
         # recurse iterable
         return [powershell_quote(child) for child in arg]
     else:
@@ -333,7 +333,7 @@ def csharp_quote(arg):
     :return: Quoted string or list of strings
     """
 
-    if utils.is_iterable(arg):
+    if isinstance(arg, list) or isinstance(arg, tuple):
         # recurse iterable
         return [csharp_quote(child) for child in arg]
     else:
