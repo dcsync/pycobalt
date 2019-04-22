@@ -1,3 +1,4 @@
+
 # pycobalt.sharpgen
 
 Helper functions for using cobbr's SharpGen
@@ -6,8 +7,8 @@ See examples/sharpgen.py for a working set of compile/exec console commands and
 aliases. Refer to `README.md` for more usage info.
 
 For more information about SharpGen see:
-- https://posts.specterops.io/operational-challenges-in-offensive-c-355bd232a200
-- https://github.com/cobbr/SharpGen
+  - https://posts.specterops.io/operational-challenges-in-offensive-c-355bd232a200
+  - https://github.com/cobbr/SharpGen
 
 ## set_location
 ```python
@@ -65,7 +66,7 @@ Set the build cache location. The default location is SharpGen/Cache.
 **Arguments**:
 
 - `location`: Directory to put cached builds in. If not passed, reset to
-default location.
+                 default location.
 
 ## clear_cache
 ```python
@@ -182,7 +183,11 @@ MD5 hash of source code
 
 ## wrap_code
 ```python
-wrap_code(source, function_name='Main', function_type='void', class_name=None, libraries=None)
+wrap_code(source,
+          function_name='Main',
+          function_type='void',
+          class_name=None,
+          libraries=None)
 ```
 
 Wrap a piece of source code in a class and function, similar to what
@@ -199,7 +204,27 @@ control over the final product.
 
 ## compile
 ```python
-compile(source, use_wrapper=True, assembly_name=None, class_name=None, function_name=None, function_type=None, libraries=None, output_kind='console', platform='x86', confuse=None, dotnet_framework='net35', optimization=True, out=None, additional_options=None, resources=None, references=None, cache=None, overwrite_cache=False, no_cache_write=False, sharpgen_location=None, sharpgen_runner=None)
+compile(source,
+        use_wrapper=True,
+        assembly_name=None,
+        class_name=None,
+        function_name=None,
+        function_type=None,
+        libraries=None,
+        output_kind='console',
+        platform='x86',
+        confuse=None,
+        dotnet_framework='net35',
+        optimization=True,
+        out=None,
+        additional_options=None,
+        resources=None,
+        references=None,
+        cache=None,
+        overwrite_cache=False,
+        no_cache_write=False,
+        sharpgen_location=None,
+        sharpgen_runner=None)
 ```
 
 Compile some C# code using SharpGen.
@@ -218,36 +243,36 @@ Compile some C# code using SharpGen.
 - `output_kind`: Type of output (exe/console or dll/library) (default: console)
 - `platform`: Platform to compile for (any/AnyCpy, x86, or x64) (default: x86)
 - `confuse`: ConfuserEx configuration file. Set a default for this
-option with `set_confuse(<file>)`.
+                option with `set_confuse(<file>)`.
 - `dotnet_framework`: .NET version to compile against (net35 or net40) (default: net35)
 - `optimization`: Perform code optimization (default: True)
 - `out`: Output file (default: file in /tmp)
 
 - `additional_options`: List of additional SharpGen options/flags
-(passed through raw)
+                           (passed through raw)
 
 - `resources`: List of resources to whitelist (by Name). These must be
-present in your resources.yml file.
+                  present in your resources.yml file.
 - `references`: List of references to whitelist (by File). These must be
-present in your references.yml file.
+                   present in your references.yml file.
 
 - `cache`: Use the build cache. Not setting this option will use the
-global settings (`enable_cache()`/`disable_cache()`). By
-default the build cache is off.
+              global settings (`enable_cache()`/`disable_cache()`). By
+              default the build cache is off.
 - `overwrite_cache`: Force overwriting this build in the cache (disable
-cache retrieval but not writing)
+                        cache retrieval but not writing)
 - `no_cache_write`: Allow for cache retrieval but not cache writing
 
 - `sharpgen_location`: Location of SharpGen directory (default: location
-passed to `set_location()` or PyCobalt repo copy)
+                          passed to `set_location()` or PyCobalt repo copy)
 - `sharpgen_runner`: Program used to run the SharpGen dll (default:
-sharpgen.default_runner or 'dotnet')
+                        sharpgen.default_runner or 'dotnet')
 
 **Returns**:
 
 Tuple containing (out, cached) where `out` is the name of the
-output file and `cached` is a boolean containing True if the build
-is from the build cache
+         output file and `cached` is a boolean containing True if the build
+         is from the build cache
 
 **Raises**:
 
@@ -269,8 +294,8 @@ Compile a file using SharpGen.
 **Returns**:
 
 Tuple containing (out, cached) where `out` is the name of the
-output file and `cached` is a boolean containing True if the build
-is from the build cache
+         output file and `cached` is a boolean containing True if the build
+         is from the build cache
 
 **Raises**:
 
@@ -319,4 +344,3 @@ True if the executed build was from the build cache
 **Raises**:
 
 - `RuntimeError`: If one of the options is invalid
-

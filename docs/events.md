@@ -1,18 +1,19 @@
+
 # pycobalt.events
 
 For registering event callbacks
 
 Regular example:
 
-def test_event_action(who, contents, time):
-engine.message('event callback test {} - {} - {}'.format(who, contents, time))
-events.register('event_action', test_event_action)
+    def test_event_action(who, contents, time):
+        engine.message('event callback test {} - {} - {}'.format(who, contents, time))
+    events.register('event_action', test_event_action)
 
 Decorator example:
 
-@events.event('event_action')
-def test_event_action(who, contents, time):
-engine.message('event callback test {} - {} - {}'.format(who, contents, time))
+    @events.event('event_action')
+    def test_event_action(who, contents, time):
+        engine.message('event callback test {} - {} - {}'.format(who, contents, time))
 
 ## is_official
 ```python
@@ -65,8 +66,7 @@ Name of unregistered callback
 
 ## event
 ```python
-event(self, name, official_only=True)
+event(name, official_only=True)
 ```
 
 Decorator for event registration
-

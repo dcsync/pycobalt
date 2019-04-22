@@ -1,24 +1,25 @@
+
 # pycobalt.callbacks
 
 For registering aggressor-to-python function callbacks
 
 Usage example:
 
-def ps_callback(bid, results):
-engine.message('received ps callback for {}'.format(bid))
+    def ps_callback(bid, results):
+        engine.message('received ps callback for {}'.format(bid))
 
-aggressor.bps(bid, ps_callback)
+    aggressor.bps(bid, ps_callback)
 
 When aggressor.bps() serializes its arguments it calls
 serialization.serialized(args), which will register and serialize all callbacks.
 
 To register a callback manually (useful for setting the serialized name manually):
 
-def ps_callback(bid, results):
-engine.message('received ps callback for {}'.format(bid))
+    def ps_callback(bid, results):
+        engine.message('received ps callback for {}'.format(bid))
 
-callbacks.register(ps_callback, prefix='our_ps_callback')
-aggressor.bps(bid, ps_callback)
+    callbacks.register(ps_callback, prefix='our_ps_callback')
+    aggressor.bps(bid, ps_callback)
 
 ## call
 ```python
@@ -92,4 +93,3 @@ Recursively check for callbacks in a list, tuple, or dict
 **Returns**:
 
 True if item contains a callback
-

@@ -1,3 +1,4 @@
+
 # pycobalt.engine
 
 For communication with cobaltstrike
@@ -107,7 +108,7 @@ Read a message line
 **Returns**:
 
 Tuple containing message name and contents (as returned by
-`parse_line`).
+         `parse_line`).
 
 ## readiter
 ```python
@@ -119,7 +120,7 @@ Read message lines
 **Returns**:
 
 Iterator with an item for each read/parsed line. Each item is the
-same as the return value of `engine.read()`.
+         same as the return value of `engine.read()`.
 
 ## call
 ```python
@@ -134,7 +135,7 @@ where possible.
 - `name`: Name of function to call
 - `args`: Arguments to pass to function
 - `silent`: Don't print tasking information (! operation) (only works
-for some functions)
+               for some functions)
 - `fork`: Call in its own thread
 - `sync`: Wait for return value
 
@@ -199,4 +200,3 @@ reference. The object will stick around if it's referenced elsewhere.
 **Arguments**:
 
 - `handle`: Handle of object to delete
-

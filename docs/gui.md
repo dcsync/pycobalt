@@ -1,37 +1,38 @@
+
 # pycobalt.gui
 
 A menu is made up of a dictionary tree
 
 Fields include:
-- type: type of item
-- name: name of item (or menu text)
-- callback: callback (called before children are produced)
-- children: child items
+  - type: type of item
+  - name: name of item (or menu text)
+  - callback: callback (called before children are produced)
+  - children: child items
 
 Types include:
-- popup
-- menu
-- item
-- insert_menu
-- separator
+  - popup
+  - menu
+  - item
+  - insert_menu
+  - separator
 
 Example:
 
-menu = { 'type': 'popup', 'name': 'beacon_top', 'callback': foo, 'children': [
-{'type': 'menu', 'name': 'Thing', 'children': [
-{'type': 'item', 'name': 'Stuff', 'callback': open_gui_thing}
-]}
-]}
-gui.register(menu)
+  menu = { 'type': 'popup', 'name': 'beacon_top', 'callback': foo, 'children': [
+      {'type': 'menu', 'name': 'Thing', 'children': [
+          {'type': 'item', 'name': 'Stuff', 'callback': open_gui_thing}
+      ]}
+  ]}
+  gui.register(menu)
 
 Example using the helper functions:
 
-menu = gui.popup('beacon_top', callback=foo, children=[
-gui.menu('Thing', children=[
-gui.item('Stuff', callback=open_gui_thing)
-])
-])
-gui.register(menu)
+  menu = gui.popup('beacon_top', callback=foo, children=[
+      gui.menu('Thing', children=[
+          gui.item('Stuff', callback=open_gui_thing)
+      ])
+  ])
+  gui.register(menu)
 
 The callback is passed cobaltstrike's @_ array as its arguments
 
@@ -137,4 +138,3 @@ Check and register a menu.
 
 - `menu`: Menu tree to register
 - `check_menu`: Check whether the menu should be checked first
-

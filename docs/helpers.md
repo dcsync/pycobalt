@@ -1,3 +1,4 @@
+
 # pycobalt.helpers
 
 Helper functions for writing pycobalt scripts
@@ -35,7 +36,7 @@ Parse output of `bps()` as passed to the callback.
 **Returns**:
 
 List of dictionaries representing the process list, sorted by PID.
-Dictionary fields include: name, ppid, pid, arch, and user.
+         Dictionary fields include: name, ppid, pid, arch, and user.
 
 ## parse_jobs
 ```python
@@ -47,12 +48,12 @@ Parse output of `bjobs()` as passed to `beacon_output_jobs callback`.
 **Arguments**:
 
 - `content`: Output of `bjobs()` as passed to the `beacon_output_jobs`
-event callback.
+                event callback.
 
 **Returns**:
 
 List of dictionaries representing the job list. Dictionary fields
-include: jid, pid, and description.
+         include: jid, pid, and description.
 
 ## parse_ls
 ```python
@@ -68,7 +69,7 @@ Parse output of `bls()` as passed to the callback.
 **Returns**:
 
 List of dictionaries representing the file list, sorted by name.
-Dictionary fields include: type, size, modified, and name
+         Dictionary fields include: type, size, modified, and name
 
 ## recurse_ls
 ```python
@@ -95,9 +96,9 @@ Find processes by name. Call callback with results.
 
 - `bid`: Beacon to use
 - `proc_name`: Process name(s) to search for. Can be a list of names or
-a single name.
+                  a single name.
 - `callback`: Callback for results. Syntax is `callback(procs)` where
-`procs` is the output of `parse_ps`.
+                 `procs` is the output of `parse_ps`.
 
 ## is_admin
 ```python
@@ -113,7 +114,7 @@ Check if beacon is admin (including SYSTEM)
 **Returns**:
 
 True if beacon is elevated (i.e. admin with UAC disabled or
-SYSTEM)
+         SYSTEM)
 
 ## default_listener
 ```python
@@ -435,9 +436,8 @@ Base64 encoded string
 
 ## ArgumentParser
 ```python
-ArgumentParser(self, bid=None, event_log=False, *args, **kwargs)
+ArgumentParser(bid=None, event_log=False, *args, **kwargs)
 ```
 
 Special version of ArgumentParser that prints to beacon console, Script
 Console, or Event Log instead of stdout.
-

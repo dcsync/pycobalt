@@ -1,18 +1,19 @@
+
 # pycobalt.commands
 
 For registering script console commands
 
 Regular example:
 
-def test_command(args):
-print(args)
-commandes.register('test_command', test_command)
+    def test_command(args):
+        print(args)
+    commandes.register('test_command', test_command)
 
 Decorator example:
 
-@commands.command('test_command')
-def test_command(args):
-print(args)
+    @commands.command('test_command')
+    def test_command(args):
+        print(args)
 
 ## register
 ```python
@@ -28,8 +29,7 @@ Register a command
 
 ## command
 ```python
-command(self, name)
+command(name)
 ```
 
 Decorator for command registration
-

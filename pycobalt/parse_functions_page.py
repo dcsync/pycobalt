@@ -74,12 +74,14 @@ def main():
     names = []
     for h2 in container.find_all('h2'):
         for a in h2.find_all('a'):
-            names.append(a.text)
+            name = a.text.strip()
+            names.append(name)
 
     # get docs
     docs = []
     for div in container.find_all('div'):
-        doc = '\n'.join(['    ' + line.rstrip().encode('utf-8', 'ignore').decode('utf-8', 'ignore') for line in div.text.splitlines()])
+        doc = '\n'.join([' ' * 4 + line.rstrip().encode('utf-8', 'ignore').decode('utf-8', 'ignore') for line in div.text.splitlines()])
+        doc = doc.replace('\t', ' ' * 4)
         docs.append(doc)
 
     # zip together

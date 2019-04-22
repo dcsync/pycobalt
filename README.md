@@ -98,7 +98,7 @@ usage and examples:
        Helper functions for using [SharpGen](https://github.com/cobbr/SharpGen)
 
 For full pydoc documentation head over to the
-[`docs`](https://github.com/dcsync/pycobalt/tree/master/docs) directory.
+[docs/](https://github.com/dcsync/pycobalt/tree/master/docs) directory.
 
 # Usage and Examples
 
