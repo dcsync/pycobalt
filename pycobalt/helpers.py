@@ -424,7 +424,7 @@ def cq(arg):
 
 def capture(command, stdin=None, shell=False, merge_stderr=False):
     """
-    Run a command and capture its output.
+    Run a client/local command and capture its output.
 
     :command: Command to run (list of arguments or string)
     :stdin: String to write to stdin
@@ -502,8 +502,8 @@ def chunkup(item, size=75):
     """
 
     chunks = [
-	    item[i:i + size] for i in range(0, len(item), size)
-	]
+        item[i:i + size] for i in range(0, len(item), size)
+    ]
     return chunks
 
 def powershell_base64(string):
@@ -519,8 +519,8 @@ def powershell_base64(string):
 
 class ArgumentParser(argparse.ArgumentParser):
     """
-    Special version of ArgumentParser that prints to beacon console or script
-    console instead of stdout.
+    Special version of ArgumentParser that prints to beacon console, Script
+    Console, or Event Log instead of stdout.
     """
 
     def __init__(self, bid=None, event_log=False, *args, **kwargs):

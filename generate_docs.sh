@@ -2,20 +2,20 @@
 
 docs=docs
 main_module=pycobalt
+#bot
 modules=(
 aggressor
 aliases
-bot
 callbacks
 commands
 engine
 events
 gui
 helpers
-serialization
 sharpgen
 )
 level='+'
+preprocessor=pydocmd.restructuredtext.Preprocessor
 
 mkdir -p $docs
 
@@ -23,5 +23,5 @@ for module in ${modules[@]} ; do
 	markdown=$docs/$module.md
 
 	echo "Generating pydoc for $module at $markdown"
-	pydocmd simple "$main_module.$module$level" > $markdown &
+	pydocmd simple -c "preprocessor=$preprocessor" "$main_module.$module$level" > $markdown
 done
