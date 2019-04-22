@@ -540,7 +540,7 @@ simple:
 
     @aliases.alias('sharpgen-exec')
     def _(bid, code, *args):
-        from_cache = sharpgen.execute(bid, code, *args)
+        from_cache = sharpgen.execute(bid, code, args)
         if from_cache:
             aggressor.blog2(bid, 'Build was executed from the cache')
 
