@@ -1,7 +1,6 @@
 PyCobalt is a Python API for Cobalt Strike.
 
-Quick Start
-===========
+# Quick Start
 
 Have Python3+ installed on Linux. PyCobalt probably works on macOS and Windows
 as well. I only test it on Linux though.
@@ -73,8 +72,7 @@ For these commands to work properly you can only call PyCobalt in one Aggressor
 script. Personally I have a single all.cna file with a bunch of calls to
 `python()` and  `include()`.
 
-PyCobalt Python Library
-=======================
+# PyCobalt Python Library
 
 PyCobalt includes several Python modules. Here's the full list, with links to examples:
 
@@ -90,14 +88,12 @@ PyCobalt includes several Python modules. Here's the full list, with links to ex
   - [sharpgen.py](#sharpgen):
        Helper functions for using [SharpGen](https://github.com/cobbr/SharpGen) with Cobalt Strike
 
-Examples
-========
+# Usage and Examples
 
 Here are some script examples. For more complete examples see the
 [examples](https://github.com/dcsync/pycobalt/tree/master/examples) directory.
 
-Script Console
---------------
+## Script Console
 
 To print a message on the script console:
 
@@ -150,8 +146,7 @@ functions:
 
     engine.loop()
 
-Aggressor
----------
+## Aggressor
 
 Calling an Aggressor function:
 
@@ -187,8 +182,7 @@ beacon console (`!` operator, only supported by certain functions):
 For notes on using non-primitive objects such as dialog objects see the
 [non-primitive objects](#non-primitive-objects) section.
 
-Aliases
--------
+## Aliases
 
 Registering a beacon console alias:
 
@@ -222,6 +216,8 @@ Or you can specify the long help yourself:
     @aliases.alias('test_alias', 'Tests alias registration', 'Test alias\n\nLong help')
     ...
 
+### Argument Checking
+
 When the alias is called its arguments will be automagically checked against the
 arguments of the python function. For example:
 
@@ -241,7 +237,9 @@ To bypass this you can use python's `*` operator:
     engine.loop()
 
 This also allows you to use Python's argparse with aliases. For more
-information about using argparse see the [helpers](#helpers) section.
+information about using argparse see the [helpers](#argparse) section.
+
+### Exception Handling
 
 If an unhandled exception occurs in your alias callback PyCobalt will catch it
 and print the exception information to the beacon console. For example, while I
@@ -271,6 +269,8 @@ In the script console:
         engine.blog2(bid, 'test alias called with args: ' + ', '.join(args))
     AttributeError: module 'pycobalt.engine' has no attribute 'blog2'
 
+### Double Quotes
+
 Cobalt Strike's beacon console allows you to pass arguments containing spaces
 if they're enclosed in double quotes. There's no way to escape double quotes
 and pass arguments containing both spaces and double quotes though. As a bit of
@@ -288,8 +288,7 @@ function or decorator. For example:
     beacon> test_alias "a ^b^" ^c^
     test alias called with args: a "b", "c"
 
-Commands
---------
+## Commands
 
 Script console commands are similar to beacon console aliases.
 
@@ -305,8 +304,7 @@ Script console commands are similar to beacon console aliases.
 Error handling and argument checking is similar. Error messages are printed to
 the script console.
 
-Events
-------
+## Events
 
 Registering an event handler:
 
@@ -327,8 +325,7 @@ Cobalt Strike ones. To register an arbitrary event (e.g. for use with
     @events.event('myevent', official_only=False)
     ...
 
-GUI
----
+## GUI
 
 The following menu tree pieces are supported:
 
@@ -373,8 +370,7 @@ Aggressor functions for the same reason.
 The one downside to this is that you can't generate the menu labels dynamically
 from within the menu callbacks.
 
-Bot
----
+## Bot
 
 [bot.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/bot.py)
 provides tools for registering Event Log bot commands.
@@ -410,8 +406,7 @@ See
 [examples/bot.py](https://github.com/dcsync/pycobalt/blob/master/examples/bot.py)
 for more examples.
 
-Helpers
--------
+## Helpers
 
 [helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py)
 contains helper functions and classes to make writing scripts easier. Here are
@@ -446,6 +441,8 @@ some of the functions available:
     cmd.exe command that does not use `CommandLineToArgvW`.
   - `powershell_base64(string)`: Encode a string as UTF-16LE and base64 it. The
     output is compatible with Powershell's -EncodedCommand flag.
+
+### Argparse
 
 There's a `helpers.ArgumentParser` class which extends
 `argparse.ArgumentParser` to support printing to the beacon console, script
@@ -484,12 +481,20 @@ In the beacon console:
 To use `helpers.ArgumentParser` with the event log pass `event_log=True` to the
 constructor. This is useful for creating bots.
 
-SharpGen
---------
+## SharpGen
 
 [sharpgen.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py)
 provides helpers for compiling and executing C# code with
-[SharpGen](https://github.com/cobbr/SharpGen). It provides the following functions:
+[SharpGen](https://github.com/cobbr/SharpGen).
+
+With the help of SharpGen I've managed to mostly replace PowerShell in my
+personal Cobalt Strike setup. Read [this blog
+post](https://cobbr.io/SharpGen.html) first if you're interested in using
+SharpGen.
+
+### Functions
+
+The main functions are as follows:
 
   - `compile_file(source, ...)`: Compile a C# file. By default this creates a
                                  temporary output file and returns its name.
@@ -498,27 +503,15 @@ provides helpers for compiling and executing C# code with
   - `execute_file(bid, source, ...)`: Compile and execute a C# file.
   - `execute(bid, code, ...)`: Compile and execute inline C# code.
 
-These functions have a number of shared keyword arguments. See the
+These functions have a large number of shared keyword arguments. See the
 [`compile_file`](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py#L83)
 function's pydoc for the full list.
 
-You need a compiled version of SharpGen to use this module. By default it
-points to the repo copy (`pycobalt/third_party/SharpGen`). You can use that copy
-but it's a Git submodule so you'll need to initialize and build it first. To do
-that run:
-
-    git submodule init
-    git submodule update
-    cd third_party/SharpGen
-    dotnet build
-
-You can use your own copy of SharpGen by calling `sharpgen.set_location('<your
-copy>')` or by passing it on the `sharpgen_location=` parameter to any of the
-four compile/execute functions.
+### Examples
 
 Here's a basic usage example:
 
-    import pycobalt.sharpgen
+    import pycobalt.sharpgen as sharpgen
     sharpgen.set_location('/root/tools/SharpGen')
 
     @aliases.alias('sharpgen-exec')
@@ -529,8 +522,59 @@ See
 [examples/sharpgen.py](https://github.com/dcsync/pycobalt/tree/master/examples/sharpgen.py)
 for console commands and beacon aliases to go with each compile/execute function.
 
-Non-Primitive Objects
----------------------
+### Build Cache
+
+PyCobalt's SharpGen module includes an optional build cache. Using it is pretty
+simple:
+
+    import pycobalt.sharpgen as sharpgen
+    sharpgen.enable_cache()
+
+    @aliases.alias('sharpgen-exec')
+    def _(bid, code, *args):
+        from_cache = sharpgen.execute(bid, code, *args)
+        if from_cache:
+            aggressor.blog2(bid, 'Build was executed from the cache')
+
+The cache works by MD5 hashing your source code before it's compiled. When you
+call `compile_file`, `compile`, `execute_file`, or `execute` PyCobalt will
+search the cache for your code's hash. If it finds the hash the cached build
+will be returned. Otherwise it will compile your code and add a successful
+build to the cache.
+
+By default the cache location will be a directory named `Cache` within your
+SharpGen directory. You can change the cache location with the
+`sharpgen.set_cache_location(<location>)` function.
+
+You can enable or disable the cache for individual compilation calls by passing
+`cache=True` or `cache=False` respectively. To force the overwrite of a cached
+build you may pass `overwrite_cache=True`.
+
+To clear the entire cache call `sharpgen.clear_cache()`.
+
+There are other caching-related functions. You'll need to [read the
+code](https://github.com/dcsync/pycobalt/tree/master/pycobalt/sharpgen.py) for
+more info.
+
+### Setting up SharpGen
+
+You need a compiled version of SharpGen to use this module. By default it
+points to the repo copy (`pycobalt/third_party/SharpGen`) which is a Git
+submodule of [github.com/dcsync/SharpGen](https://github.com/dcsync/SharpGen).
+To use it you'll need to initialize and build it first. To do that run:
+
+    git submodule init
+    git submodule update
+    cd third_party/SharpGen
+    dotnet build
+
+You can use your own copy of SharpGen by calling `sharpgen.set_location('<your
+copy>')` or by passing it on the `sharpgen_location=` parameter to any of the
+four compile/execute functions.
+
+## Advanced Usage
+
+### Non-Primitive Objects
 
 When passed from Cobalt Strike to Python a non-primitive object's reference is
 stored. A string identifying this stored reference is passed to Python (let's
@@ -554,8 +598,7 @@ Java objects. There's a Python library called javaobj which supports
 serializing and deserializing Java objects. It doesn't work well with complex
 Java objects though.
 
-Sleep Functions
----------------
+### Sleep Functions
 
 You can call arbitrary Sleep and Aggressor functions (including your own
 Aggressor functions) like this:
@@ -577,19 +620,16 @@ You can also eval arbitrary Sleep code:
 `engine.eval` doesn't perform any sort of parameter marshalling or callback
 serialization.
 
-Installation
-============
+# Installation
 
-Python Side
------------
+## Python Side
 
 Run `setup.py install` to install the PyCobalt python library.
 
 Or you can run it straight out of the repo if you're familiar with
 [PYTHONPATH](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH).
 
-Cobalt Strike Side
-------------------
+## Cobalt Strike Side
 
 The Aggressor library is in the
 [aggressor](https://github.com/dcsync/pycobalt/tree/master/aggressor)
