@@ -512,7 +512,7 @@ The main functions are as follows:
   - `execute(bid, code, ...)`: Compile and execute inline C# code.
 
 These functions have a large number of shared keyword arguments. See the
-[`compile_file`](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py#L83)
+[`compile_file`](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py#L388)
 function's pydoc for the full list.
 
 ### Examples
@@ -545,17 +545,17 @@ simple:
             aggressor.blog2(bid, 'Build was executed from the cache')
 
 The cache works by MD5 hashing your source code before it's compiled. When you
-call `compile_file`, `compile`, `execute_file`, or `execute` PyCobalt will
-search the cache for your code's hash. If it finds the hash the cached build
-will be returned. Otherwise it will compile your code and add a successful
-build to the cache.
+call `compile_file`, `compile`, `execute_file`, or `execute` with the cache
+enabled PyCobalt will search the cache for your code's hash. If it finds the
+hash it will return a cached build. Otherwise it will compile your code and add
+a successful build to the cache.
 
 By default the cache location will be a directory named `Cache` within your
 SharpGen directory. You can change the cache location with the
 `sharpgen.set_cache_location(<location>)` function.
 
 You can enable or disable the cache for individual compilation calls by passing
-`cache=True` or `cache=False` respectively. To force the overwrite of a cached
+`cache=True` or `cache=False` respectively. To force an overwrite of a cached
 build you may pass `overwrite_cache=True`.
 
 To clear the entire cache call `sharpgen.clear_cache()`.
