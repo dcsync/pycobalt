@@ -4,8 +4,9 @@
 Generate aggressor.py based on the aggressor documentation functions.html page.
 """
 
-import requests
 from bs4 import BeautifulSoup
+import requests
+import textwrap
 import re
 
 url = 'https://www.cobaltstrike.com/aggressor-script/functions.html'
@@ -80,8 +81,7 @@ def main():
     # get docs
     docs = []
     for div in container.find_all('div'):
-        doc = '\n'.join([' ' * 4 + line.rstrip().encode('utf-8', 'ignore').decode('utf-8', 'ignore') for line in div.text.splitlines()])
-        doc = doc.replace('\t', ' ' * 4)
+        doc = div.text
         docs.append(doc)
 
     # zip together
@@ -90,7 +90,16 @@ def main():
 
     # add sleep functions
     for func in sleep_functions:
-        functions[func] = 'Sleep function. See http://sleep.dashnine.org/manual/index.html'
+        functions[func] = '\nSleep function. See http://sleep.dashnine.org/manual/index.html\n'
+
+    # fix up docs
+    new_functions = {}
+    for name, doc in functions.items():
+        doc = '\n'.join([' ' * 8 + line.rstrip().encode('utf-8', 'ignore').decode('utf-8', 'ignore') for line in doc.splitlines()])
+        doc = doc.replace('\t', ' ' * 4)
+        doc = '\n' + ' ' * 4 + 'Documentation from {}:\n'.format(url) + doc
+        new_functions[name] = doc
+    functions = new_functions
 
     print('found {} functions'.format(len(functions)))
 
@@ -124,7 +133,8 @@ import pycobalt.engine as engine
         if func in silent_functions:
             data += '''
 def {pyname}(*args, silent=False, fork=False):
-    r""""{doc}"""
+    r""""{doc}
+    """
 
     return engine.call('{name}', args, silent=silent, fork=fork)
 
@@ -132,7 +142,8 @@ def {pyname}(*args, silent=False, fork=False):
         else:
             data += '''
 def {pyname}(*args, fork=False):
-    r"""{doc}"""
+    r"""{doc}
+    """
 
     return engine.call('{name}', args, fork=fork)
 
