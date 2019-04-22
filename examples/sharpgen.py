@@ -16,12 +16,16 @@ import pycobalt.sharpgen as sharpgen
 # enable the build cache
 sharpgen.enable_cache()
 
+engine.enable_debug()
+
 @aliases.alias('sharpgen-execute', 'Execute C# code using SharpGen', quote_replacement='^')
 def _(bid, code, *args):
     aggressor.btask(bid, 'Tasked beacon to execute C# code: {}'.format(code))
     try:
         from_cache = sharpgen.execute(bid, code, args)
-        aggressor.blog2(bid, 'Build was executed from the cache')
+
+        if from_cache:
+            aggressor.blog2(bid, 'Build was retrieved from the cache')
     except RuntimeError as e:
         aggressor.berror(bid, 'SharpGen failed. See Script Console for more details.')
 
@@ -30,7 +34,9 @@ def _(bid, source, *args):
     aggressor.btask(bid, 'Tasked beacon to execute C# code from: {}'.format(source))
     try:
         from_cache = sharpgen.execute_file(bid, source, args)
-        aggressor.blog2(bid, 'Build was executed from the cache')
+
+        if from_cache:
+            aggressor.blog2(bid, 'Build was retrieved from the cache')
     except RuntimeError as e:
         aggressor.berror(bid, 'SharpGen failed. See Script Console for more details.')
 

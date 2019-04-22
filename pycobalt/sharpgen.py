@@ -320,15 +320,16 @@ def wrap_code(source, function_name='Main', function_type='void',
         global default_libraries
         libraries = default_libraries
 
+    # add return statement. not sure why this is necessary.
+    if function_type == 'void' and 'return;' not in source:
+        source += '\nreturn;'
+
     out = ''
 
     # add libraries
     for library in libraries:
         out += 'using {};\n'.format(library)
-
-    # add return statement. not sure why this is necessary.
-    if function_type == 'void' and 'return;' not in source:
-        source += '\nreturn;'
+    out += '\n'
 
     # indent the code
     source = '\n'.join([' ' * 12 + line for line in source.splitlines()])
@@ -680,7 +681,7 @@ def execute_file(bid, source, args, **kwargs):
 
     compiled, from_cache = compile_file(source, **kwargs)
     # TODO quote args correctly
-    quoted_args = ' '.join(args)
+    quoted_args = ' '.join([str(arg) for arg in args])
     aggressor.bexecute_assembly(bid, compiled, quoted_args, silent=True)
     os.remove(compiled)
 
@@ -704,7 +705,7 @@ def execute(bid, code, args, **kwargs):
 
     compiled, from_cache = compile(code, **kwargs)
     # TODO is there a way to quote arguments
-    quoted_args = ' '.join(args)
+    quoted_args = ' '.join([str(arg) for arg in args])
     engine.debug('SharpGen executing assembly')
     aggressor.bexecute_assembly(bid, compiled, quoted_args, silent=True)
     os.remove(compiled)
