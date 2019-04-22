@@ -24,8 +24,12 @@ import pycobalt.helpers as helpers
 # Location of the sharpgen directory
 _sharpgen_location = utils.basedir('../third_party/SharpGen')
 
+# Cache options
 _cache_enabled = False
 _cache_location = None
+
+# ConfuserEx options
+_confuserex_config = None
 
 def set_location(location):
     """
@@ -68,6 +72,18 @@ def disable_cache():
     global _cache_enabled
 
     _cache_enabled = False
+
+def set_confuse(config):
+    """
+    Set a default location for ConfuserEx config. This is so you don't have to
+    keep passing the `confuse=` compilation keyword argument.
+
+    :param config: ConfuserEx config file
+    """
+
+    global _confuserex_config
+
+    _confuserex_config = config
 
 def set_cache_location(location=None):
     """
@@ -288,36 +304,38 @@ def compile_file(
     Compile a file using SharpGen.
 
     :param source: File name to compile
-    :param wrapper: Use SharpGen's code wrapper (inverse of SharpGen's --no-wrapper)
+    :param wrapper: Use SharpGen's code wrapper (inverse of the dcsync/SharpGen fork's --no-wrapper)
     :param dotnet_framework: .NET version to compile against (net35 or net40) (SharpGen's --dotnet-framework)
     :param output_kind: Type of output (console or dll) (SharpGen's --output-kind)
     :param platform: Platform to compile for (any/AnyCpy, x86, or x64) (SharpGen's --platform)
     :param optimization: Perform code optimization (inverse of SharpGen's --no-optimization)
     :param assembly_name: Name of generated assembly (SharpGen's --assembly-name)
     :param class_name: Name of generated class (SharpGen's --class-name)
-    :param confuse: ConfuserEx configuration file (SharpGen's --confuse)
+    :param confuse: ConfuserEx configuration file (SharpGen's --confuse). Set a
+                    default for this option with `set_confuse(<file>)`.
     :param out: Output file (SharpGen's --file)
     :param additional_options: List of additional SharpGen options/flags
                                (passed through raw)
+
     :param resources: List of resources to include (by Name). These must be
                       present in your resources.yml file.
     :param references: List of references to include (by File). These must be
                        present in your references.yml file.
+
     :param cache: Use the build cache. Not setting this option will use the
-                  global settings (enable_cache()).
+                  global settings (`enable_cache()`/`disable_cache()`).
     :param overwrite_cache: Force overwriting this build in the cache (disable
                             cache retrieval but not writing)
     :param no_cache_write: Allow for cache retrieval but not cache writing
+
     :param sharpgen_location: Location of SharpGen directory (default: location
-                              passed to `set_location()` or repo copy)
+                              passed to `set_location()` or PyCobalt repo copy)
+
     :return: Tuple containing (out, cached) where `out` is the name of the
              output file and `cached` is a boolean containing True if the build
              is from the build cache
     :raises: RuntimeError: If one of the options is invalid
     """
-
-    global _sharpgen_location
-    global _cache_enabled
 
     if not out:
         # use a temporary output file
@@ -328,6 +346,7 @@ def compile_file(
         out = tempfile.NamedTemporaryFile(prefix='pycobalt.sharpgen.', suffix=suffix, delete=False).name
 
     # build cache settings
+    global _cache_enabled
     if cache is None:
         # use global settings
         cache_write = _cache_enabled and not no_cache_write
@@ -349,6 +368,7 @@ def compile_file(
 
     # default sharpgen_location
     if not sharpgen_location:
+        global _sharpgen_location
         sharpgen_location = _sharpgen_location
 
     # find SharpGen.dll
@@ -388,8 +408,12 @@ def compile_file(
     if class_name:
         args += ['--class-name', class_name]
 
+    global _confuserex_config
     if confuse:
         args += ['--confuse', confuse]
+    elif _confuserex_config:
+        # see `set_confuse()`
+        args += ['--confuse', _confuserex_config]
 
     if additional_options:
         args += additional_options
