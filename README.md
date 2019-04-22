@@ -68,6 +68,14 @@ scripts first. Otherwise they'll run forever doing nothing.
     aggressor> reload example.cna
     [pycobalt] Executing script /root/pycobalt/example.py
 
+You can restart individual scripts as well:
+
+    aggressor> python /root/pycobalt/example.py
+    [pycobalt] /root/pycobalt/example.py is already running. Restarting.
+    [pycobalt] Asking script to stop: /root/pycobalt/example.py 
+    [pycobalt] Script process exited: /root/pycobalt/example.py
+    [pycobalt] Executing script /root/pycobalt/example.py 
+
 For these commands to work properly you can only call PyCobalt in one Aggressor
 script. Personally I have a single all.cna file with a bunch of calls to
 `python()` and  `include()`.
@@ -76,16 +84,16 @@ script. Personally I have a single all.cna file with a bunch of calls to
 
 PyCobalt includes several Python modules. Here's the full list, with links to examples:
 
-  - [engine.py](#script-console): Main communication code
-  - [aggressor.py](#aggressor): Stubs for calling Aggressor functions
-  - [aliases.py](#aliases): Beacon console alias registration
-  - [commands.py](#commands): Script console command registration
-  - [events.py](#events): Event handler registration
-  - [gui.py](#gui): Context menu registration
-  - [helpers.py](#helpers):
+  - [pycobalt.engine](#script-console): Main communication code
+  - [pycobalt.aggressor](#aggressor): Stubs for calling Aggressor functions
+  - [pycobalt.aliases](#aliases): Beacon console alias registration
+  - [pycobalt.commands](#commands): Script console command registration
+  - [pycobalt.events](#events): Event handler registration
+  - [pycobalt.gui](#gui): Context menu registration
+  - [pycobalt.helpers](#helpers):
     Assorted helper functions and classes to make writing scripts easier
-  - [bot.py](#bot): Event Log bot toolkit
-  - [sharpgen.py](#sharpgen):
+  - [pycobalt.bot](#bot): Event Log bot toolkit
+  - [pycobalt.sharpgen](#sharpgen):
        Helper functions for using [SharpGen](https://github.com/cobbr/SharpGen) with Cobalt Strike
 
 # Usage and Examples
