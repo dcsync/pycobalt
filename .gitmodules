@@ -3,4 +3,4 @@
 	url = https://github.com/stleary/JSON-java
 [submodule "third_party/SharpGen"]
 	path = third_party/SharpGen
-	url = https://github.com/dcsync/SharpGen
+	url = https://github.com/cobbr/SharpGen

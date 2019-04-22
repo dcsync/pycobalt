@@ -491,7 +491,7 @@ constructor. This is useful for creating bots.
 
 ## SharpGen
 
-[sharpgen.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py)
+[sharpgen.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py)
 provides helpers for compiling and executing C# code with
 [SharpGen](https://github.com/cobbr/SharpGen).
 
@@ -568,7 +568,7 @@ more info.
 
 You need a compiled version of SharpGen to use this module. By default it
 points to the repo copy (`pycobalt/third_party/SharpGen`) which is a Git
-submodule of [github.com/dcsync/SharpGen](https://github.com/dcsync/SharpGen).
+submodule of [github.com/cobbr/SharpGen](https://github.com/cobbr/SharpGen).
 To use it you'll need to initialize and build it first. To do that run:
 
     git submodule init
