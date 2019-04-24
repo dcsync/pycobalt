@@ -14,7 +14,7 @@ gui
 helpers
 sharpgen
 )
-level='+'
+level='++'
 preprocessor=pydocmd.restructuredtext.Preprocessor
 
 mkdir -p $docs

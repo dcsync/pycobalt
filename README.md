@@ -18,7 +18,7 @@ PyCobalt looks like this:
     import pycobalt.aggressor as aggressor
     import pycobalt.aliases as aliases
 
-    # register this function as a beacon console alias
+    # register this function as a Beacon Console alias
     @aliases.alias('example-alias')
     def example_alias(bid):
         aggressor.blog2(bid, 'example alias')
@@ -87,8 +87,8 @@ usage and examples:
 
   - [pycobalt.engine](#script-console): Main communication code
   - [pycobalt.aggressor](#aggressor): Stubs for calling Aggressor functions
-  - [pycobalt.aliases](#aliases): Beacon console alias registration
-  - [pycobalt.commands](#commands): Script console command registration
+  - [pycobalt.aliases](#aliases): Beacon Console alias registration
+  - [pycobalt.commands](#commands): Script Console command registration
   - [pycobalt.events](#events): Event handler registration
   - [pycobalt.gui](#gui): Context menu registration
   - [pycobalt.helpers](#helpers):
@@ -107,7 +107,7 @@ Here are some script examples. For more complete examples see the
 
 ## Script Console
 
-To print a message on the script console:
+To print a message on the Script Console:
 
     import pycobalt.engine as engine
 
@@ -115,11 +115,11 @@ To print a message on the script console:
 
     engine.loop()
 
-This shows up in the script console as:
+This shows up in the Script Console as:
 
     [pycobalt example.py] test message
 
-To print an error message on the script console:
+To print an error message on the Script Console:
 
     import pycobalt.engine as engine
 
@@ -127,11 +127,11 @@ To print an error message on the script console:
 
     engine.loop()
 
-This shows up in the script console as:
+This shows up in the Script Console as:
 
     [pycobalt example.py error] test error
 
-To print debug messages to the script console:
+To print debug messages to the Script Console:
 
     import pycobalt.engine as engine
 
@@ -143,12 +143,12 @@ To print debug messages to the script console:
 
     engine.loop()
 
-This shows up in the script console as:
+This shows up in the Script Console as:
 
     [pycobalt example.py debug] debug message 1
     [pycobalt example.py debug] debug message 2
 
-To print raw stuff to the script console you can just call the Aggressor print
+To print raw stuff to the Script Console you can just call the Aggressor print
 functions:
 
     import pycobalt.engine as engine
@@ -160,7 +160,11 @@ functions:
 
 ## Aggressor
 
-Calling an Aggressor function:
+[pycobalt.aggressor](https://github.com/dcsync/pycobalt/tree/master/docs/aggressor.md)
+provides wrappers for all ~300
+[Aggressor](https://www.cobaltstrike.com/aggressor-script/functions.html)
+functions and some [Sleep](http://sleep.dashnine.org/manual/index.html)
+functions. Here's how you call an Aggressor function:
 
     import pycobalt.engine as engine
     import pycobalt.aggressor as aggressor
@@ -170,7 +174,7 @@ Calling an Aggressor function:
 
     engine.loop()
 
-Calling an Aggressor function with a callback:
+To call an Aggressor function with a callback:
 
     import pycobalt.engine as engine
     import pycobalt.aggressor as aggressor
@@ -184,43 +188,49 @@ Calling an Aggressor function with a callback:
 
     engine.loop()
 
-Calling an Aggressor function without printing tasking information to the
-beacon console (`!` operator, only supported by certain functions):
+To call an Aggressor function without printing tasking information to the
+Beacon Console (`!` operator, only supported by certain functions):
 
     ...
     aggressor.bshell(bid, 'whoami', silent=True)
     ...
 
+For information on calling Sleep or Aggressor functions that aren't in
+pycobalt.aggressor (including your own Aggressor functions) see the [Sleep
+Functions](#sleep-functions) section below.
+
 For notes on using non-primitive objects such as dialog objects see the
-[non-primitive objects](#non-primitive-objects) section.
+[Non-Primitive Objects](#non-primitive-objects) section.
 
 ## Aliases
 
-Registering a beacon console alias:
+[pycobalt.aliases](https://github.com/dcsync/pycobalt/tree/master/docs/aliases.md)
+provides the ability to register Beacon Console aliases.
 
     import pycobalt.engine as engine
     import pycobalt.aliases as aliases
     import pycobalt.aggressor as aggressor
 
     @aliases.alias('test_alias')
-    def test_alias(bid):
-        aggressor.blog2(bid, 'test alias called')
+    def test_alias(bid, arg1, arg2='test'):
+        aggressor.blog2(bid, 'test alias called with args {} {}'.format(arg1, arg2))
 
     engine.loop()
 
-Registering an alias with help info:
+You can register help info with an alias and it will show up when you run
+Cobalt Strike's `help` command:
 
     ...
     @aliases.alias('test_alias', short_help='Tests alias registration')
     ...
 
-By default the long help will be based on the short help and python function
+By default the long help will be based on the short help and Python function
 syntax. For example:
 
     beacon> help test_alias
     Tests alias registration
     
-    Syntax: test_alias
+    Syntax: test_alias arg1 [arg2=test]
 
 Or you can specify the long help yourself:
 
@@ -231,10 +241,10 @@ Or you can specify the long help yourself:
 ### Argument Checking
 
 When the alias is called its arguments will be automagically checked against the
-arguments of the python function. For example:
+arguments of the Python function. For example:
 
-    beacon> test_alias foo
-    [-] Syntax: test_alias
+    beacon> test_alias 1 2 3
+    [-] Syntax: test_alias arg1 [arg2=test]
 
 To bypass this you can use python's `*` operator:
 
@@ -249,12 +259,12 @@ To bypass this you can use python's `*` operator:
     engine.loop()
 
 This also allows you to use Python's argparse with aliases. For more
-information about using argparse see the [helpers](#argparse) section.
+information about using argparse see the [Argparse](#argparse) section below.
 
 ### Exception Handling
 
 If an unhandled exception occurs in your alias callback PyCobalt will catch it
-and print the exception information to the beacon console. For example, while I
+and print the exception information to the Beacon Console. For example, while I
 was writing the previous example I typed `engine.blog2()` instead of
 `aggressor.blog2()` by accident and got this error:
 
@@ -262,7 +272,7 @@ was writing the previous example I typed `engine.blog2()` instead of
     [-] Caught Python exception while executing alias 'test_alias': module 'pycobalt.engine' has no attribute 'blog2'
         See Script Console for more details.
 
-In the script console:
+In the Script Console:
 
     ...
     [pycobalt script error] exception: module 'pycobalt.engine' has no attribute 'blog2'
@@ -283,10 +293,11 @@ In the script console:
 
 ### Double Quotes
 
-Cobalt Strike's beacon console allows you to pass arguments containing spaces
-if they're enclosed in double quotes. There's no way to escape double quotes
-and pass arguments containing both spaces and double quotes though. As a bit of
-a workaround PyCobalt includes an optional quote replacement mechanism.
+Cobalt Strike's Beacon and Script Consoles allow you to pass arguments
+containing spaces if they're enclosed in double quotes. There's no way to
+escape double quotes and pass arguments containing both spaces and double
+quotes though. As a bit of a workaround PyCobalt includes an optional quote
+replacement mechanism.
 
 To use it simply pass `quote_replacement=<string>` to the alias registration
 function or decorator. For example:
@@ -302,7 +313,8 @@ function or decorator. For example:
 
 ## Commands
 
-Script console commands are similar to beacon console aliases.
+[pycobalt.commands](https://github.com/dcsync/pycobalt/tree/master/docs/commands.md)
+provides the ability to register Script Console commands.
 
     import pycobalt.engine as engine
     import pycobalt.commands as commands
@@ -313,12 +325,14 @@ Script console commands are similar to beacon console aliases.
 
     engine.loop()
 
-Error handling and argument checking is similar. Error messages are printed to
-the script console.
+[Exception handling](#exception-handling), [argument
+checking](#argument-checking), and [double quote replacement](#double-quotes)
+is similar to that of aliases. Exceptions are printed to the Script Console.
 
 ## Events
 
-Registering an event handler:
+[pycobalt.events](https://github.com/dcsync/pycobalt/tree/master/docs/events.md)
+provides the ability to register event handlers (Aggressor's `on` function).
 
     import pycobalt.engine as engine
     import pycobalt.events as events
@@ -337,7 +351,13 @@ Cobalt Strike ones. To register an arbitrary event (e.g. for use with
     @events.event('myevent', official_only=False)
     ...
 
+The arguments to your event callback are checked against incoming events. If
+they don't match an Exception will be printed to the Script Console.
+
 ## GUI
+
+[pycobalt.gui](https://github.com/dcsync/pycobalt/tree/master/docs/gui.md)
+provides the ability to register menu trees.
 
 The following menu tree pieces are supported:
 
@@ -384,8 +404,8 @@ from within the menu callbacks.
 
 ## Bot
 
-[bot.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/bot.py)
-provides tools for registering Event Log bot commands.
+[pycobalt.bot](https://github.com/dcsync/pycobalt/blob/master/pycobalt/bot.py)
+provides tools for creating Event Log bots.
 
 For example:
 
@@ -420,7 +440,7 @@ for more examples.
 
 ## Helpers
 
-[helpers.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/helpers.py)
+[pycobalt.helpers](https://github.com/dcsync/pycobalt/tree/master/docs/helpers.md)
 contains helper functions and classes to make writing scripts easier. Here are
 some of the functions available:
 
@@ -457,8 +477,8 @@ some of the functions available:
 ### Argparse
 
 There's a `helpers.ArgumentParser` class which extends
-`argparse.ArgumentParser` to support printing to the beacon console, script
-console, or event log. Here's an example using it with an alias:
+`argparse.ArgumentParser` to support printing to the Beacon Console, script
+console, or Event Log. Here's an example using it with an alias:
 
     @aliases.alias('outlook', 'Retrieve an outlook folder', 'See `outlook -h`')
     def _(bid, *args):
@@ -472,7 +492,7 @@ console, or event log. Here's an example using it with an alias:
         except: return
         ...
 
-In the beacon console:
+In the Beacon Console:
 
     beacon> outlook -h
     [-] usage: outlook [-h] [-f FOLDER] [-s SUBJECT] [-t N] [-d] [-o OUT]
@@ -490,12 +510,12 @@ In the beacon console:
     beacon> outlook -z
     [-] unrecognized arguments: -z
 
-To use `helpers.ArgumentParser` with the event log pass `event_log=True` to the
-constructor. This is useful for creating bots.
+To use `helpers.ArgumentParser` with the Event Log pass `event_log=True` to the
+constructor. This is useful for creating [bots](#bot).
 
 ## SharpGen
 
-[sharpgen.py](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py)
+[pycobalt.sharpgen](https://github.com/dcsync/pycobalt/tree/master/docs/sharpgen.md)
 provides helpers for compiling and executing C# code with
 [SharpGen](https://github.com/cobbr/SharpGen).
 
@@ -516,8 +536,8 @@ The main functions are as follows:
   - `execute(bid, code, ...)`: Compile and execute inline C# code.
 
 These functions have a large number of shared keyword arguments. See the
-[`compile_file`](https://github.com/dcsync/pycobalt/blob/master/pycobalt/sharpgen.py#L388)
-function's pydoc for the full list.
+[module docs](https://github.com/dcsync/pycobalt/tree/master/docs/sharpgen.md)
+for the full list.
 
 ### Examples
 
@@ -532,7 +552,10 @@ Here's a basic usage example:
 
 See
 [examples/sharpgen.py](https://github.com/dcsync/pycobalt/tree/master/examples/sharpgen.py)
-for console commands and beacon aliases to go with each compile/execute function.
+for example Script Console commands and Beacon Console aliases to go with each
+compile/execute function (including a full version of `sharpgen-exec`).
+
+This module is also pretty useful on its own, independent of Cobalt Strike.
 
 ### Build Cache
 
@@ -564,7 +587,8 @@ build you may pass `overwrite_cache=True`.
 
 To clear the entire cache call `sharpgen.clear_cache()`.
 
-There are other caching-related functions. You'll need to [read the
+There are other caching-related functions. You'll need to read the [module
+docs](https://github.com/dcsync/pycobalt/tree/master/docs/sharpgen.md) or [the
 code](https://github.com/dcsync/pycobalt/tree/master/pycobalt/sharpgen.py) for
 more info.
 
@@ -612,8 +636,9 @@ Java objects though.
 
 ### Sleep Functions
 
-You can call arbitrary Sleep and Aggressor functions (including your own
-Aggressor functions) like this:
+You can call arbitrary [Sleep](http://sleep.dashnine.org/manual/index.html) and
+[Aggressor](https://www.cobaltstrike.com/aggressor-script/functions.html)
+functions (including your own Aggressor functions) like this:
 
     engine.call('printAll', [['a', 'b', 'c']])
 
