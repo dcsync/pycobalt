@@ -19,15 +19,32 @@ import pycobalt.callbacks as callbacks
 import pycobalt.engine as engine
 import pycobalt.utils as utils
 
+_default_quote_replacement = None
+
+def set_quote_replacement(replacement):
+    """
+    Set the default `quote_replacement` value. Passing `quote_replacement=` to
+    `register()` or `@alias()` overrides this.
+
+    See `register()` for more information.
+
+    :param replacement: Quote replacement string
+    """
+
+    global _default_quote_replacement
+    _default_quote_replacement = replacement
+
 def register(name, callback, short_help=None, long_help=None,
              quote_replacement=None):
     """
     Register an alias
 
-    Regarding the quote_replacement argument: Cobalt Strike's Beacon console
+    Regarding the `quote_replacement` argument: Cobalt Strike's Beacon console
     uses double quotes to enclose arguments with spaces in them. There's no way
-    to escape double quotes within those quotes though. Set quote_replacement
-    to a string and PyCobalt will replace it with " in each argument.
+    to escape double quotes within those quotes though. Set `quote_replacement`
+    to a string and PyCobalt will replace it with " in each argument. Call
+    `aliases.set_quote_replacement(<string>)` to change the default quote
+    replacement behavior.
 
     :param name: Name of alias
     :param callback: Callback for alias
@@ -52,6 +69,10 @@ def register(name, callback, short_help=None, long_help=None,
             return
 
         # handle the quote replacement character
+        if not quote_replacement:
+            global _default_quote_replacement
+            quote_replacment = _default_quote_replacement
+
         if quote_replacement:
             args = [arg.replace(quote_replacement, '"') for arg in args]
 

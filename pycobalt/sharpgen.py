@@ -43,11 +43,73 @@ default_build_paths = ['bin/Release/netcoreapp2.1/SharpGen.dll',
 _sharpgen_location = utils.basedir('../third_party/SharpGen')
 
 # Cache options
-_cache_enabled = False
+_default_cache_enabled = False
 _cache_location = None
 
 # ConfuserEx options
-_confuserex_config = None
+_default_confuser_config = None
+_default_confuser_protections = None
+
+# not currently used. needs more testing. enforcement will be optional.
+_confuser_protection_support = {
+    # XXX re-build and test
+    'anti debug': ('net35', 'net40'),
+
+    # crashed in mono, "Failed to run module constructor due to (null) assembly"
+    # XXX re-build and test
+    'anti dump': ('net35', 'net40'),
+
+    # XXX re-build and test
+    'anti ildasm': ('net35', 'net40'),
+
+    # crashed in mono, "Failed to run module constructor due to (null) assembly"
+    # XXX re-build and test
+    'anti tamper': ('net35', 'net40'),
+
+    # crashed in .NET 3.5 but not 4.0, missing System.Reflection.Assembly.op_Equality
+    'constants': ('net40'),
+
+    # tested with .NET 3.5 and 4.0
+    'ctrl flow': ('net35', 'net40'),
+
+    # seems to break everywhere with a segfault?
+    'invalid metadata': (),
+
+    # failed to build due to .NET 3.5 missing System.Reflection.MethodInfo.op_Inequality
+    'ref proxy': ('net40'),
+
+    # tested with .NET 3.5 and 4.0
+    'rename': ('net35', 'net40'),
+
+    # tested with .NET 3.5 and 4.0
+    'resources': ('net35', 'net40'),
+
+    # only in XenocodeRCE and mkaring forks
+    #'typescramble': ('net35', 'net40'),
+}
+
+# will work on this later
+#_confuser_protection_params = {
+#    'anti debug': {'mode': ('safe', 'win32', 'antinet')},
+#    'anti dump': {},
+#    'anti ildasm': {},
+#    'anti tamper': {'mode': ('normal', 'jit'), 'key': ('normal', 'dynamic')},
+#    'constants': {},
+#    'ctrl flow': {},
+#    'invalid metadata': {},
+#    'ref proxy': {},
+#    'rename': {},
+#    'resources': {},
+#}
+
+# Special value, indicates that no change should be made to the SharpGen
+# resources.yml and references.yml files.
+no_changes = object()
+
+# Other default options
+_default_resources = no_changes
+_default_references = no_changes
+_default_dotnet_framework = 'net35'
 
 def set_location(location):
     """
@@ -74,9 +136,9 @@ def enable_cache():
     fresh new C# and change a compilation option without changing the source.
     """
 
-    global _cache_enabled
+    global _default_cache_enabled
 
-    _cache_enabled = True
+    _default_cache_enabled = True
 
     if not _cache_location:
         # reset to <SharpGen>/Cache
@@ -87,21 +149,109 @@ def disable_cache():
     Disable the build cache
     """
 
-    global _cache_enabled
+    global _default_cache_enabled
 
-    _cache_enabled = False
+    _default_cache_enabled = False
 
-def set_confuse(config):
+def set_confuser_config(config):
     """
     Set a default location for ConfuserEx config. This is so you don't have to
-    keep passing the `confuse=` compilation keyword argument.
+    keep passing the `confuser_config=` compilation keyword argument.
+
+    This setting will disable anything set with `set_confuser_protections()`
+    but is overridden by the `confuser_protections=` keyword argument.
 
     :param config: ConfuserEx config file
     """
 
-    global _confuserex_config
+    global _default_confuser_config
+    global _default_confuser_protections
 
-    _confuserex_config = config
+    _default_confuser_config = config
+    _default_confuser_protections = None
+
+def set_confuser_protections(protections):
+    """
+    Set a the default ConfuserEx protections. This is so you don't have to
+    keep passing the `confuser_protections=` compilation keyword argument.
+
+    This setting will disable anything set with `set_confuser_config()`
+    but is overridden by the `confuser_config=` keyword argument.
+
+    The protections passed may be either:
+     - A list containing protection names
+     - A dictionary of dictionaries containing {protection: {argument, value}}
+
+    Example calls:
+    
+        # use protections resources and rename
+        sharpgen.set_confuser_protections(['resources', 'rename'])
+
+        # use protections resources and rename with mode=dynamic argument for
+        # resources
+        sharpgen.set_confuser_protections({'resources': {'mode': 'dynamic'},
+                                           'rename': None})
+
+    :param protections: ConfuserEx protections file
+    """
+
+    global _default_confuser_config
+    global _default_confuser_protections
+
+    _default_confuser_protections = protections
+    _default_confuser_config = None
+
+def set_resources(resources=None):
+    """
+    Set the resource whitelist default. Call with no arguments to disable all
+    resources by default.
+
+    Use the special value `sharpgen.no_changes` to indicate that no changes
+    should be made to the `resources.yml` file.
+
+    :param resources: Default resouce whitelist
+    """
+
+    global _default_resources
+
+    if not resources:
+        resources = []
+
+    _default_resources = resources
+
+def set_references(references=['mscorlib.dll', 'System.dll', 'System.Core.dll']):
+    """
+    Set the reference whitelist default. Call with no arguments disable all
+    references except mscorlib.dll, System.dll, and System.Core.dll by default.
+
+    Use the special value `sharpgen.no_changes` to indicate that no changes
+    should be made to the `references.yml` file.
+
+    :param references: Default reference whitelist
+    """
+
+    global _default_references
+
+    if not references:
+        references = []
+
+    _default_references = references
+
+def set_dotnet_framework(version):
+    """
+    Set the default .NET Framework version. This is overridden by the
+    `dotnet_framework=` keyword argument.
+
+    :param version: .NET Framework version ('net35' or 'net40')
+    """
+
+    global _default_dotnet_framework
+
+    # check dotnet_framework
+    if version not in ('net35', 'net40'):
+        raise RuntimeError('Argument version must be net35 or net40')
+
+    _default_dotnet_framework = version
 
 def set_cache_location(location=None):
     """
@@ -309,6 +459,7 @@ def wrap_code(source, function_name='Main', function_type='void',
     :param function_type: Function type (default: void)
     :param class_name: Class name (default: random)
     :param libraries: List of librares to use (default: sharpgen.default_libraries)
+    :return: Generated code
     """
 
     if not class_name:
@@ -348,6 +499,55 @@ def wrap_code(source, function_name='Main', function_type='void',
 
     return out
 
+def generate_confuser_config(protections):
+    """
+    Generate a ConfuserEx config file.
+
+    The protections passed may be either:
+     - A list containing protection names
+     - A dictionary of dictionaries containing {protection: {argument, value}}
+
+    :param protections: List of protection names or a dictionary of
+                        dictionaries containing protections and their
+                        arguments.
+    :return: Generated ConfuserEx config file
+    """
+
+    config = textwrap.dedent("""\
+        <project baseDir="{0}" outputDir="{1}" xmlns="http://confuser.codeplex.com">
+          <module path="{2}">
+            <rule pattern="true" inherit="false">
+        """)
+
+    indent = ' ' * 6
+    if isinstance(protections, dict):
+        # protections is a dictionary of dictionaries
+        # format is {protection: {argument, value}}
+        for protection, arguments in protections.items():
+            config += indent + '<protection id="{}">\n'.format(protection)
+
+            # generate arguments
+            if arguments:
+                if not isinstance(arguments, dict):
+                    raise RuntimeError('Invalid arguments passed for ConfuserEx protection: {}'.format(protection))
+
+                for name, value in arguments.items():
+                    config += indent + '  <argument name="{}" value="{}" />\n'.format(name, value)
+
+            config += indent + '</protection>\n'
+    else:
+        # protections is just a list of protections with no arguments
+        for protection in protections:
+            config += indent + '<protection id="{}" />\n'.format(protection)
+
+    config += textwrap.dedent("""\
+            </rule>
+          </module>
+        </project>
+        """)
+
+    return config
+
 def compile(
                     # Input options
                     source,
@@ -362,11 +562,14 @@ def compile(
 
                     # Compilation options
                     output_kind='console',
-                    platform='x86',
-                    confuse=None,
-                    dotnet_framework='net35', 
+                    platform='AnyCpu',
+                    dotnet_framework=None, 
                     optimization=True,
                     out=None,
+
+                    # Confuser options
+                    confuser_config=None,
+                    confuser_protections=None,
 
                     # Additional SharpGen options (passed through raw)
                     additional_options=None,
@@ -397,20 +600,33 @@ def compile(
 
     :param assembly_name: Name of generated assembly (default: random)
     :param output_kind: Type of output (exe/console or dll/library) (default: console)
-    :param platform: Platform to compile for (any/AnyCpy, x86, or x64) (default: x86)
-    :param confuse: ConfuserEx configuration file. Set a default for this
-                    option with `set_confuse(<file>)`.
-    :param dotnet_framework: .NET version to compile against (net35 or net40) (default: net35)
+    :param platform: Platform to compile for (any/AnyCpu, x86, or x64) (default: AnyCpu)
+    :param confuser_config: ConfuserEx configuration file. Set a default for this
+                            option with `set_confuser_config(<file>)`.
+    :param confuser_protections: ConfuserEx protections to enable. Setting this
+                                 argument will generate a temporary ConfuserEx
+                                 config file for this build. For more
+                                 information and to set a default for this
+                                 option see `set_confuser_protections(<protections>)`.
+    :param dotnet_framework: .NET Framework version to compile against
+                             (net35 or net40) (default: value passed to
+                             `set_dotnet_framework(<version>)` or net35)
     :param optimization: Perform code optimization (default: True)
     :param out: Output file (default: file in /tmp)
 
     :param additional_options: List of additional SharpGen options/flags
                                (passed through raw)
 
-    :param resources: List of resources to whitelist (by Name). These must be
-                      present in your resources.yml file.
-    :param references: List of references to whitelist (by File). These must be
-                       present in your references.yml file.
+    :param resources: List of resources to whitelist (by Name). This option
+                      temporarily modifies your `resources.yml` file so listed
+                      resources must be present in that file. By default
+                      resources.yml will not be touched. Call
+                      `set_resources(<resources>)` to change the default.
+    :param references: List of references to whitelist (by File). This option
+                      temporarily modifies your `references.yml` file so listed
+                      references must be present in that file. By default
+                       references.yml will not be touched. Call
+                      `set_references(<references>)` to change the default.
 
     :param cache: Use the build cache. Not setting this option will use the
                   global settings (`enable_cache()`/`disable_cache()`). By
@@ -432,15 +648,18 @@ def compile(
 
     # check output_kind
     if output_kind not in ('exe', 'console', 'dll', 'library'):
-        raise RuntimeError('output_kind must be exe/console or dll/library')
+        raise RuntimeError('Argument output_kind must be exe/console or dll/library')
     if output_kind == 'exe':
         output_kind = 'console'
     if output_kind == 'library':
         output_kind = 'dll'
 
     # check dotnet_framework
+    if not dotnet_framework:
+        global _default_dotnet_framework
+        dotnet_framework = _default_dotnet_framework
     if dotnet_framework not in ('net35', 'net40'):
-        raise RuntimeError('dotnet_framework must be net35 or net40')
+        raise RuntimeError('Argument dotnet_framework must be net35 or net40')
 
     if not out:
         # use a temporary output file
@@ -451,11 +670,11 @@ def compile(
         out = tempfile.NamedTemporaryFile(prefix='pycobalt.sharpgen.', suffix=suffix, delete=False).name
 
     # build cache settings
-    global _cache_enabled
+    global _default_cache_enabled
     if cache is None:
         # use global settings
-        cache_write = _cache_enabled and not no_cache_write
-        cache_retrieval = _cache_enabled and not overwrite_cache
+        cache_write = _default_cache_enabled and not no_cache_write
+        cache_retrieval = _default_cache_enabled and not overwrite_cache
     else:
         # override global settings
         cache_write = cache and not no_cache_write
@@ -500,10 +719,10 @@ def compile(
 
     # check platform
     platform = platform.lower()
-    if platform not in ('any', 'anycpy', 'x86', 'x64'):
-        raise RuntimeError('platform must be any/AnyCpy, x86, or x64')
-    if platform in ('any', 'anycpy'):
-        platform = 'AnyCpy'
+    if platform not in ('any', 'anycpu', 'x86', 'x64'):
+        raise RuntimeError('Argument platform must be any/AnyCpu, x86, or x64')
+    if platform in ('any', 'anycpu'):
+        platform = 'AnyCpu'
 
     args = []
 
@@ -519,22 +738,40 @@ def compile(
         args += ['--assembly-name', assembly_name]
 
     # ConfuserEx config
-    global _confuserex_config
-    if confuse:
-        args += ['--confuse', confuse]
-    elif _confuserex_config:
-        # see `set_confuse()`
-        args += ['--confuse', _confuserex_config]
+    # if neither flag is passed, pick a global default
+    if not (confuser_config or confuser_protections):
+        global _default_confuser_config
+        global _default_confuser_protections
+        if _default_confuser_config:
+            confuser_config = _default_confuser_config
+        elif _default_confuser_protections:
+            confuser_protections = _default_confuser_protections
+
+    # check to make sure both arguments were not passed
+    if confuser_protections and confuser_config:
+        raise RuntimeError('Arguments confuser_protections and confuser_config are not compatible together')
+
+    # if confuser_protections is passed generate a ConfuserEx config file
+    confuser_tempfile = None
+    if confuser_protections:
+        # this is cleaned up way at the bottom of the function
+        confuser_tempfile = tempfile.NamedTemporaryFile('w+', prefix='pycobalt.sharpgen.', suffix='confuser_config.cr')
+
+        config = generate_confuser_config(confuser_protections)
+
+        engine.debug('Confuser config: ' + config)
+
+        confuser_tempfile.write(config)
+        confuser_tempfile.flush()
+
+        confuser_config = confuser_tempfile.name
+
+    if confuser_config:
+        args += ['--confuse', confuser_config]
 
     # additional options
     if additional_options:
         args += additional_options
-
-    resources_yaml_file = '{}/Resources/resources.yml'.format(sharpgen_location)
-    references_yaml_file = '{}/References/references.yml'.format(sharpgen_location)
-
-    original_resources_yaml = None
-    original_references_yaml = None
 
     def filter_yaml(yaml, key, enabled_items):
         """
@@ -551,7 +788,7 @@ def compile(
 
         # filter out the items we want
         for item in items:
-            if item[key].lower() in enabled_items.lower():
+            if item[key].lower() in [item.lower() for item in enabled_items]:
                 item['Enabled'] = 'true'
             else:
                 item['Enabled'] = 'false'
@@ -559,10 +796,26 @@ def compile(
         # dump new yaml
         return utils.yaml_basic_dump(items)
 
-    # this is a bit ugly but I can't think of a better way to do it
+    resources_yaml_file = '{}/Resources/resources.yml'.format(sharpgen_location)
+    references_yaml_file = '{}/References/references.yml'.format(sharpgen_location)
+
+    original_resources_yaml = None
+    original_references_yaml = None
+
+    # figure out resources behavior
+    global _default_resources
+    if resources is None:
+        resources = _default_resources
+
+    # figure out references behavior
+    global _default_references
+    if references is None:
+        references = _default_references
+
+    # this feels a bit ugly but I can't think of a better way to do it
     try:
         # pick resources?
-        if resources is not None:
+        if resources is not no_changes:
             # read in original yaml
             with open(resources_yaml_file, 'r') as fp:
                 original_resources_yaml = fp.read()
@@ -575,7 +828,7 @@ def compile(
                 fp.write(new_yaml)
 
         # pick references?
-        if references is not None:
+        if references is not no_changes:
             # read in original yaml
             with open(references_yaml_file, 'r') as fp:
                 original_references_yaml = fp.read()
@@ -605,7 +858,7 @@ def compile(
             # call the SharpGen dll
             args = [sharpgen_runner, sharpgen_dll] + args
             engine.debug('Compiling code: ' + source)
-            engine.debug('Running SharpGen: ' + ' '.join(args)) 
+            engine.debug('Running SharpGen: ' + str(args))
             code, output, _ = helpers.capture(args, merge_stderr=True)
             engine.debug('Finished running SharpGen')
 
@@ -621,6 +874,12 @@ def compile(
             engine.message('SharpGen error code: {}'.format(code))
             engine.message('SharpGen error output:\n' + output)
             engine.message('End SharpGen error output')
+
+            if code == -12 and os.path.isfile(out):
+                # confuser failed. remove the un-confused output binary.
+                try: os.remove(out)
+                except: pass
+
             raise RuntimeError('SharpGen failed with code {}'.format(code))
     finally:
         if original_resources_yaml:
@@ -637,6 +896,12 @@ def compile(
         # copy build to the cache
         engine.debug('Adding {} to SharpGen cache'.format(source_hash))
         _cache_add(source_hash, out)
+
+    if confuser_tempfile:
+        # we have to explictly close the tempfile here. otherwise python's
+        # garbage collector might "optimize" out the object early, causing the
+        # file to be deleted.
+        confuser_tempfile.close()
 
     return out, False
 
@@ -677,7 +942,7 @@ def execute_file(bid, source, args, **kwargs):
 
     # check for `out` argument
     if 'out' in kwargs:
-        raise RuntimeError('do not use the out parameter with execute_file()')
+        raise RuntimeError('Do not use the out parameter with execute_file()')
 
     compiled, from_cache = compile_file(source, **kwargs)
     # TODO quote args correctly
@@ -701,7 +966,7 @@ def execute(bid, code, args, **kwargs):
 
     # check for `out` argument
     if 'out' in kwargs:
-        raise RuntimeError('do not use the out parameter with execute()')
+        raise RuntimeError('Do not use the out parameter with execute()')
 
     compiled, from_cache = compile(code, **kwargs)
     # TODO is there a way to quote arguments
