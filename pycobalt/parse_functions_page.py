@@ -88,18 +88,22 @@ def main():
     for name, doc in zip(names, docs):
         functions[name] = doc
 
+    # fix up docs
+    for name, doc in functions.items():
+        doc = doc.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
+        doc = doc.replace('\t', ' ' * 4)
+        doc = '\n'.join([line.rstrip() for line in doc.splitlines()])
+        doc = '\nDocumentation from {}:\n'.format(url) + textwrap.indent(doc, ' ' * 4)
+        functions[name] = doc
+
     # add sleep functions
     for func in sleep_functions:
-        functions[func] = '\nSleep function. See http://sleep.dashnine.org/manual/index.html\n'
+        functions[func] = '\nSleep function. See http://sleep.dashnine.org/manual/index.html'
 
-    # fix up docs
-    new_functions = {}
+    # indent docs
     for name, doc in functions.items():
-        doc = '\n'.join([' ' * 8 + line.rstrip().encode('utf-8', 'ignore').decode('utf-8', 'ignore') for line in doc.splitlines()])
-        doc = doc.replace('\t', ' ' * 4)
-        doc = '\n' + ' ' * 4 + 'Documentation from {}:\n'.format(url) + doc
-        new_functions[name] = doc
-    functions = new_functions
+        doc = textwrap.indent(doc, ' ' * 4)
+        functions[name] = doc
 
     print('found {} functions'.format(len(functions)))
 
