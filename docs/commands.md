@@ -15,6 +15,20 @@ Decorator example:
     def test_command(args):
         print(args)
 
+## set_quote_replacement
+```python
+set_quote_replacement(replacement)
+```
+
+Set the default `quote_replacement` value. Passing `quote_replacement=` to
+`register()` or `@command()` overrides this.
+
+See `register()` for more information.
+
+**Arguments**:
+
+- `replacement`: Quote replacement string
+
 ## register
 ```python
 register(name, callback, quote_replacement=None)

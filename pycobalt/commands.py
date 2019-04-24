@@ -19,6 +19,21 @@ import pycobalt.utils as utils
 import pycobalt.callbacks as callbacks
 import pycobalt.aggressor as aggressor
 
+_default_quote_replacement = None
+
+def set_quote_replacement(replacement):
+    """
+    Set the default `quote_replacement` value. Passing `quote_replacement=` to
+    `register()` or `@command()` overrides this.
+
+    See `register()` for more information.
+
+    :param replacement: Quote replacement string
+    """
+
+    global _default_quote_replacement
+    _default_quote_replacement = replacement
+
 def register(name, callback, quote_replacement=None):
     """
     Register a command
@@ -42,6 +57,10 @@ def register(name, callback, quote_replacement=None):
             return
 
         # handle the quote replacement character
+        if not quote_replacement:
+            global _default_quote_replacement
+            quote_replacment = _default_quote_replacement
+
         if quote_replacement:
             args = [arg.replace(quote_replacement, '"') for arg in args]
 
