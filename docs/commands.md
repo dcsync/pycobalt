@@ -17,19 +17,26 @@ Decorator example:
 
 ## register
 ```python
-register(name, callback)
+register(name, callback, quote_replacement=None)
 ```
 
 Register a command
+
+Regarding the `quote_replacement` argument: Cobalt Strike's Script Console
+uses double quotes to enclose arguments with spaces in them. There's no way
+to escape double quotes within those quotes though. Set `quote_replacement`
+to a string and PyCobalt will replace it with " in each argument.
 
 **Arguments**:
 
 - `name`: Name of command
 - `callback`: Callback for command
+- `quote_replacement`: Replace this string with " in each
+                          argument.
 
 ## command
 ```python
-command(name)
+command(name, quote_replacement=None)
 ```
 
 Decorator for command registration

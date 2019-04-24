@@ -44,17 +44,91 @@ disable_cache()
 
 Disable the build cache
 
-## set_confuse
+## set_confuser_config
 ```python
-set_confuse(config)
+set_confuser_config(config)
 ```
 
 Set a default location for ConfuserEx config. This is so you don't have to
-keep passing the `confuse=` compilation keyword argument.
+keep passing the `confuser_config=` compilation keyword argument.
+
+This setting will disable anything set with `set_confuser_protections()`
+but is overridden by the `confuser_protections=` keyword argument.
 
 **Arguments**:
 
 - `config`: ConfuserEx config file
+
+## set_confuser_protections
+```python
+set_confuser_protections(protections)
+```
+
+Set a the default ConfuserEx protections. This is so you don't have to
+keep passing the `confuser_protections=` compilation keyword argument.
+
+This setting will disable anything set with `set_confuser_config()`
+but is overridden by the `confuser_config=` keyword argument.
+
+The protections passed may be either:
+ - A list containing protection names
+ - A dictionary of dictionaries containing {protection: {argument, value}}
+
+Example calls:
+
+    # use protections resources and rename
+    sharpgen.set_confuser_protections(['resources', 'rename'])
+
+    # use protections resources and rename with mode=dynamic argument for
+    # resources
+    sharpgen.set_confuser_protections({'resources': {'mode': 'dynamic'},
+                                       'rename': None})
+
+**Arguments**:
+
+- `protections`: ConfuserEx protections file
+
+## set_resources
+```python
+set_resources(resources=None)
+```
+
+Set the resource whitelist default. Call with no arguments to disable all
+resources by default.
+
+Use the special value `sharpgen.no_changes` to indicate that no changes
+should be made to the `resources.yml` file.
+
+**Arguments**:
+
+- `resources`: Default resouce whitelist
+
+## set_references
+```python
+set_references(references=['mscorlib.dll', 'System.dll', 'System.Core.dll'])
+```
+
+Set the reference whitelist default. Call with no arguments disable all
+references except mscorlib.dll, System.dll, and System.Core.dll by default.
+
+Use the special value `sharpgen.no_changes` to indicate that no changes
+should be made to the `references.yml` file.
+
+**Arguments**:
+
+- `references`: Default reference whitelist
+
+## set_dotnet_framework
+```python
+set_dotnet_framework(version)
+```
+
+Set the default .NET Framework version. This is overridden by the
+`dotnet_framework=` keyword argument.
+
+**Arguments**:
+
+- `version`: .NET Framework version ('net35' or 'net40')
 
 ## set_cache_location
 ```python
@@ -202,6 +276,31 @@ control over the final product.
 - `class_name`: Class name (default: random)
 - `libraries`: List of librares to use (default: sharpgen.default_libraries)
 
+**Returns**:
+
+Generated code
+
+## generate_confuser_config
+```python
+generate_confuser_config(protections)
+```
+
+Generate a ConfuserEx config file.
+
+The protections passed may be either:
+ - A list containing protection names
+ - A dictionary of dictionaries containing {protection: {argument, value}}
+
+**Arguments**:
+
+- `protections`: List of protection names or a dictionary of
+                    dictionaries containing protections and their
+                    arguments.
+
+**Returns**:
+
+Generated ConfuserEx config file
+
 ## compile
 ```python
 compile(source,
@@ -212,11 +311,12 @@ compile(source,
         function_type=None,
         libraries=None,
         output_kind='console',
-        platform='x86',
-        confuse=None,
-        dotnet_framework='net35',
+        platform='AnyCpu',
+        dotnet_framework=None,
         optimization=True,
         out=None,
+        confuser_config=None,
+        confuser_protections=None,
         additional_options=None,
         resources=None,
         references=None,
@@ -241,20 +341,33 @@ Compile some C# code using SharpGen.
 
 - `assembly_name`: Name of generated assembly (default: random)
 - `output_kind`: Type of output (exe/console or dll/library) (default: console)
-- `platform`: Platform to compile for (any/AnyCpy, x86, or x64) (default: x86)
-- `confuse`: ConfuserEx configuration file. Set a default for this
-                option with `set_confuse(<file>)`.
-- `dotnet_framework`: .NET version to compile against (net35 or net40) (default: net35)
+- `platform`: Platform to compile for (any/AnyCpu, x86, or x64) (default: AnyCpu)
+- `confuser_config`: ConfuserEx configuration file. Set a default for this
+                        option with `set_confuser_config(<file>)`.
+- `confuser_protections`: ConfuserEx protections to enable. Setting this
+                             argument will generate a temporary ConfuserEx
+                             config file for this build. For more
+                             information and to set a default for this
+                             option see `set_confuser_protections(<protections>)`.
+- `dotnet_framework`: .NET Framework version to compile against
+                         (net35 or net40) (default: value passed to
+                         `set_dotnet_framework(<version>)` or net35)
 - `optimization`: Perform code optimization (default: True)
 - `out`: Output file (default: file in /tmp)
 
 - `additional_options`: List of additional SharpGen options/flags
                            (passed through raw)
 
-- `resources`: List of resources to whitelist (by Name). These must be
-                  present in your resources.yml file.
-- `references`: List of references to whitelist (by File). These must be
-                   present in your references.yml file.
+- `resources`: List of resources to whitelist (by Name). This option
+                  temporarily modifies your `resources.yml` file so listed
+                  resources must be present in that file. By default
+                  resources.yml will not be touched. Call
+                  `set_resources(<resources>)` to change the default.
+- `references`: List of references to whitelist (by File). This option
+                  temporarily modifies your `references.yml` file so listed
+                  references must be present in that file. By default
+                   references.yml will not be touched. Call
+                  `set_references(<references>)` to change the default.
 
 - `cache`: Use the build cache. Not setting this option will use the
               global settings (`enable_cache()`/`disable_cache()`). By

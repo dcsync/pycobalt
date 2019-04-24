@@ -15,6 +15,20 @@ Decorator example:
     def test_alias(args):
         print(args)
 
+## set_quote_replacement
+```python
+set_quote_replacement(replacement)
+```
+
+Set the default `quote_replacement` value. Passing `quote_replacement=` to
+`register()` or `@alias()` overrides this.
+
+See `register()` for more information.
+
+**Arguments**:
+
+- `replacement`: Quote replacement string
+
 ## register
 ```python
 register(name,
@@ -26,10 +40,12 @@ register(name,
 
 Register an alias
 
-Regarding the quote_replacement argument: Cobalt Strike's Beacon console
+Regarding the `quote_replacement` argument: Cobalt Strike's Beacon console
 uses double quotes to enclose arguments with spaces in them. There's no way
-to escape double quotes within those quotes though. Set quote_replacement
-to a string and PyCobalt will replace it with " in each argument.
+to escape double quotes within those quotes though. Set `quote_replacement`
+to a string and PyCobalt will replace it with " in each argument. Call
+`aliases.set_quote_replacement(<string>)` to change the default quote
+replacement behavior.
 
 **Arguments**:
 
