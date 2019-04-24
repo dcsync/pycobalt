@@ -5629,105 +5629,81 @@ Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
 print(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## println
 ```python
 println(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## printAll
 ```python
 printAll(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## warn
 ```python
 warn(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## debug
 ```python
 debug(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## command
 ```python
 command(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## cast
 ```python
 cast(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## casti
 ```python
 casti(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## typeOf
 ```python
 typeOf(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## exit
 ```python
 exit(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## systemProperties
 ```python
 systemProperties(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
 
 ## cwd
 ```python
 cwd(*args, fork=False)
 ```
 
-Documentation from https://www.cobaltstrike.com/aggressor-script/functions.html:
-
-    Sleep function. See http://sleep.dashnine.org/manual/index.html
+Sleep function. See http://sleep.dashnine.org/manual/index.html
