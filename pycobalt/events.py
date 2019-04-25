@@ -14,7 +14,7 @@ Decorator example:
         engine.message('event callback test {} - {} - {}'.format(who, contents, time))
 """
 
-_official_events = [
+_official_events = (
     'beacon_checkin',
     'beacon_error',
     'beacon_indicator',
@@ -53,8 +53,10 @@ _official_events = [
     'ssh_output_alt',
     'ssh_tasked',
     'web_hit',
-    'any',
     'beacons',
+    'any',
+
+    # heartbeats
     'heartbeat_10m',
     'heartbeat_10s',
     'heartbeat_15s',
@@ -66,7 +68,20 @@ _official_events = [
     'heartbeat_5m',
     'heartbeat_5s',
     'heartbeat_60m',
-]
+
+    # data model
+    'applications',
+    'archives',
+    'beacons',
+    'credentials',
+    'downloads',
+    'keystrokes',
+    'screenshots',
+    'services',
+    'sites',
+    'socks',
+    'targets',
+)
 
 import collections
 
@@ -101,7 +116,7 @@ def register(name, callback, official_only=True):
         callback(*args)
 
     if official_only and not is_official(name):
-        raise RuntimeError('tried to register an unofficial event: {name}. try events.event("{name}", official_only=False).'.format(name=name))
+        raise RuntimeError('Tried to register an unofficial event: {name}. Try events.event("{name}", official_only=False).'.format(name=name))
 
     callback_name = callbacks.register(event_callback, prefix='event_{}'.format(name))
     aggressor.on(name, event_callback)
