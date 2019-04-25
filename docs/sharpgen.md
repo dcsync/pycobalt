@@ -96,6 +96,9 @@ set_resources(resources=None)
 Set the resource whitelist default. Call with no arguments to disable all
 resources by default.
 
+The `resources=` argument overrides this. The `add_resources=` argument
+adds to the list passed here.
+
 Use the special value `sharpgen.no_changes` to indicate that no changes
 should be made to the `resources.yml` file.
 
@@ -110,6 +113,9 @@ set_references(references=['mscorlib.dll', 'System.dll', 'System.Core.dll'])
 
 Set the reference whitelist default. Call with no arguments disable all
 references except mscorlib.dll, System.dll, and System.Core.dll by default.
+
+The `references=` argument overrides this. The `add_references=` argument
+adds to the list passed here.
 
 Use the special value `sharpgen.no_changes` to indicate that no changes
 should be made to the `references.yml` file.
@@ -320,6 +326,8 @@ compile(source,
         additional_options=None,
         resources=None,
         references=None,
+        add_resources=None,
+        add_references=None,
         cache=None,
         overwrite_cache=False,
         no_cache_write=False,
@@ -368,6 +376,10 @@ Compile some C# code using SharpGen.
                   references must be present in that file. By default
                    references.yml will not be touched. Call
                   `set_references(<references>)` to change the default.
+- `add_resources`: List of resources to add, on top of the defaults (see
+                      `set_resources(<resources>)`)
+- `add_references`: List of references to add, on top of the defaults
+                       (see `set_references(<references>)`)
 
 - `cache`: Use the build cache. Not setting this option will use the
               global settings (`enable_cache()`/`disable_cache()`). By

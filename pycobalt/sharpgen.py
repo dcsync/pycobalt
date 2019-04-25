@@ -206,6 +206,9 @@ def set_resources(resources=None):
     Set the resource whitelist default. Call with no arguments to disable all
     resources by default.
 
+    The `resources=` argument overrides this. The `add_resources=` argument
+    adds to the list passed here.
+
     Use the special value `sharpgen.no_changes` to indicate that no changes
     should be made to the `resources.yml` file.
 
@@ -223,6 +226,9 @@ def set_references(references=['mscorlib.dll', 'System.dll', 'System.Core.dll'])
     """
     Set the reference whitelist default. Call with no arguments disable all
     references except mscorlib.dll, System.dll, and System.Core.dll by default.
+
+    The `references=` argument overrides this. The `add_references=` argument
+    adds to the list passed here.
 
     Use the special value `sharpgen.no_changes` to indicate that no changes
     should be made to the `references.yml` file.
@@ -448,7 +454,7 @@ def _find_sharpgen_dll(location, paths=None):
     raise RuntimeError("Didn't find any copies of SharpGen.dll in {}/bin. Did you build it?".format(location))
 
 def wrap_code(source, function_name='Main', function_type='void',
-              class_name=None, libraries=None):
+              class_name=None, libraries=None, add_return=True):
     """
     Wrap a piece of source code in a class and function, similar to what
     SharpGen does. We perform the function wrapping here in order to have more
@@ -459,6 +465,7 @@ def wrap_code(source, function_name='Main', function_type='void',
     :param function_type: Function type (default: void)
     :param class_name: Class name (default: random)
     :param libraries: List of librares to use (default: sharpgen.default_libraries)
+    :param add_return: Add return statement if needed (default: True)
     :return: Generated code
     """
 
@@ -472,7 +479,7 @@ def wrap_code(source, function_name='Main', function_type='void',
         libraries = default_libraries
 
     # add return statement. not sure why this is necessary.
-    if function_type == 'void' and 'return;' not in source:
+    if add_return and function_type == 'void' and 'return;' not in source:
         source += '\nreturn;'
 
     out = ''
@@ -486,12 +493,12 @@ def wrap_code(source, function_name='Main', function_type='void',
     source = '\n'.join([' ' * 12 + line for line in source.splitlines()])
 
     # wrap the code
-    out += textwrap.dedent("""\
+    out += helpers.fix_multiline_string("""
     public static class {class_name}
     {{
         static {function_type} {function_name}(string[] args)
         {{
-            {source}
+{source}
         }}
     }}
     """.format(source=source, function_name=function_name,
@@ -577,6 +584,8 @@ def compile(
                     # Resources/references
                     resources=None,
                     references=None,
+                    add_resources=None,
+                    add_references=None,
 
                     # Cache options
                     cache=None,
@@ -596,7 +605,8 @@ def compile(
     :param class_name: Name of generated class (default: random)
     :param function_name: Name of function for wrapper (default: Main for .exe, Execute for .dll)
     :param function_type: Function return type (default: void for .exe, object for .dll)
-    :param libraries: Libraries to use in the wrapper (default: sharpgen.default_libraries)
+    :param libraries: Libraries to use (C# `using`) in the wrapper (default:
+                      `sharpgen.default_libraries`).
 
     :param assembly_name: Name of generated assembly (default: random)
     :param output_kind: Type of output (exe/console or dll/library) (default: console)
@@ -627,6 +637,10 @@ def compile(
                       references must be present in that file. By default
                        references.yml will not be touched. Call
                       `set_references(<references>)` to change the default.
+    :param add_resources: List of resources to add, on top of the defaults (see
+                          `set_resources(<resources>)`)
+    :param add_references: List of references to add, on top of the defaults
+                           (see `set_references(<references>)`)
 
     :param cache: Use the build cache. Not setting this option will use the
                   global settings (`enable_cache()`/`disable_cache()`). By
@@ -664,9 +678,9 @@ def compile(
     if not out:
         # use a temporary output file
         if output_kind == 'dll':
-            suffix = 'build.dll'
+            suffix = '_build.dll'
         else:
-            suffix = 'build.exe'
+            suffix = '_build.exe'
         out = tempfile.NamedTemporaryFile(prefix='pycobalt.sharpgen.', suffix=suffix, delete=False).name
 
     # build cache settings
@@ -755,7 +769,7 @@ def compile(
     confuser_tempfile = None
     if confuser_protections:
         # this is cleaned up way at the bottom of the function
-        confuser_tempfile = tempfile.NamedTemporaryFile('w+', prefix='pycobalt.sharpgen.', suffix='confuser_config.cr')
+        confuser_tempfile = tempfile.NamedTemporaryFile('w+', prefix='pycobalt.sharpgen.', suffix='_confuser_config.cr')
 
         config = generate_confuser_config(confuser_protections)
 
@@ -807,10 +821,22 @@ def compile(
     if resources is None:
         resources = _default_resources
 
+    if add_resources:
+        if resources is None:
+            resources = add_resources
+        else:
+            resources.extend(add_resources)
+
     # figure out references behavior
     global _default_references
     if references is None:
         references = _default_references
+
+    if add_references:
+        if references is None:
+            references = add_references
+        else:
+            references.extend(add_references)
 
     # this feels a bit ugly but I can't think of a better way to do it
     try:
@@ -822,6 +848,8 @@ def compile(
 
             # filter yaml
             new_yaml = filter_yaml(original_resources_yaml, 'Name', resources)
+
+            engine.debug('Temporarily overwriting {} with:\n{}'.format(resources_yaml_file, new_yaml))
 
             # overwrite yaml file with new yaml
             with open(resources_yaml_file, 'w+') as fp:
@@ -836,12 +864,14 @@ def compile(
             # filter yaml
             new_yaml = filter_yaml(original_references_yaml, 'File', references)
 
+            engine.debug('Temporarily overwriting {} with:\n{}'.format(references_yaml_file, new_yaml))
+
             # overwrite yaml file with new yaml
             with open(references_yaml_file, 'w+') as fp:
                 fp.write(new_yaml)
 
         # write source to a file and build it
-        with tempfile.NamedTemporaryFile('w+', prefix='pycobalt.sharpgen.', suffix='code.cs') as source_file:
+        with tempfile.NamedTemporaryFile('w+', prefix='pycobalt.sharpgen.', suffix='_code.cs') as source_file:
             source_file.write(source)
             source_file.flush()
 
