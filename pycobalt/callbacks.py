@@ -8,8 +8,9 @@ Usage example:
 
     aggressor.bps(bid, ps_callback)
 
-When aggressor.bps() serializes its arguments it calls
-serialization.serialized(args), which will register and serialize all callbacks.
+When `aggressor.bps()` serializes its arguments it calls
+`serialization.serialized(args),` which will register and serialize all
+callbacks.
 
 To register a callback manually (useful for setting the serialized name manually):
 
@@ -36,18 +37,21 @@ def call(name, args):
 
     :param name: Name of callback
     :param args: Arguments to pass to callback (checked by `utils.check_args` first)
+    :return: Return value of callback
     """
 
     global _callbacks
     if name in _callbacks:
         callback = _callbacks[name]
         if utils.check_args(callback, args):
-            callback(*args)
+            return callback(*args)
         else:
             syntax = '{}{}'.format(name, utils.signature(callback))
-            engine.error("{} is an invalid number of arguments for callback '{}'. syntax: {}".format(len(args), name, syntax))
+            raise RuntimeError("{} is an invalid number of arguments for callback '{}'. Syntax: {}".format(len(args), name, syntax))
     else:
-        engine.debug('unknown callback {}'.format(name))
+        engine.debug('Unknown callback {}'.format(name))
+
+    return None
 
 def name(func):
     """
