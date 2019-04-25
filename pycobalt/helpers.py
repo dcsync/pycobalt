@@ -432,17 +432,17 @@ def capture(command, stdin=None, shell=False, merge_stderr=False):
     :shell: Run as a shell command
     :merge_stderr: Redirect stderr to stdout
 
-    :return: Returns a tuple containing code, stdout, stderr
+    :return: Returns a tuple containing (return_code, stdout, stderr)
     """
 
     if merge_stderr:
-        # redirect to stdout
+        # redirect stderr to stdout
         stderr = subprocess.STDOUT
     else:
         stderr = subprocess.PIPE
 
     proc = subprocess.Popen(command, shell=shell, stdout=subprocess.PIPE,
-            stdin=subprocess.PIPE, stderr=stderr)
+                            stdin=subprocess.PIPE, stderr=stderr)
 
     stdout, stderr = proc.communicate(input=stdin)
     code = proc.poll()
@@ -552,6 +552,29 @@ def fix_multiline_string(string, *args, **kwargs):
     string = textwrap.dedent(string)
 
     return string
+
+def path_to_unc(host, path):
+    """
+    Convert path to UNC path
+
+        python> path_to_unc('CORP-PC', 'C:\Users\CEO')
+        '\\CORP-PC\C$\Users\CEO'
+
+    :param host: Host to use
+    :param path: Path to convert
+    :return: UNC path
+    """
+
+    m = re.match(r'([a-zA-Z]):\\(.*)', path)
+    if m:
+        drive = m.group(1)
+        subpath = m.group(2)
+    else:
+        drive = 'C'
+        subpath = path
+
+    unc = r'\\{}\{}$\{}'.format(host, drive, subpath)
+    return unc
 
 class ArgumentParser(argparse.ArgumentParser):
     """
