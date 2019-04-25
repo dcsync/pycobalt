@@ -79,8 +79,8 @@ def _handle_exception_softly(exc):
     try:
         raise exc
     except Exception as e:
-        error('exception: {}\n'.format(str(e)))
-        error('traceback: {}'.format(traceback.format_exc()))
+        error('Exception: {}\n'.format(str(e)))
+        error('Traceback: {}'.format(traceback.format_exc()))
 
 def write(message_type, message=''):
     """
@@ -134,8 +134,11 @@ def handle_message(name, message):
     elif name == 'stop':
         # stop script
         stop()
+    elif not name:
+        error('Error reading pipe: {}'.format(str(message)))
+        _handle_exception_softly(message)
     else:
-        raise RuntimeError('Received unhandled or out-of-order message type: {} {}'.format(name, str(message)))
+        error('Received unhandled or out-of-order message type: {} {}'.format(name, str(message)))
 
 def parse_line(line):
     """
@@ -146,8 +149,10 @@ def parse_line(line):
     """
 
     try:
+        # remove shitty unicode
+        line = line.encode('utf-8', 'ignore').decode()
         line = line.strip()
-        wrapper = json.loads(line)
+        wrapper = json.loads(line, strict=False)
         name = wrapper['name']
         if 'message' in wrapper:
             message = wrapper['message']
@@ -156,7 +161,7 @@ def parse_line(line):
 
         return name, message
     except Exception as e:
-        return None, str(e)
+        return None, e
 
 _has_forked = False
 def fork():
