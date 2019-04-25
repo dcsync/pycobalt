@@ -267,7 +267,8 @@ wrap_code(source,
           function_name='Main',
           function_type='void',
           class_name=None,
-          libraries=None)
+          libraries=None,
+          add_return=True)
 ```
 
 Wrap a piece of source code in a class and function, similar to what
@@ -281,6 +282,7 @@ control over the final product.
 - `function_type`: Function type (default: void)
 - `class_name`: Class name (default: random)
 - `libraries`: List of librares to use (default: sharpgen.default_libraries)
+- `add_return`: Add return statement if needed (default: True)
 
 **Returns**:
 
@@ -345,7 +347,8 @@ Compile some C# code using SharpGen.
 - `class_name`: Name of generated class (default: random)
 - `function_name`: Name of function for wrapper (default: Main for .exe, Execute for .dll)
 - `function_type`: Function return type (default: void for .exe, object for .dll)
-- `libraries`: Libraries to use in the wrapper (default: sharpgen.default_libraries)
+- `libraries`: Libraries to use (C# `using`) in the wrapper (default:
+                  `sharpgen.default_libraries`).
 
 - `assembly_name`: Name of generated assembly (default: random)
 - `output_kind`: Type of output (exe/console or dll/library) (default: console)

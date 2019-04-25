@@ -2,17 +2,17 @@
 
 docs=docs
 main_module=pycobalt
-#bot
 modules=(
-aggressor
-aliases
-callbacks
-commands
-engine
-events
-gui
-helpers
-sharpgen
+	aggressor
+	aliases
+	callbacks
+	commands
+	engine
+	events
+	gui
+	helpers
+	sharpgen
+	#bot
 )
 level='++'
 preprocessor=pydocmd.restructuredtext.Preprocessor

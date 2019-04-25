@@ -352,7 +352,7 @@ def csharp_quote(arg):
         return new_string
 
 def argument_quote(arg):
-    """
+    r"""
     Escape the argument for the cmd.exe shell.
     See http://blogs.msdn.com/b/twistylittlepassagesallalike/archive/2011/04/23/everyone-quotes-arguments-the-wrong-way.aspx
 
@@ -554,7 +554,7 @@ def fix_multiline_string(string, *args, **kwargs):
     return string
 
 def path_to_unc(host, path):
-    """
+    r"""
     Convert path to UNC path
 
         python> path_to_unc('CORP-PC', 'C:\Users\CEO')
@@ -580,18 +580,16 @@ class ArgumentParser(argparse.ArgumentParser):
     """
     Special version of ArgumentParser that prints to beacon console, Script
     Console, or Event Log instead of stdout.
+
+    With the exception of the `bid` and `event_log` arguments all constructor
+    arguments are passed to `argparse.ArgumentParser`.
+
+    :param bid: Print errors to this beacon's console (default: script
+                console)
+    :param event_log: Print errors to Event Log (default: False)
     """
 
     def __init__(self, bid=None, event_log=False, *args, **kwargs):
-        """
-        With the exception of the `bid` argument all arguments are passed to
-        `argparse.ArgumentParser`.
-
-        :param bid: Print errors to this beacon's console (default: script
-                    console)
-        :param event_log: Print errors to Event Log
-        """
-
         self.bid = bid
         self.event_log = event_log
 

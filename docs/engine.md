@@ -1,14 +1,17 @@
 
 # pycobalt.engine
 
-For communication with cobaltstrike
+For communication with Cobalt Strike
 
 ## enable_debug
 ```python
 enable_debug()
 ```
 
-Enable debug messages
+Enable debug messages on the Python side
+
+To enable the Aggressor debug messages run `python-debug` in the Script
+Console or set `$pycobalt_debug_on = true` in your Aggressor script.
 
 ## disable_debug
 ```python
@@ -33,7 +36,7 @@ Write script console debug message
 write(message_type, message='')
 ```
 
-Write a message to cobaltstrike. Message can be anything serializable by
+Write a message to Cobalt Strike. Message can be anything serializable by
 `serialization.py`. This includes primitives, bytes, lists, dicts, tuples,
 and callbacks (automatically registered).
 
@@ -74,10 +77,34 @@ Tuple containing 'name' and 'message'
 fork()
 ```
 
-Tell cobaltstrike to fork into a new thread.
+Tell Cobalt Strike to fork into a new thread.
 
 Menu trees have to be registered before we fork into a new thread so this
 is called in `engine.loop()` after the registration is finished.
+
+## read_pipe
+```python
+read_pipe()
+```
+
+read_pipe a message line
+
+**Returns**:
+
+Tuple containing message name and contents (as returned by
+         `parse_line`).
+
+## read_pipe_iter
+```python
+read_pipe_iter()
+```
+
+read_pipe message lines
+
+**Returns**:
+
+Iterator with an item for each read_pipe/parsed line. Each item is the
+         same as the return value of `engine.read_pipe()`.
 
 ## loop
 ```python
@@ -97,30 +124,6 @@ stop()
 ```
 
 Stop the script (just exits the process)
-
-## read
-```python
-read()
-```
-
-Read a message line
-
-**Returns**:
-
-Tuple containing message name and contents (as returned by
-         `parse_line`).
-
-## readiter
-```python
-readiter()
-```
-
-Read message lines
-
-**Returns**:
-
-Iterator with an item for each read/parsed line. Each item is the
-         same as the return value of `engine.read()`.
 
 ## call
 ```python
@@ -159,7 +162,7 @@ Eval aggressor code. Does not provide a return value.
 menu(menu_items)
 ```
 
-Register a cobaltstrike menu tree
+Register a Cobalt Strike menu tree
 
 **Arguments**:
 

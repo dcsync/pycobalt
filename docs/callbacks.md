@@ -10,8 +10,9 @@ Usage example:
 
     aggressor.bps(bid, ps_callback)
 
-When aggressor.bps() serializes its arguments it calls
-serialization.serialized(args), which will register and serialize all callbacks.
+When `aggressor.bps()` serializes its arguments it calls
+`serialization.serialized(args),` which will register and serialize all
+callbacks.
 
 To register a callback manually (useful for setting the serialized name manually):
 
@@ -32,6 +33,10 @@ Call a function callback by name
 
 - `name`: Name of callback
 - `args`: Arguments to pass to callback (checked by `utils.check_args` first)
+
+**Returns**:
+
+Return value of callback
 
 ## name
 ```python
