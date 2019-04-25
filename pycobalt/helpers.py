@@ -28,6 +28,7 @@ import argparse
 import subprocess
 import random
 import string
+import textwrap
 
 import pycobalt.utils as utils
 import pycobalt.engine as engine
@@ -516,6 +517,41 @@ def powershell_base64(string):
     """
 
     return base64.b64encode(string.encode('UTF-16LE')).decode()
+
+def fix_multiline_string(string, *args, **kwargs):
+    """
+    Fix an indented multi-line string. Example:
+
+        csharp = helpers.code_format('''
+                    Console.WriteLine("{arg1}" + "{arg2}");
+                    ''', arg1='ex', arg2='ample')
+
+    This will de-indent the code, remove the leading newline, remove trailing
+    whitespace, and call `string.format()` on it.
+
+    :param string: String to format
+    :param *args: Arguments to pass to `string.format()`
+    :param *kwargs: Keyword arguments to pass to `string.format()`
+    :return: Formatted code
+    """
+
+    # format string
+    if kwargs or args:
+        string = string.format(*args, **kwargs)
+
+    # remove leading newline
+    if string.startswith('\n'):
+        string = string[1:]
+
+    # remove last line if it's empty or just whitespace
+    lines = string.splitlines()
+    if not lines[-1] or lines[-1].isspace():
+        string = '\n'.join(lines[:-1])
+
+    # de-indent
+    string = textwrap.dedent(string)
+
+    return string
 
 class ArgumentParser(argparse.ArgumentParser):
     """
