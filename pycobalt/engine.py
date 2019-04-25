@@ -1,5 +1,5 @@
 """
-For communication with cobaltstrike
+For communication with Cobalt Strike
 """
 
 # TODO better argument checking on aggressor functions
@@ -39,7 +39,10 @@ def _init_pipes():
 
 def enable_debug():
     """
-    Enable debug messages
+    Enable debug messages on the Python side
+
+    To enable the Aggressor debug messages run `python-debug` in the Script
+    Console or set `$pycobalt_debug_on = true` in your Aggressor script.
     """
 
     global _debug_on
@@ -81,7 +84,7 @@ def _handle_exception_softly(exc):
 
 def write(message_type, message=''):
     """
-    Write a message to cobaltstrike. Message can be anything serializable by
+    Write a message to Cobalt Strike. Message can be anything serializable by
     `serialization.py`. This includes primitives, bytes, lists, dicts, tuples,
     and callbacks (automatically registered).
 
@@ -91,9 +94,9 @@ def write(message_type, message=''):
 
     global _out_pipe
     wrapper = {
-                  'name': message_type,
-                  'message': message,
-              }
+        'name': message_type,
+        'message': message,
+    }
     serialized = serialization.serialized(wrapper)
     _out_pipe.write(serialized + "\n")
     _out_pipe.flush()
@@ -111,7 +114,14 @@ def handle_message(name, message):
         # dispatch callback
         callback_name = message['name']
         callback_args = message['args'] if 'args' in message else []
-        callbacks.call(callback_name, callback_args)
+        ret = callbacks.call(callback_name, callback_args)
+
+        if 'sync' in message and message['sync']:
+            # send return value
+            debug('Received sync return request in callback {}'.format(callback_name))
+            write('return', ret)
+        else:
+            debug('not returning a value from {}'.format(callback_name))
     elif name == 'eval':
         # eval python code
         eval(message)
@@ -125,7 +135,7 @@ def handle_message(name, message):
         # stop script
         stop()
     else:
-        raise RuntimeError('received unhandled or out-of-order message type: {} {}'.format(name, str(message)))
+        raise RuntimeError('Received unhandled or out-of-order message type: {} {}'.format(name, str(message)))
 
 def parse_line(line):
     """
@@ -151,7 +161,7 @@ def parse_line(line):
 _has_forked = False
 def fork():
     """
-    Tell cobaltstrike to fork into a new thread.
+    Tell Cobalt Strike to fork into a new thread.
 
     Menu trees have to be registered before we fork into a new thread so this
     is called in `engine.loop()` after the registration is finished.
@@ -160,9 +170,32 @@ def fork():
     global _has_forked
 
     if _has_forked:
-        raise RuntimeError('tried to fork cobaltstrike twice')
+        raise RuntimeError('Tried to fork Cobalt Strike twice')
 
     write('fork')
+
+def read_pipe():
+    """
+    read_pipe a message line
+
+    :return: Tuple containing message name and contents (as returned by
+             `parse_line`).
+    """
+
+    global _in_pipe
+    return parse_line(next(_in_pipe))
+
+def read_pipe_iter():
+    """
+    read_pipe message lines
+
+    :return: Iterator with an item for each read_pipe/parsed line. Each item is the
+             same as the return value of `engine.read_pipe()`.
+    """
+
+    global _in_pipe
+    for line in _in_pipe:
+        yield parse_line(line)
 
 def loop(fork_first=True):
     """
@@ -172,19 +205,17 @@ def loop(fork_first=True):
     :param fork_first: Whether to call `fork()` first.
     """
 
-    if fork_first:
+    global _has_forked
+
+    if fork_first and not _has_forked:
         fork()
 
-    reader = readiter()
-    while True:
+    for name, message in read_pipe_iter():
         try:
-            name, message = next(reader)
             if name:
                 handle_message(name, message)
             else:
-                error('received invalid message: {}'.format(message))
-        except StopIteration as e:
-            break
+                error('Received invalid message: {}'.format(message))
         except Exception as e:
             _handle_exception_softly(e)
 
@@ -194,29 +225,6 @@ def stop():
     """
 
     sys.exit()
-
-def read():
-    """
-    Read a message line
-
-    :return: Tuple containing message name and contents (as returned by
-             `parse_line`).
-    """
-
-    global _in_pipe
-    return parse_line(next(_in_pipe))
-
-def readiter():
-    """
-    Read message lines
-
-    :return: Iterator with an item for each read/parsed line. Each item is the
-             same as the return value of `engine.read()`.
-    """
-
-    global _in_pipe
-    for line in _in_pipe:
-        yield parse_line(line)
 
 def call(name, args=None, silent=False, fork=False, sync=True):
     """
@@ -244,18 +252,17 @@ def call(name, args=None, silent=False, fork=False, sync=True):
         fork = True
 
     message = {
-                'name': name,
-                'args': args,
-                'silent': silent,
-                'fork': fork,
-                'sync': sync,
-              }
+        'name': name,
+        'args': args,
+        'silent': silent,
+        'fork': fork,
+        'sync': sync,
+    }
     write('call', message)
 
     if sync:
-        # read and handle messages until we get our return value
-        while True:
-            name, message = read()
+        # read_pipe and handle messages until we get our return value
+        for name, message in read_pipe_iter():
             if name == 'return':
                 # got it
                 return message
@@ -276,7 +283,7 @@ def eval(code):
 
 def menu(menu_items):
     """
-    Register a cobaltstrike menu tree
+    Register a Cobalt Strike menu tree
 
     :param menu_items: Menu tree as returned by the `gui.py` helpers.
     """
@@ -284,7 +291,7 @@ def menu(menu_items):
     global _has_forked
 
     if _has_forked:
-        raise RuntimeError('tried to register a menu after forking. this crashes cobaltstrike')
+        raise RuntimeError('Tried to register a menu after forking. This crashes Cobalt Strike')
 
     write('menu', menu_items)
 
