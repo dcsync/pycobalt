@@ -57,9 +57,16 @@ def register(name, callback, short_help=None, long_help=None,
                               argument.
     """
 
+    # this is a workaround for a famously stupid python issue where keyword
+    # arguments are not passed to closures correctly.
+    quote_replacement_ = quote_replacement
+
     def alias_callback(*args):
         # first argument is bid
         bid = int(args[0])
+
+        # see above
+        quote_replacement = quote_replacement_
 
         # check arguments
         if not utils.check_args(callback, args):
@@ -71,7 +78,7 @@ def register(name, callback, short_help=None, long_help=None,
         # handle the quote replacement character
         if not quote_replacement:
             global _default_quote_replacement
-            quote_replacment = _default_quote_replacement
+            quote_replacement = _default_quote_replacement
 
         if quote_replacement:
             args = [arg.replace(quote_replacement, '"') for arg in args]

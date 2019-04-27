@@ -49,7 +49,14 @@ def register(name, callback, quote_replacement=None):
                               argument.
     """
 
+    # this is a workaround for a famously stupid python issue where keyword
+    # arguments are not passed to closures correctly.
+    quote_replacement_ = quote_replacement
+
     def command_callback(*args):
+        # see above
+        quote_replacement = quote_replacement_
+
         # check arguments
         if not utils.check_args(callback, args):
             syntax = '{} {}'.format(name, utils.signature_command(callback))
@@ -59,7 +66,7 @@ def register(name, callback, quote_replacement=None):
         # handle the quote replacement character
         if not quote_replacement:
             global _default_quote_replacement
-            quote_replacment = _default_quote_replacement
+            quote_replacement = _default_quote_replacement
 
         if quote_replacement:
             args = [arg.replace(quote_replacement, '"') for arg in args]
