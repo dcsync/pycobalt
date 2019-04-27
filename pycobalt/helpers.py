@@ -351,6 +351,39 @@ def csharp_quote(arg):
 
         return new_string
 
+def execute_assembly_quote(arg):
+    """
+    Quote a string or list of strings for use as arguments to pass to `bexecute_assembly`.
+
+    The argument format appears to be pretty simple. Arguments may be enclosed
+    in double-quotes. Double-quotes may be escaped with backslashes.
+    Backslashes may be escaped with backslashes.
+
+    The return value is a string suitable for use with `bexecute_assembly`. If
+    a list of strings is passed each argument is quoted and separated by a
+    space.
+
+    :param arg: Argument to quote (string or list of strings)
+    :return: Argument string for `bexecute_assembly`
+    """
+
+    if isinstance(arg, list) or isinstance(arg, tuple):
+        # recurse iterable
+        return ' '.join([execute_assembly_quote(child) for child in arg])
+    else:
+        new_string = str(arg)
+
+        # escape \
+        new_string = new_string.replace('\\', '\\\\')
+
+        # escape "
+        new_string = new_string.replace('"', '\\"')
+
+        # enclose in "
+        new_string = '"{}"'.format(new_string)
+
+        return new_string
+
 def argument_quote(arg):
     r"""
     Escape the argument for the cmd.exe shell.

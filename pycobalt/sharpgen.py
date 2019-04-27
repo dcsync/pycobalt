@@ -43,8 +43,9 @@ default_build_paths = ['bin/Release/netcoreapp2.1/SharpGen.dll',
 _sharpgen_location = utils.basedir('../third_party/SharpGen')
 
 # Cache options
+_cache_location = '{}/Cache'.format(_sharpgen_location)
 _default_cache_enabled = False
-_cache_location = None
+_default_cache_overwrite = False
 
 # ConfuserEx options
 _default_confuser_config = None
@@ -152,6 +153,24 @@ def disable_cache():
     global _default_cache_enabled
 
     _default_cache_enabled = False
+
+def enable_cache_overwrite():
+    """
+    Enable cache overwrite mode
+    """
+
+    global _default_cache_overwrite
+
+    _default_cache_overwrite = True
+
+def disable_cache_overwrite():
+    """
+    Disable cache overwrite mode
+    """
+
+    global _default_cache_overwrite
+
+    _default_cache_overwrite = False
 
 def set_confuser_config(config):
     """
@@ -589,7 +608,7 @@ def compile(
 
                     # Cache options
                     cache=None,
-                    overwrite_cache=False,
+                    cache_overwrite=None,
                     no_cache_write=False,
 
                     # Dependency info
@@ -645,8 +664,9 @@ def compile(
     :param cache: Use the build cache. Not setting this option will use the
                   global settings (`enable_cache()`/`disable_cache()`). By
                   default the build cache is off.
-    :param overwrite_cache: Force overwriting this build in the cache (disable
-                            cache retrieval but not writing)
+    :param cache_overwrite: Force overwriting this build in the cache (disable
+                            cache retrieval but not writing). The default is
+                            `False` unless `enable_cache_overwrite()` is called.
     :param no_cache_write: Allow for cache retrieval but not cache writing
 
     :param sharpgen_location: Location of SharpGen directory (default: location
@@ -683,19 +703,26 @@ def compile(
             suffix = '_build.exe'
         out = tempfile.NamedTemporaryFile(prefix='pycobalt.sharpgen.', suffix=suffix, delete=False).name
 
-    # build cache settings
+    # cache settings
+    # set default cache_overwrite
+    global _default_cache_overwrite
+    if not cache_overwrite is None:
+        cache_overwrite = _default_cache_overwrite
+
+    # determine cache write and retrieval settings based on `cache`,
+    # `cache_overwrite`, and `no_cache_write`
     global _default_cache_enabled
     if cache is None:
         # use global settings
         cache_write = _default_cache_enabled and not no_cache_write
-        cache_retrieval = _default_cache_enabled and not overwrite_cache
+        cache_retrieval = _default_cache_enabled and not cache_overwrite
     else:
         # override global settings
         cache_write = cache and not no_cache_write
-        cache_retrieval = cache and not overwrite_cache
+        cache_retrieval = cache and not cache_overwrite
 
     if cache_retrieval or cache_write:
-        # get source hash for build cache
+        # get cache source hash
         source_hash = cache_source_hash(source)
 
     if cache_retrieval:
@@ -958,13 +985,15 @@ def compile_file(source_file, **kwargs):
 
     return compile(source, **kwargs)
 
-def execute_file(bid, source, args, **kwargs):
+def execute_file(bid, source, args, delete_after=True, silent=True, **kwargs):
     """
     Compile and execute a C# file
 
     :param bid: Beacon to execute on
     :param source: Source file to compile
     :param args: Arguments used for execution
+    :param delete_after: Delete the generated .exe after (default: True)
+    :param silent: Tell `bexecute_assembly` not to print anything (default: True)
     :param **kwargs: Compilation arguments passed to `compile_file`.
     :return: True if the executed build was from the build cache
     :raises RuntimeError: If one of the options is invalid
@@ -975,20 +1004,25 @@ def execute_file(bid, source, args, **kwargs):
         raise RuntimeError('Do not use the out parameter with execute_file()')
 
     compiled, from_cache = compile_file(source, **kwargs)
-    # TODO quote args correctly
-    quoted_args = ' '.join([str(arg) for arg in args])
-    aggressor.bexecute_assembly(bid, compiled, quoted_args, silent=True)
-    os.remove(compiled)
+
+    quoted_args = helpers.execute_assembly_quote(args)
+    aggressor.bexecute_assembly(bid, compiled, quoted_args, silent=silent)
+
+    # cleanup
+    if delete_after:
+        os.remove(compiled)
 
     return from_cache
 
-def execute(bid, code, args, **kwargs):
+def execute(bid, code, args, delete_after=True, silent=True, **kwargs):
     """
     Compile and execute some C# code
 
     :param bid: Beacon to execute on
     :param code: Code to compile
     :param args: Arguments used for execution
+    :param delete_after: Delete the generated .exe after (default: True)
+    :param silent: Tell `bexecute_assembly` not to print anything (default: True)
     :param **kwargs: Compilation arguments passed to `compile_file`.
     :return: True if the executed build was from the build cache
     :raises RuntimeError: If one of the options is invalid
@@ -999,10 +1033,12 @@ def execute(bid, code, args, **kwargs):
         raise RuntimeError('Do not use the out parameter with execute()')
 
     compiled, from_cache = compile(code, **kwargs)
-    # TODO is there a way to quote arguments
-    quoted_args = ' '.join([str(arg) for arg in args])
-    engine.debug('SharpGen executing assembly')
-    aggressor.bexecute_assembly(bid, compiled, quoted_args, silent=True)
-    os.remove(compiled)
+
+    quoted_args = helpers.execute_assembly_quote(args)
+    aggressor.bexecute_assembly(bid, compiled, quoted_args, silent=silent)
+
+    # cleanup
+    if delete_after:
+        os.remove(compiled)
 
     return from_cache
