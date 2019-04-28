@@ -21,7 +21,7 @@ import pycobalt.aggressor as aggressor
 import pycobalt.helpers as helpers
 
 # Some directly configurable defaults
-default_libraries = [
+default_using = [
     'System',
     'System.IO',
     'System.Text',
@@ -43,7 +43,7 @@ default_build_paths = ['bin/Release/netcoreapp2.1/SharpGen.dll',
 _sharpgen_location = utils.basedir('../third_party/SharpGen')
 
 # Cache options
-_cache_location = '{}/Cache'.format(_sharpgen_location)
+_cache_location = None
 _default_cache_enabled = False
 _default_cache_overwrite = False
 
@@ -51,65 +51,15 @@ _default_cache_overwrite = False
 _default_confuser_config = None
 _default_confuser_protections = None
 
-# not currently used. needs more testing. enforcement will be optional.
-_confuser_protection_support = {
-    # XXX re-build and test
-    'anti debug': ('net35', 'net40'),
-
-    # crashed in mono, "Failed to run module constructor due to (null) assembly"
-    # XXX re-build and test
-    'anti dump': ('net35', 'net40'),
-
-    # XXX re-build and test
-    'anti ildasm': ('net35', 'net40'),
-
-    # crashed in mono, "Failed to run module constructor due to (null) assembly"
-    # XXX re-build and test
-    'anti tamper': ('net35', 'net40'),
-
-    # crashed in .NET 3.5 but not 4.0, missing System.Reflection.Assembly.op_Equality
-    'constants': ('net40'),
-
-    # tested with .NET 3.5 and 4.0
-    'ctrl flow': ('net35', 'net40'),
-
-    # seems to break everywhere with a segfault?
-    'invalid metadata': (),
-
-    # failed to build due to .NET 3.5 missing System.Reflection.MethodInfo.op_Inequality
-    'ref proxy': ('net40'),
-
-    # tested with .NET 3.5 and 4.0
-    'rename': ('net35', 'net40'),
-
-    # tested with .NET 3.5 and 4.0
-    'resources': ('net35', 'net40'),
-
-    # only in XenocodeRCE and mkaring forks
-    #'typescramble': ('net35', 'net40'),
-}
-
-# will work on this later
-#_confuser_protection_params = {
-#    'anti debug': {'mode': ('safe', 'win32', 'antinet')},
-#    'anti dump': {},
-#    'anti ildasm': {},
-#    'anti tamper': {'mode': ('normal', 'jit'), 'key': ('normal', 'dynamic')},
-#    'constants': {},
-#    'ctrl flow': {},
-#    'invalid metadata': {},
-#    'ref proxy': {},
-#    'rename': {},
-#    'resources': {},
-#}
-
 # Special value, indicates that no change should be made to the SharpGen
-# resources.yml and references.yml files.
+# resources.yml and references.yml files. I couldn't think of a better way to
+# do this because None is used as the default parameter in the compilation
+# functions.
 no_changes = object()
 
 # Other default options
-_default_resources = no_changes
-_default_references = no_changes
+default_resources = no_changes
+default_references = no_changes
 _default_dotnet_framework = 'net35'
 
 def set_location(location):
@@ -231,17 +181,20 @@ def set_resources(resources=None):
     Use the special value `sharpgen.no_changes` to indicate that no changes
     should be made to the `resources.yml` file.
 
+    You may set `sharpgen.default_resources` directly instead of calling this
+    function.
+
     :param resources: Default resouce whitelist
     """
 
-    global _default_resources
+    global default_resources
 
     if not resources:
         resources = []
 
-    _default_resources = resources
+    default_resources = resources
 
-def set_references(references=['mscorlib.dll', 'System.dll', 'System.Core.dll']):
+def set_references(references=None):
     """
     Set the reference whitelist default. Call with no arguments disable all
     references except mscorlib.dll, System.dll, and System.Core.dll by default.
@@ -252,15 +205,43 @@ def set_references(references=['mscorlib.dll', 'System.dll', 'System.Core.dll'])
     Use the special value `sharpgen.no_changes` to indicate that no changes
     should be made to the `references.yml` file.
 
+    You may set `sharpgen.default_references` directly instead of calling this
+    function.
+
     :param references: Default reference whitelist
     """
 
-    global _default_references
+    global default_references
 
     if not references:
-        references = []
+        references = ['mscorlib.dll', 'System.dll', 'System.Core.dll']
 
-    _default_references = references
+    default_references = references
+
+def set_using(using=None):
+    """
+    Set the default libraries to use with C#'s `using` statement. This is a
+    default for the `using=` compilation keyword argument.
+
+    This setting may be either a list or a dictionary containing `{namespace:
+    alias}`. The dictionary form allows you to set namespace aliases with the
+    `using ALIAS = NAMESPACE;` directive.
+
+    You may set `sharpgen.default_using` directly instead of calling this
+    function.
+
+    :param using: Libraries to use. Default: [System, System.IO, System.Text,
+                  System.Linq, System.Security.Principal,
+                  System.Collections.Generic]
+    """
+
+    global default_using
+
+    if not using:
+        using = ['System', 'System.IO', 'System.Text', 'System.Linq',
+                 'System.Security.Principal', 'System.Collections.Generic']
+
+    default_using = list(set(using))
 
 def set_dotnet_framework(version):
     """
@@ -278,9 +259,25 @@ def set_dotnet_framework(version):
 
     _default_dotnet_framework = version
 
+def get_cache_location():
+    """
+    Get the build cache location
+
+    :return: Build cache location
+    """
+
+    global _cache_location
+    global _sharpgen_location
+
+    if _cache_location:
+        return _cache_location
+    else:
+        return '{}/Cache'.format(_sharpgen_location)
+
 def set_cache_location(location=None):
     """
-    Set the build cache location. The default location is SharpGen/Cache.
+    Set the build cache location. The default location is
+    `<sharpgen directory>/Cache`.
 
     :param location: Directory to put cached builds in. If not passed, reset to
                      default location.
@@ -303,24 +300,22 @@ def _cache_path(source_hash):
     :return: Full file path to the cached build
     """
 
-    global _cache_location
-
-    return '{}/{}'.format(_cache_location, source_hash)
+    return '{}/{}'.format(get_cache_location(), source_hash)
 
 def clear_cache():
     """
     Clear the build cache
     """
 
-    global _cache_location
+    cache_location = get_cache_location()
 
-    if not os.path.isdir(_cache_location):
+    if not os.path.isdir(cache_location):
         # cache does not exist
         return
 
     # delete all files in the cache directory
-    for fname in os.listdir(_cache_location):
-        path = '{}/{}'.format(_cache_location, fname)
+    for fname in os.listdir(cache_location):
+        path = '{}/{}'.format(cache_location, fname)
         if os.path.isfile(path):
             os.remove(path)
 
@@ -332,10 +327,8 @@ def _cache_add(source_hash, build_file):
     :param build_file: Build filename
     """
 
-    global _cache_location
-
     # make the build cache directory if needed
-    os.makedirs(_cache_location, exist_ok=True)
+    os.makedirs(get_cache_location(), exist_ok=True)
 
     path = _cache_path(source_hash)
     with open(path, 'wb+') as cachefp, open(build_file, 'rb') as buildfp:
@@ -350,9 +343,7 @@ def cache_remove(source_hash):
     :return: True if the cached build existed
     """
 
-    global _cache_location
-
-    if not os.path.isdir(_cache_location):
+    if not os.path.isdir(get_cache_location()):
         # cache does not exist
         return False
 
@@ -473,18 +464,20 @@ def _find_sharpgen_dll(location, paths=None):
     raise RuntimeError("Didn't find any copies of SharpGen.dll in {}/bin. Did you build it?".format(location))
 
 def wrap_code(source, function_name='Main', function_type='void',
-              class_name=None, libraries=None, add_return=True):
+              class_name=None, using=None, add_return=True,
+              catch_exceptions=True):
     """
     Wrap a piece of source code in a class and function, similar to what
     SharpGen does. We perform the function wrapping here in order to have more
     control over the final product.
 
     :param source: Source to wrap
-    :param function_name: Function name (default: Main)
-    :param function_type: Function type (default: void)
+    :param function_name: Function name (default: 'Main')
+    :param function_type: Function type (default: 'void')
     :param class_name: Class name (default: random)
-    :param libraries: List of librares to use (default: sharpgen.default_libraries)
+    :param using: List of librares to use (default: sharpgen.default_using)
     :param add_return: Add return statement if needed (default: True)
+    :param catch_exceptions: Catch any unhandled exceptions (default: True)
     :return: Generated code
     """
 
@@ -492,10 +485,10 @@ def wrap_code(source, function_name='Main', function_type='void',
         # default class_name is random
         class_name = utils.random_string(5, 10)
 
-    if not libraries:
-        # default libraries are sharpgen.default_libraries
-        global default_libraries
-        libraries = default_libraries
+    if not using:
+        # default is sharpgen.default_using
+        global default_using
+        using = default_using
 
     # add return statement. not sure why this is necessary.
     if add_return and function_type == 'void' and 'return;' not in source:
@@ -503,25 +496,59 @@ def wrap_code(source, function_name='Main', function_type='void',
 
     out = ''
 
-    # add libraries
-    for library in libraries:
-        out += 'using {};\n'.format(library)
+    # convert `using` to the dict format
+    if not isinstance(using, dict):
+        new_using = {}
+        for namespace in using:
+            new_using[namespace] = None
+        using = new_using
+
+    # output `using` statements
+    for namespace, alias in using.items():
+        if alias:
+            # alias form (`using ALIAS = NAMESPACE;`)
+            out += 'using {} = {};\n'.format(alias, namespace)
+        else:
+            # regular form (`using NAMESPACE;`)
+            out += 'using {};\n'.format(namespace)
     out += '\n'
 
-    # indent the code
-    source = '\n'.join([' ' * 12 + line for line in source.splitlines()])
+    # start building out the blocks part
+    blocks = textwrap.indent(source, ' ' * 4)
 
-    # wrap the code
-    out += helpers.fix_multiline_string("""
-    public static class {class_name}
-    {{
+    # wrap in exception handler
+    if catch_exceptions:
+        blocks = helpers.code_string(r"""
+            try
+            {{
+            {blocks}
+            }}
+            catch (Exception ex)
+            {{
+                Console.WriteLine("Caught an unhandled C# exception:\n" + ex.ToString());
+            }}
+            """, blocks=blocks)
+        blocks = textwrap.indent(blocks, ' ' * 4)
+
+    # wrap in a function
+    blocks = helpers.code_string(r"""
         static {function_type} {function_name}(string[] args)
         {{
-{source}
+        {blocks}
         }}
-    }}
-    """.format(source=source, function_name=function_name,
-               class_name=class_name, function_type=function_type))
+        """, blocks=blocks, function_type=function_type,
+             function_name=function_name)
+    blocks = textwrap.indent(blocks, ' ' * 4)
+
+    # wrap in a class
+    blocks = helpers.code_string(r"""
+        public static class {class_name}
+        {{
+        {blocks}
+        }}
+        """, blocks=blocks, class_name=class_name)
+
+    out += blocks
 
     return out
 
@@ -575,46 +602,47 @@ def generate_confuser_config(protections):
     return config
 
 def compile(
-                    # Input options
-                    source,
+                # Input options
+                source,
 
-                    # Wrapper options
-                    use_wrapper=True,
-                    assembly_name=None,
-                    class_name=None,
-                    function_name=None,
-                    function_type=None,
-                    libraries=None,
+                # Wrapper options
+                use_wrapper=True,
+                assembly_name=None,
+                class_name=None,
+                function_name=None,
+                function_type=None,
+                using=None,
+                add_using=None,
 
-                    # Compilation options
-                    output_kind='console',
-                    platform='AnyCpu',
-                    dotnet_framework=None, 
-                    optimization=True,
-                    out=None,
+                # Compilation options
+                output_kind='console',
+                platform='AnyCpu',
+                dotnet_framework=None, 
+                optimization=True,
+                out=None,
 
-                    # Confuser options
-                    confuser_config=None,
-                    confuser_protections=None,
+                # Confuser options
+                confuser_config=None,
+                confuser_protections=None,
 
-                    # Additional SharpGen options (passed through raw)
-                    additional_options=None,
+                # Additional SharpGen options (passed through raw)
+                additional_options=None,
 
-                    # Resources/references
-                    resources=None,
-                    references=None,
-                    add_resources=None,
-                    add_references=None,
+                # Resources/references
+                resources=None,
+                references=None,
+                add_resources=None,
+                add_references=None,
 
-                    # Cache options
-                    cache=None,
-                    cache_overwrite=None,
-                    no_cache_write=False,
+                # Cache options
+                cache=None,
+                cache_overwrite=None,
+                no_cache_write=False,
 
-                    # Dependency info
-                    sharpgen_location=None,
-                    sharpgen_runner=None
-                ):
+                # Dependency info
+                sharpgen_location=None,
+                sharpgen_runner=None
+           ):
     """
     Compile some C# code using SharpGen.
 
@@ -624,8 +652,11 @@ def compile(
     :param class_name: Name of generated class (default: random)
     :param function_name: Name of function for wrapper (default: Main for .exe, Execute for .dll)
     :param function_type: Function return type (default: void for .exe, object for .dll)
-    :param libraries: Libraries to use (C# `using`) in the wrapper (default:
-                      `sharpgen.default_libraries`).
+    :param using: Namespaces to use (C# `using`) in the wrapper. See
+                  `sharpgen.set_using()` for more information.
+    :param add_using: Additional namespaces to use (C# `using`) in the wrapper.
+                      These are added on top of the defaults. See
+                      `sharpgen.set_using()` for more information.
 
     :param assembly_name: Name of generated assembly (default: random)
     :param output_kind: Type of output (exe/console or dll/library) (default: console)
@@ -754,9 +785,20 @@ def compile(
             else:
                 function_type = 'void'
 
+        if not using:
+            # default is sharpgen.default_using
+            global default_using
+            using = default_using
+
+        if add_using:
+            using += add_using
+
+        # de-duplicate using
+        using = list(set(using))
+
         source = wrap_code(source, function_name=function_name,
                            function_type=function_type, class_name=class_name,
-                           libraries=libraries)
+                           using=using)
 
     # check platform
     platform = platform.lower()
@@ -783,6 +825,8 @@ def compile(
     if not (confuser_config or confuser_protections):
         global _default_confuser_config
         global _default_confuser_protections
+
+        # prefer `set_confuser_config()` over `set_confuser_protections()`
         if _default_confuser_config:
             confuser_config = _default_confuser_config
         elif _default_confuser_protections:
@@ -796,7 +840,8 @@ def compile(
     confuser_tempfile = None
     if confuser_protections:
         # this is cleaned up way at the bottom of the function
-        confuser_tempfile = tempfile.NamedTemporaryFile('w+', prefix='pycobalt.sharpgen.', suffix='_confuser_config.cr')
+        confuser_tempfile = tempfile.NamedTemporaryFile('w+',
+                prefix='pycobalt.sharpgen.', suffix='_confuser_config.cr')
 
         config = generate_confuser_config(confuser_protections)
 
@@ -844,26 +889,34 @@ def compile(
     original_references_yaml = None
 
     # figure out resources behavior
-    global _default_resources
+    global default_resources
     if resources is None:
-        resources = _default_resources
+        resources = default_resources
 
     if add_resources:
-        if resources is None:
+        if resources in (None, no_changes):
             resources = add_resources
         else:
             resources.extend(add_resources)
 
+    # de-duplicate resources
+    if resources is not no_changes:
+        resources = list(set(resources))
+
     # figure out references behavior
-    global _default_references
+    global default_references
     if references is None:
-        references = _default_references
+        references = default_references
 
     if add_references:
-        if references is None:
+        if references in (None, no_changes):
             references = add_references
         else:
             references.extend(add_references)
+
+    # de-duplicate references
+    if references is not no_changes:
+        references = list(set(references))
 
     # this feels a bit ugly but I can't think of a better way to do it
     try:
@@ -914,30 +967,28 @@ def compile(
 
             # call the SharpGen dll
             args = [sharpgen_runner, sharpgen_dll] + args
-            engine.debug('Compiling code: ' + source)
-            engine.debug('Running SharpGen: ' + str(args))
+            #engine.debug('Compiling code: ' + source)
+            #engine.debug('Running SharpGen: {}'.format(' '.join(args)))
+
             code, output, _ = helpers.capture(args, merge_stderr=True)
-            engine.debug('Finished running SharpGen')
-
-        # debug
-        #output = output.decode()
-        #engine.debug('SharpGen return: {}'.format(code))
-        #engine.debug('SharpGen output: {}'.format(output))
-
-        if code != 0 or not os.path.getsize(out):
-            # SharpGen failed
             output = output.decode()
+
+            #engine.debug('Finished running SharpGen')
+
+        if code != 0 or not os.path.isfile(out) or not os.path.getsize(out):
+            # SharpGen failed
             engine.message('SharpGen invocation: {}'.format(' '.join(args)))
             engine.message('SharpGen error code: {}'.format(code))
             engine.message('SharpGen error output:\n' + output)
             engine.message('End SharpGen error output')
 
-            if code == -12 and os.path.isfile(out):
-                # confuser failed. remove the un-confused output binary.
-                try: os.remove(out)
-                except: pass
+            if os.path.isfile(out):
+                os.remove(out)
 
             raise RuntimeError('SharpGen failed with code {}'.format(code))
+        else:
+            engine.debug('SharpGen return: {}'.format(code))
+            engine.debug('SharpGen output: {}'.format(output))
     finally:
         if original_resources_yaml:
             # set the resources yaml back to the original
@@ -992,16 +1043,17 @@ def execute_file(bid, source, args, delete_after=True, silent=True, **kwargs):
     :param bid: Beacon to execute on
     :param source: Source file to compile
     :param args: Arguments used for execution
-    :param delete_after: Delete the generated .exe after (default: True)
+    :param delete_after: Delete the generated .exe after (default: True). This
+                         option is set to False if `out=` is set.
     :param silent: Tell `bexecute_assembly` not to print anything (default: True)
     :param **kwargs: Compilation arguments passed to `compile_file`.
     :return: True if the executed build was from the build cache
     :raises RuntimeError: If one of the options is invalid
     """
 
-    # check for `out` argument
+    # disable `delete_after` if `out=` is set.
     if 'out' in kwargs:
-        raise RuntimeError('Do not use the out parameter with execute_file()')
+        delete_after = False
 
     compiled, from_cache = compile_file(source, **kwargs)
 
@@ -1021,16 +1073,17 @@ def execute(bid, code, args, delete_after=True, silent=True, **kwargs):
     :param bid: Beacon to execute on
     :param code: Code to compile
     :param args: Arguments used for execution
-    :param delete_after: Delete the generated .exe after (default: True)
+    :param delete_after: Delete the generated .exe after (default: True). This
+                         option is set to False if `out=` is set.
     :param silent: Tell `bexecute_assembly` not to print anything (default: True)
     :param **kwargs: Compilation arguments passed to `compile_file`.
     :return: True if the executed build was from the build cache
     :raises RuntimeError: If one of the options is invalid
     """
 
-    # check for `out` argument
+    # disable `delete_after` if `out=` is set.
     if 'out' in kwargs:
-        raise RuntimeError('Do not use the out parameter with execute()')
+        delete_after = False
 
     compiled, from_cache = compile(code, **kwargs)
 

@@ -183,6 +183,21 @@ def is_iterable(var):
     except TypeError:
         return False
 
+def is_int(string, base=10):
+    """
+    Check if a string is an integer.
+
+    :param string: String to check
+    :param base: Base to check with (default: 10)
+    :return: True if the string is an integer
+    """
+
+    try:
+        int(string, base=base)
+        return True
+    except ValueError:
+        return False
+
 def random_string(minsize=4, maxsize=8, choices=string.ascii_uppercase):
     """
     Generate a random ASCII string

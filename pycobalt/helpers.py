@@ -35,11 +35,12 @@ import pycobalt.engine as engine
 import pycobalt.callbacks as callbacks
 import pycobalt.aggressor as aggressor
 
-def parse_ps(content):
+def parse_ps(content, sort_by='pid'):
     """
     Parse output of `bps()` as passed to the callback.
 
     :param content: Output of `bps()`
+    :param sort_by: Parameter to sort by
     :return: List of dictionaries representing the process list, sorted by PID.
              Dictionary fields include: name, ppid, pid, arch, and user.
     """
@@ -54,17 +55,21 @@ def parse_ps(content):
         proc['ppid'] = int(proc['ppid'])
 
         # get arch
-        if len(others) > 1:
+        if len(others) >= 1:
             proc['arch'] = others[0]
 
         # get user
-        if len(others) > 2:
+        if len(others) >= 2:
             proc['user'] = others[1]
+
+        # get user
+        if len(others) >= 3:
+            proc['session'] = others[2]
 
         procs.append(proc)
 
     # sort it
-    procs = list(sorted(procs, key=lambda item: item['pid']))
+    procs = list(sorted(procs, key=lambda item: item[sort_by]))
 
     return procs
 
@@ -551,7 +556,7 @@ def powershell_base64(string):
 
     return base64.b64encode(string.encode('UTF-16LE')).decode()
 
-def fix_multiline_string(string, *args, **kwargs):
+def code_string(string, *args, **kwargs):
     """
     Fix an indented multi-line string. Example:
 
@@ -568,6 +573,9 @@ def fix_multiline_string(string, *args, **kwargs):
     :return: Formatted code
     """
 
+    # pre-format de-indent
+    string = textwrap.dedent(string)
+
     # format string
     if kwargs or args:
         string = string.format(*args, **kwargs)
@@ -581,7 +589,7 @@ def fix_multiline_string(string, *args, **kwargs):
     if not lines[-1] or lines[-1].isspace():
         string = '\n'.join(lines[:-1])
 
-    # de-indent
+    # post-format de-indent
     string = textwrap.dedent(string)
 
     return string
