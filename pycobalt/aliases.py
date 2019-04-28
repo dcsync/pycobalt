@@ -85,7 +85,7 @@ def register(name, callback, short_help=None, long_help=None,
 
         try:
             # run the alias callback
-            engine.debug('calling callback for alias {}'.format(name))
+            #engine.debug('calling callback for alias {}'.format(name))
             callback(*args)
         except Exception as e:
             # print exception summaries to the beacon log. raise the

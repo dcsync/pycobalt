@@ -118,10 +118,7 @@ def handle_message(name, message):
 
         if 'sync' in message and message['sync']:
             # send return value
-            debug('Received sync return request in callback {}'.format(callback_name))
             write('return', ret)
-        else:
-            debug('not returning a value from {}'.format(callback_name))
     elif name == 'eval':
         # eval python code
         eval(message)
