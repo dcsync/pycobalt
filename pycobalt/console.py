@@ -1,4 +1,4 @@
-"""
+r"""
 Helper functions for printing to the Beacon Console and Script Console. This
 includes:
 
@@ -11,7 +11,7 @@ Changing Beacon Console output (regular example):
 
     def beacon_output(bid, contents):
         return '<output>\n{}\n</output>'.format(contents)
-    console.register('beacon_output', beacon_output)
+    console.register_modifier('beacon_output', beacon_output)
 
 Changing Beacon Console output (decorator example):
 
@@ -152,7 +152,7 @@ _known_modifiers = (
     'SSH_INPUT',
 )
 
-def is_known(name):
+def is_known_modifier(name):
     """
     Check if a modifier is one of the known cobaltstrike ones
 
@@ -163,9 +163,9 @@ def is_known(name):
     global _known_modifiers
     return name.upper() in _known_modifiers
 
-def register(name, callback, known_only=True):
+def register_modifier(name, callback, known_only=True):
     """
-    Register an modifier callback.
+    Register a modifier callback.
 
     :param name: Name of modifier (case-insensitive)
     :param callback: Modifier callback
@@ -183,7 +183,7 @@ def register(name, callback, known_only=True):
             engine.handle_exception_softly(exc)
             return '[!] An Exception occurred in the {} output modifier. See Script Console for more details.'.format(name)
 
-    if known_only and not is_known(name):
+    if known_only and not is_known_modifier(name):
         raise RuntimeError('Tried to register an unknown modifier: {name}. Try console.modifier("{name}", known_only=False).'.format(name=name))
 
     callback_name = callbacks.register(modifier_callback, prefix='modifier_{}'.format(name))
@@ -191,7 +191,7 @@ def register(name, callback, known_only=True):
 
     return callback_name
 
-def unregister(callback):
+def unregister_modifier(callback):
     """
     Unregister a modifier callback. There's no way to easily unregister a callback in
     Aggressor so this will forever leave us with broken callbacks coming back
@@ -219,7 +219,7 @@ class modifier:
 
     def __call__(self, func):
         self.func = func
-        register(self.name, self.func, known_only=self.known_only)
+        register_modifier(self.name, self.func, known_only=self.known_only)
 
 # Color and formatting stuff follows
 _escape = chr(3)

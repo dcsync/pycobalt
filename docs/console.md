@@ -12,18 +12,14 @@ includes:
 Changing Beacon Console output (regular example):
 
     def beacon_output(bid, contents):
-        return '<output>
-{}
-</output>'.format(contents)
-    console.register('beacon_output', beacon_output)
+        return '<output>\n{}\n</output>'.format(contents)
+    console.register_modifier('beacon_output', beacon_output)
 
 Changing Beacon Console output (decorator example):
 
     @console.modifier('beacon_output')
     def beacon_output(bid, contents):
-        return '<output>
-{}
-</output>'.format(contents)
+        return '<output>\n{}\n</output>'.format(contents)
 
 Printing colored text to the Script Console:
 
@@ -32,7 +28,7 @@ Printing colored text to the Script Console:
 I'm sort of color blind so orange might be red and cyan might be blue. To see
 all of Cobalt Strike's color options run this in the Script Console:
 
-    e for ($i = 0; $i < 100; $i++) { println($i . "    " . chr($i) . "test"); }
+    e for ($i = 0; $i < 100; $i++) { println($i . "    \x03" . chr($i) . "test"); }
 
 I've attempted to document the arguments to various output modifiers below.
 This documentation is mostly based on Cobalt Strike's
@@ -99,9 +95,9 @@ SSH Beacon Console
  - `SSH_OUTPUT_DOWNLOADS`: bid, downloads={'name', 'path', 'size', 'rcvd'}
  - `SSH_INPUT`: bid, user, text, when
 
-## is_known
+## is_known_modifier
 ```python
-is_known(name)
+is_known_modifier(name)
 ```
 
 Check if a modifier is one of the known cobaltstrike ones
@@ -114,12 +110,12 @@ Check if a modifier is one of the known cobaltstrike ones
 
 True if modifier is a known one
 
-## register
+## register_modifier
 ```python
-register(name, callback, known_only=True)
+register_modifier(name, callback, known_only=True)
 ```
 
-Register an modifier callback.
+Register a modifier callback.
 
 **Arguments**:
 
@@ -131,9 +127,9 @@ Register an modifier callback.
 
 Name of registered callback
 
-## unregister
+## unregister_modifier
 ```python
-unregister(callback)
+unregister_modifier(callback)
 ```
 
 Unregister a modifier callback. There's no way to easily unregister a callback in
