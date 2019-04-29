@@ -44,6 +44,20 @@ disable_cache()
 
 Disable the build cache
 
+## enable_cache_overwrite
+```python
+enable_cache_overwrite()
+```
+
+Enable cache overwrite mode
+
+## disable_cache_overwrite
+```python
+disable_cache_overwrite()
+```
+
+Disable cache overwrite mode
+
 ## set_confuser_config
 ```python
 set_confuser_config(config)
@@ -102,13 +116,16 @@ adds to the list passed here.
 Use the special value `sharpgen.no_changes` to indicate that no changes
 should be made to the `resources.yml` file.
 
+You may set `sharpgen.default_resources` directly instead of calling this
+function.
+
 **Arguments**:
 
 - `resources`: Default resouce whitelist
 
 ## set_references
 ```python
-set_references(references=['mscorlib.dll', 'System.dll', 'System.Core.dll'])
+set_references(references=None)
 ```
 
 Set the reference whitelist default. Call with no arguments disable all
@@ -120,9 +137,33 @@ adds to the list passed here.
 Use the special value `sharpgen.no_changes` to indicate that no changes
 should be made to the `references.yml` file.
 
+You may set `sharpgen.default_references` directly instead of calling this
+function.
+
 **Arguments**:
 
 - `references`: Default reference whitelist
+
+## set_using
+```python
+set_using(using=None)
+```
+
+Set the default libraries to use with C#'s `using` statement. This is a
+default for the `using=` compilation keyword argument.
+
+This setting may be either a list or a dictionary containing `{namespace:
+alias}`. The dictionary form allows you to set namespace aliases with the
+`using ALIAS = NAMESPACE;` directive.
+
+You may set `sharpgen.default_using` directly instead of calling this
+function.
+
+**Arguments**:
+
+- `using`: Libraries to use. Default: [System, System.IO, System.Text,
+              System.Linq, System.Security.Principal,
+              System.Collections.Generic]
 
 ## set_dotnet_framework
 ```python
@@ -136,12 +177,24 @@ Set the default .NET Framework version. This is overridden by the
 
 - `version`: .NET Framework version ('net35' or 'net40')
 
+## get_cache_location
+```python
+get_cache_location()
+```
+
+Get the build cache location
+
+**Returns**:
+
+Build cache location
+
 ## set_cache_location
 ```python
 set_cache_location(location=None)
 ```
 
-Set the build cache location. The default location is SharpGen/Cache.
+Set the build cache location. The default location is
+`<sharpgen directory>/Cache`.
 
 **Arguments**:
 
@@ -267,8 +320,9 @@ wrap_code(source,
           function_name='Main',
           function_type='void',
           class_name=None,
-          libraries=None,
-          add_return=True)
+          using=None,
+          add_return=True,
+          catch_exceptions=True)
 ```
 
 Wrap a piece of source code in a class and function, similar to what
@@ -278,11 +332,12 @@ control over the final product.
 **Arguments**:
 
 - `source`: Source to wrap
-- `function_name`: Function name (default: Main)
-- `function_type`: Function type (default: void)
+- `function_name`: Function name (default: 'Main')
+- `function_type`: Function type (default: 'void')
 - `class_name`: Class name (default: random)
-- `libraries`: List of librares to use (default: sharpgen.default_libraries)
+- `using`: List of librares to use (default: sharpgen.default_using)
 - `add_return`: Add return statement if needed (default: True)
+- `catch_exceptions`: Catch any unhandled exceptions (default: True)
 
 **Returns**:
 
@@ -317,7 +372,8 @@ compile(source,
         class_name=None,
         function_name=None,
         function_type=None,
-        libraries=None,
+        using=None,
+        add_using=None,
         output_kind='console',
         platform='AnyCpu',
         dotnet_framework=None,
@@ -331,7 +387,7 @@ compile(source,
         add_resources=None,
         add_references=None,
         cache=None,
-        overwrite_cache=False,
+        cache_overwrite=None,
         no_cache_write=False,
         sharpgen_location=None,
         sharpgen_runner=None)
@@ -347,8 +403,11 @@ Compile some C# code using SharpGen.
 - `class_name`: Name of generated class (default: random)
 - `function_name`: Name of function for wrapper (default: Main for .exe, Execute for .dll)
 - `function_type`: Function return type (default: void for .exe, object for .dll)
-- `libraries`: Libraries to use (C# `using`) in the wrapper (default:
-                  `sharpgen.default_libraries`).
+- `using`: Namespaces to use (C# `using`) in the wrapper. See
+              `sharpgen.set_using()` for more information.
+- `add_using`: Additional namespaces to use (C# `using`) in the wrapper.
+                  These are added on top of the defaults. See
+                  `sharpgen.set_using()` for more information.
 
 - `assembly_name`: Name of generated assembly (default: random)
 - `output_kind`: Type of output (exe/console or dll/library) (default: console)
@@ -387,8 +446,9 @@ Compile some C# code using SharpGen.
 - `cache`: Use the build cache. Not setting this option will use the
               global settings (`enable_cache()`/`disable_cache()`). By
               default the build cache is off.
-- `overwrite_cache`: Force overwriting this build in the cache (disable
-                        cache retrieval but not writing)
+- `cache_overwrite`: Force overwriting this build in the cache (disable
+                        cache retrieval but not writing). The default is
+                        `False` unless `enable_cache_overwrite()` is called.
 - `no_cache_write`: Allow for cache retrieval but not cache writing
 
 - `sharpgen_location`: Location of SharpGen directory (default: location
@@ -431,7 +491,7 @@ Tuple containing (out, cached) where `out` is the name of the
 
 ## execute_file
 ```python
-execute_file(bid, source, args, **kwargs)
+execute_file(bid, source, args, delete_after=True, silent=True, **kwargs)
 ```
 
 Compile and execute a C# file
@@ -441,6 +501,9 @@ Compile and execute a C# file
 - `bid`: Beacon to execute on
 - `source`: Source file to compile
 - `args`: Arguments used for execution
+- `delete_after`: Delete the generated .exe after (default: True). This
+                     option is set to False if `out=` is set.
+- `silent`: Tell `bexecute_assembly` not to print anything (default: True)
 :param **kwargs: Compilation arguments passed to `compile_file`.
 
 **Returns**:
@@ -453,7 +516,7 @@ True if the executed build was from the build cache
 
 ## execute
 ```python
-execute(bid, code, args, **kwargs)
+execute(bid, code, args, delete_after=True, silent=True, **kwargs)
 ```
 
 Compile and execute some C# code
@@ -463,6 +526,9 @@ Compile and execute some C# code
 - `bid`: Beacon to execute on
 - `code`: Code to compile
 - `args`: Arguments used for execution
+- `delete_after`: Delete the generated .exe after (default: True). This
+                     option is set to False if `out=` is set.
+- `silent`: Tell `bexecute_assembly` not to print anything (default: True)
 :param **kwargs: Compilation arguments passed to `compile_file`.
 
 **Returns**:

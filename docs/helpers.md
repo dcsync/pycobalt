@@ -24,7 +24,7 @@ Thanks Holger!
 
 ## parse_ps
 ```python
-parse_ps(content)
+parse_ps(content, sort_by='pid')
 ```
 
 Parse output of `bps()` as passed to the callback.
@@ -32,6 +32,7 @@ Parse output of `bps()` as passed to the callback.
 **Arguments**:
 
 - `content`: Output of `bps()`
+- `sort_by`: Parameter to sort by
 
 **Returns**:
 
@@ -278,6 +279,29 @@ string literal with internal double quotes escaped. Also removes newlines.
 
 Quoted string or list of strings
 
+## execute_assembly_quote
+```python
+execute_assembly_quote(arg)
+```
+
+Quote a string or list of strings for use as arguments to pass to `bexecute_assembly`.
+
+The argument format appears to be pretty simple. Arguments may be enclosed
+in double-quotes. Double-quotes may be escaped with backslashes.
+Backslashes may be escaped with backslashes.
+
+The return value is a string suitable for use with `bexecute_assembly`. If
+a list of strings is passed each argument is quoted and separated by a
+space.
+
+**Arguments**:
+
+- `arg`: Argument to quote (string or list of strings)
+
+**Returns**:
+
+Argument string for `bexecute_assembly`
+
 ## argument_quote
 ```python
 argument_quote(arg)
@@ -434,9 +458,9 @@ Powershell's -EncodedCommand.
 
 Base64 encoded string
 
-## fix_multiline_string
+## code_string
 ```python
-fix_multiline_string(string, *args, **kwargs)
+code_string(string, *args, **kwargs)
 ```
 
 Fix an indented multi-line string. Example:

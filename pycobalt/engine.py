@@ -69,7 +69,7 @@ def debug(line):
     if _debug_on:
         write('debug', line)
 
-def _handle_exception_softly(exc):
+def handle_exception_softly(exc):
     """
     Print an exception to the script console
 
@@ -114,11 +114,15 @@ def handle_message(name, message):
         # dispatch callback
         callback_name = message['name']
         callback_args = message['args'] if 'args' in message else []
-        ret = callbacks.call(callback_name, callback_args)
+        return_value = callbacks.call(callback_name, callback_args)
 
-        if 'sync' in message and message['sync']:
+        if 'sync' in message and message['sync'] and 'id' in message:
             # send return value
-            write('return', ret)
+            return_message = {
+                'value': return_value,
+                'id': message['id']
+            }
+            write('return', return_message)
     elif name == 'eval':
         # eval python code
         eval(message)
@@ -133,7 +137,7 @@ def handle_message(name, message):
         stop()
     elif not name:
         error('Error reading pipe: {}'.format(str(message)))
-        _handle_exception_softly(message)
+        handle_exception_softly(message)
     else:
         error('Received unhandled or out-of-order message type: {} {}'.format(name, str(message)))
 
@@ -219,7 +223,7 @@ def loop(fork_first=True):
             else:
                 error('Received invalid message: {}'.format(message))
         except Exception as e:
-            _handle_exception_softly(e)
+            handle_exception_softly(e)
 
 def stop():
     """
@@ -272,7 +276,7 @@ def call(name, args=None, silent=False, fork=False, sync=True):
                 try:
                     handle_message(name, message)
                 except Exception as e:
-                    _handle_exception_softly(e)
+                    handle_exception_softly(e)
 
 def eval(code):
     """

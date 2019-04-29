@@ -12,6 +12,7 @@ modules=(
 	gui
 	helpers
 	sharpgen
+	console
 	#bot
 )
 level='++'

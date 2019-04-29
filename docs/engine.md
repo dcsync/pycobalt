@@ -31,6 +31,17 @@ Write script console debug message
 
 - `line`: Line to write
 
+## handle_exception_softly
+```python
+handle_exception_softly(exc)
+```
+
+Print an exception to the script console
+
+**Arguments**:
+
+- `exc`: Exception to print
+
 ## write
 ```python
 write(message_type, message='')

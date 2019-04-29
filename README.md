@@ -85,11 +85,12 @@ script. Personally I have a single all.cna file with a bunch of calls to
 PyCobalt includes several Python modules. Here's the full list, with links to
 usage and examples:
 
-  - [pycobalt.engine](#script-console): Main communication code
+  - [pycobalt.engine](#script-console-messages): Main communication code
   - [pycobalt.aggressor](#aggressor): Stubs for calling Aggressor functions
   - [pycobalt.aliases](#aliases): Beacon Console alias registration
   - [pycobalt.commands](#commands): Script Console command registration
   - [pycobalt.events](#events): Event handler registration
+  - [pycobalt.console](#console): Output modifiers and console colors
   - [pycobalt.gui](#gui): Context menu registration
   - [pycobalt.helpers](#helpers):
     Assorted helper functions and classes to make writing scripts easier
@@ -105,7 +106,7 @@ For full pydoc documentation head over to the
 Here are some script examples. For more complete examples see the
 [examples](https://github.com/dcsync/pycobalt/tree/master/examples) directory.
 
-## Script Console
+## Script Console Messages
 
 To print a message on the Script Console:
 
@@ -252,7 +253,7 @@ To bypass this you can use python's `*` operator:
     import pycobalt.aliases as aliases
     import pycobalt.aggressor as aggressor
 
-    @aliases.alias('test_alias')
+    @aliases.alias('test_alias', 'Tests alias registration')
     def test_alias(bid, *args):
         aggressor.blog2(bid, 'test alias called with args: ' + ', '.join(args))
 
@@ -353,6 +354,89 @@ Cobalt Strike ones. To register an arbitrary event (e.g. for use with
 
 The arguments to your event callback are checked against incoming events. If
 they don't match an Exception will be printed to the Script Console.
+
+## Console
+
+[pycobalt.console](https://github.com/dcsync/pycobalt/tree/master/docs/console.md)
+provides helpers for working with console output. This includes:
+
+ - Registering console output modifiers (Aggressor's `set BEACON_OUTPUT`).
+ - Helper functions for coloring and styling text.
+ - Helper functions for creating ASCII tables and aligned text in the console.
+
+### Output Modifiers
+
+Here's how you register output modifiers:
+
+    import pycobalt.engine as engine
+    import pycobalt.console as console
+
+    # this is case-insensitive
+    @console.modifier('beacon_input')
+    def _(bid, user, text, when):
+        # the return text is what you'll see in the Beacon Console
+        return user + '> ' + text
+
+    engine.loop()
+
+Output modifiers aren't officially documented. I attempted to document them
+over at
+[docs/console.md](https://github.com/dcsync/pycobalt/tree/master/docs/console.md).
+
+As usual the arguments to your modifier callbacks are checked. If
+they don't match an Exception will be printed to the Script Console and an
+error message will be returned in place of your callback's return value.
+
+Unlike alias, command, and event callbacks, output modifier callbacks are
+called in Cobalt Strike's main thread. In order to avoid freezing up the entire
+application PyCobalt will timeout and return/print an error if your callback
+doesn't return within 8 seconds. You may modify this timeout by setting
+[`$pycobalt_timeout`](#aggressor-configuration).
+
+### Console Colors
+
+This module also contains console color and style helpers. 
+
+	...
+	@aliases.alias('red', 'Print red text to the Beacon Console')
+	def _(bid, red_text, plain_text=''):
+		aggressor.blog2(bid, console.red(red_text) + plain_text)
+	...
+
+Alternatively you may use the escape codes directly:
+
+	...
+	@aliases.alias('red', 'Print red text to the Beacon Console')
+	def _(bid, red_text, plain_text=''):
+		aggressor.blog2(bid, console.codes['red'] + red_text + console.codes['reset'] + plain_text)
+	...
+
+There are a bunch of colors and styles. See
+[docs/console.md](https://github.com/dcsync/pycobalt/tree/master/docs/console.md)
+for the full list.
+
+### PS Command Example
+
+Inspired by the Shadow Brokers leak I set out to improve the output of my `ps`
+command.
+
+	beacon> ps
+	...
+    | PID  | PPID |          Name          |                  Description                   |     User     | Session |
+    +------+------+------------------------+------------------------------------------------+--------------+---------+
+    |    0 |    0 | [System Process]       | System Idle Process                            |              |         |
+    |    4 |    0 |     System             | System Kernel                                  |              |         |
+    |  260 |    4 |         smss           | Session Manager Subsystem                      |              |         |
+    |  355 |  344 | csrss                  | Client-Server Runtime Server Subsystem         |              |         |
+    |  418 |  344 | wininit                | Vista background service launcher              |              |         |
+    |  519 |  418 |     services           | Windows Service Controller                     |              |         |
+    |  201 |  519 |         svchost        | Microsoft Service Host Process (check path)    |              |         |
+    |  300 |  519 |         svchost        | Microsoft Service Host Process (check path)    |              |         |
+	...
+
+The code
+([`examples/ps.py`](https://github.com/dcsync/pycobalt/tree/master/examples/ps.py))
+uses every feature in this module.
 
 ## GUI
 
@@ -610,6 +694,23 @@ four compile/execute functions.
 
 ## Advanced Usage
 
+### Aggressor Configuration
+
+The PyCobalt Aggressor scripts are configurable with some variables.
+
+Configuration variables for `pycobalt.cna`:
+
+ - `$pycobalt_path`: Directory containing `pycobalt.cna` (default: `script_resource()`)
+ - `$pycobalt_python`: Location of the Python interpreter (default: `"/usr/bin/env python3"`)
+ - `$pycobalt_debug_on`: Enable debug messages (boolean, default: `false`)
+ - `$pycobalt_timeout`: Global timeout value in milliseconds to use for various
+                        operations (default: `8000`)
+
+Configuration variables for `json.cna`:
+
+ - `$json_path`: Directory containing `json.cna` (default: `$pycobalt_path`)
+ - `$json_jar_file`: Full file path of `json.jar` (default: `$json_path . '/jars/json.jar'`)
+
 ### Non-Primitive Objects
 
 When passed from Cobalt Strike to Python a non-primitive object's reference is
@@ -657,16 +758,16 @@ You can also eval arbitrary Sleep code:
 `engine.eval` doesn't perform any sort of parameter marshalling or callback
 serialization.
 
-# Installation
+### Installation
 
-## Python Side
+#### Python Side
 
 Run `setup.py install` to install the PyCobalt python library.
 
 Or you can run it straight out of the repo if you're familiar with
 [PYTHONPATH](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONPATH).
 
-## Cobalt Strike Side
+#### Cobalt Strike Side
 
 The Aggressor library is in the
 [aggressor](https://github.com/dcsync/pycobalt/tree/master/aggressor)

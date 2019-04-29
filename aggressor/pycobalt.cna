@@ -2,6 +2,8 @@
 #  - $pycobalt_path: Directory containing pycobalt.cna
 #  - $pycobalt_python: Location of the Python interpreter (default: /usr/bin/env python3)
 #  - $pycobalt_debug_on: Enable debug messages (boolean, default: false)
+#  - $pycobalt_timeout: Global timeout value in milliseconds to use for various
+#                       operations (default: 8000)
 # 
 # Configuration variables for json.cna:
 #  - $json_path: Directory containing json.cna (default: $pycobalt_path)
@@ -13,6 +15,10 @@ if ($pycobalt_debug_on is $null) {
 
 if (!$pycobalt_python) {
 	$pycobalt_python = '/usr/bin/env python3'
+}
+
+if (!$pycobalt_timeout) {
+	$pycobalt_timeout = 8000;
 }
 
 # Write debug message to console
@@ -64,14 +70,31 @@ include($json_path . '/json.cna');
 # { file: handle }
 %_pycobalt_handles = %();
 
+# For passing return values from Python to Aggressor between threads
+# { id: value }
+%_pycobalt_returns = %();
+$_pycobalt_returns_lock = semaphore();
+
+# Print the current thread info (for debugging)
+sub _pycobalt_debug_thread {
+	local('$thread $name $id');
+
+	$thread = [Thread currentThread];
+	$name = [$thread getName];
+	$id = [$thread getId];
+	_pycobalt_debug("Current thread: $name (ID " . $id . ')');
+}
+
 # Print a stacktrace (for debugging)
-sub _pycobalt_stacktrace {
+sub _pycobalt_debug_stacktrace {
 	local('@stack $frame');
 
+	_pycobalt_debug_thread();
+
 	@stack = [[Thread currentThread] getStackTrace];
-	_pycobalt_debug('Stack size: ' . size(@stack));
-	for $frame (@stack) {
-		_pycobalt_debug($frame);
+	_pycobalt_debug('Stack trace (' . size(@stack) . ' frames):');
+	foreach $frame (@stack) {
+		_pycobalt_debug('  - ' . $frame);
 	}
 }
 
@@ -159,7 +182,7 @@ sub _pycobalt_resolve_object_handle {
 sub _pycobalt_deserialize_special {
 	local('$arg $item $key $object_prefix $handle $object_name');
 	local('$object $callback_name $callback_prefix $callback @new_list %new_hash');
-	local('$data @args');
+	local('$data @args $obj $line $bytes_prefix');
 
 	$arg = $1;
 	$handle = $2;
@@ -183,17 +206,56 @@ sub _pycobalt_deserialize_special {
 			# it's a callback
 			$callback_name = substr($arg, strlen($callback_prefix));
 
+			# if you call this callback with the key-value argument
+			# `$return_expected = true` it will wait for a return value from
+			# the Python script and return it.
 			$callback = lambda({
+				local('@args $tries %info $id $error');
 				@args = @_;
 				# XXX stack is already overflowing when there are menu options and such
 				# could possibly fork() here to create a new thread/stack
 				#@args = _pycobalt_serialize_special(@_);
 				_pycobalt_debug('Calling callback: ' . $callback_name);
+
 				%info = %(name => $callback_name, args => @args);
+
+				# let the script know we expect a return value
+				if ($return_expected) {
+					$id = '' . rand(9999999999999);
+					%info['sync'] = true;
+					%info['id'] = $id;
+				}
+
 				if (!_pycobalt_write_message($callback_handle, 'callback', %info)) {
 					_pycobalt_debug("Callback belongs to a closed script: " . $callback_name);
 				}
-			}, $callback_handle => $handle, \$callback_name);
+
+				# wait for return value
+				if ($return_expected) {
+					_pycobalt_debug('Waiting for return value from Python script');
+					_pycobalt_debug_stacktrace();
+
+					# we allow the script a total of 2 seconds to give us a
+					# return value
+					$tries = 0;
+					while ($tries < $pycobalt_timeout / 100) {
+						sleep(100);
+						acquire($_pycobalt_returns_lock);
+						if ($id in %_pycobalt_returns) {
+							release($_pycobalt_returns_lock);
+							return %_pycobalt_returns[$id];
+						}
+						release($_pycobalt_returns_lock);
+						$tries += 1;
+					}
+
+					$error = "$callback_name timed out after $pycobalt_timeout milliseconds without receiving a return value";
+					_pycobalt_error($error);
+					return $error;
+				}
+			}, $callback_handle => $handle, \$callback_name,
+			   \$pycobalt_timeout, \%_pycobalt_returns,
+			   \$_pycobalt_returns_lock);
 
 			return $callback;
 		} else if (left($arg, strlen($bytes_prefix)) eq $bytes_prefix) {
@@ -243,43 +305,43 @@ sub _pycobalt_set_menu {
 
 	%menu = $1;
 
-	_pycobalt_debug('Setting up menu ' . %menu);
+	#_pycobalt_debug('Setting up menu ' . %menu);
 
 	sub _pycobalt_menu_callback {
-		_pycobalt_debug('In callback for ' . %menu);
+		#_pycobalt_debug('In callback for ' . %menu);
 
 		# Call the callback
 		if ('callback' in %menu) {
 			$callback = %menu['callback'];
-			_pycobalt_debug('Calling callback ' . $callback);
+			#_pycobalt_debug('Calling callback ' . $callback);
 			invoke($callback, @_);
 		}
 
 		# Deal with children
 		if ('children' in %menu) {
 			@children = %menu['children'];
-			_pycobalt_debug('Children: ' . @children);
+			#_pycobalt_debug('Children: ' . @children);
 			foreach $child (@children) {
-				_pycobalt_debug('Dealing with child ' . $child);
+				#_pycobalt_debug('Dealing with child ' . $child);
 				_pycobalt_set_menu($child);
 			}
 		}
 	}
 
 	if (%menu['type'] eq 'popup') {
-		_pycobalt_debug('Making popup');
+		#_pycobalt_debug('Making popup');
 		popup(%menu['name'], lambda(&_pycobalt_menu_callback, \%menu));
 	} else if (%menu['type'] eq 'menu') {
-		_pycobalt_debug('Making menu');
+		#_pycobalt_debug('Making menu');
 		menu(%menu['name'], lambda(&_pycobalt_menu_callback, \%menu));
 	} else if (%menu['type'] eq 'item') {
-		_pycobalt_debug('Making item');
+		#_pycobalt_debug('Making item');
 		item(%menu['name'], lambda(&_pycobalt_menu_callback, \%menu));
 	} else if (%menu['type'] eq 'insert_menu') {
-		_pycobalt_debug('Making insert');
+		#_pycobalt_debug('Making insert');
 		insert_menu(%menu['name'], $1, $2, $3, $4, $5, $6);
 	} else if (%menu['type'] eq 'separator') {
-		_pycobalt_debug('Making separator');
+		#_pycobalt_debug('Making separator');
 		separator();
 	} else {
 		_pycobalt_error('Invalid menu type: ' . %menu['type']);
@@ -332,15 +394,34 @@ sub _pycobalt_handle_message {
 	$message = $3;
 
 	if ($name eq 'fork') {
+		# fork.
+		# no message.
+
 		return true;
 	} else if ($name eq 'message') {
+		# write a message to the script console
+		# message: string to write
+
 		_pycobalt_script_message($_pycobalt_script, $message);
 	} else if ($name eq 'error') {
+		# write an error message to the script console
+		# message: string to write
+
 		_pycobalt_script_error($_pycobalt_script, $message);
 	} else if ($name eq 'debug') {
+		# write a debug message to the script console
+		# message: string to write
+
 		_pycobalt_script_debug($_pycobalt_script, $message);
 	} else if ($name eq 'call') {
-		# call a function
+		# call a Sleep/Aggressor function
+		# message items:
+		#  - name: method name (string)
+		#  - args: method arguments (array)
+		#  - silent: add the ! operator (boolean)
+		#  - fork: fork before calling (boolean)
+		#  - sync: write a return value message (boolean)
+
 		$func = $message['name'];
 		@args = $message['args'];
 		$silent = $message['silent'];
@@ -368,8 +449,8 @@ sub _pycobalt_handle_message {
 			# in this thread.
 			@args = _pycobalt_deserialize_special(@args, $handle);
 
-			_pycobalt_debug('Closure call: ' . $closure_text);
-			_pycobalt_debug('Closure args: ' . @args);
+			#_pycobalt_debug('Closure call: ' . $closure_text);
+			#_pycobalt_debug('Closure args: ' . @args);
 
 			$closure = compile_closure($closure_text);
 			$ret = invoke($closure, @args);
@@ -384,21 +465,27 @@ sub _pycobalt_handle_message {
 		# call it
 		if ($fork) {
 			# fork it and call it
-			_pycobalt_debug('Forking before calling function');
+			#_pycobalt_debug('Forking before calling function');
 			fork(&_pycobalt_closure_caller, \$closure_text, \@args, \$handle,
 				 \$pycobalt_path, \$json_path, \$json_jar_file, \%_pycobalt_objects,
-				 \$pycobalt_debug_on, \$sync);
+				 \$pycobalt_debug_on, \$sync, \$pycobalt_timeout,
+				 \%_pycobalt_returns, \$_pycobalt_returns_lock);
 		} else {
 			# call it in this thread, and send return value
 			_pycobalt_closure_caller();
 		}
 	} else if ($name eq 'menu') {
-		# create a menu
-		_pycobalt_debug('Menu call: ' . $message);
+		# create a menu tree
+		# message: menu tree (see _pycobalt_set_menu) (hash)
+
+		#_pycobalt_debug('Menu call: ' . $message);
 		%menu = _pycobalt_deserialize_special($message, $handle);
-		_pycobalt_debug('Deserialized: ' . %menu);
+		#_pycobalt_debug('Deserialized: ' . %menu);
 		_pycobalt_set_menu(%menu);
 	} else if ($name eq 'delete') {
+		# delete a serialized variable
+		# message: object handle (string)
+
 		# remove serialization reference to object. if it's the only reference
 		# the object will be deleted.
 		local('$handle')
@@ -416,11 +503,52 @@ sub _pycobalt_handle_message {
 			_pycobalt_debug('Tried to delete non-existent object: ' . $handle)
 		}
 	} else if ($name eq 'eval') {
-		# eval some code
+		# eval some Sleep code
+		# message: code to eval (string)
+
 		eval($message);
+	} else if ($name eq 'set') {
+		# set one of those output setting things (e.g. `set BEACON_OUTPUT`)
+		# message items:
+		#  - name: name of display parameter to set (string)
+		#  - callback: callback to call (serialized callback string)
+
+		local('%info $lambda $name');
+		%info = _pycobalt_deserialize_special($message, $handle);
+		$name = %info['name'];
+		$callback = %info['callback'];
+
+		set "$name" {
+			_pycobalt_debug('inside set block');
+			_pycobalt_debug_stacktrace();
+			$ret = invoke($callback, @_,
+			              parameters => %($return_expected => true,
+			              $callback_handle => $handle));
+			_pycobalt_debug("return: " . $ret);
+			return $ret;
+		}
+	} else if ($name eq 'return') {
+		# return value from python to Aggressor
+		# message items:
+		#  - id: return ID
+		#  - value: return value
+
+		local('%info $id $value');
+		%info = _pycobalt_deserialize_special($message, $handle);
+		$id = %info['id'];
+		$value = %info['value'];
+
+		# set the return value. this is retrieved by whichever function/thread
+		# needs it.
+		acquire($_pycobalt_returns_lock);
+		%_pycobalt_returns[$id] = $value;
+		release($_pycobalt_returns_lock);
 	} else {
-		_pycobalt_msg("Unhandled message of type $name - " . $message);
+		# unhandled message type
+
+		_pycobalt_error("Unhandled message of type $name - " . $message);
 	}
+
 	return false;
 }
 
@@ -454,7 +582,12 @@ sub _pycobalt_stderr_callback {
 sub _pycobalt_thread_callback {
 	local('$line $obj');
 
+	_pycobalt_debug('handler thread:');
+	_pycobalt_debug_stacktrace();
+
 	while $line (readln($_pycobalt_handle)) {
+		#_pycobalt_debug('main thread line: ' . $line);
+
 		$obj = json_loads($line);
 
 		if ($obj && 'name' in $obj && 'message' in $obj) {
@@ -477,7 +610,23 @@ sub _pycobalt_thread_callback {
 	return false;
 }
 
+# Get a list of running filenames
+#
+# Usage: python_files()
+sub python_files {
+	return keys(%_pycobalt_handles);
+}
+
+# Get a list of running handles
+#
+# Usage: python_handles()
+sub python_handles {
+	return values(%_pycobalt_handles);
+}
+
 # Return a filename for a handle
+#
+# Usage: python_handle_to_file(handle)
 sub python_handle_to_file {
 	local('$find_handle $file $handle');
 
@@ -493,6 +642,8 @@ sub python_handle_to_file {
 }
 
 # Return handle for a filename
+#
+# Usage: python_file_to_handle(filename)
 sub python_file_to_handle {
 	local('$find_name');
 
@@ -506,8 +657,10 @@ sub python_file_to_handle {
 }
 
 # Start a Python script
+#
+# Usage: python(script, fork_immediately=False)
 sub python {
-	local('$error $stderr_thread $script_thread $existing_handle');
+	local('$error $stderr_thread $script_thread $existing_handle $ret');
 
 	# global variable
 	$_pycobalt_script = $1;
@@ -517,6 +670,7 @@ sub python {
 	if ($existing_handle) {
 		_pycobalt_msg($_pycobalt_script . ' is already running. Restarting.');
 		python_stop($existing_handle);
+		sleep(100);
 	}
 
 	# execute the script
@@ -531,22 +685,54 @@ sub python {
 	# start the stderr handler
 	$stderr_thread = fork(&_pycobalt_stderr_callback, \$_pycobalt_handle, \$_pycobalt_script);
 
+	_pycobalt_debug('main thread:');
+	_pycobalt_debug_thread();
+
 	# run without forking first so we can register context menu stuff
 	# TODO make this time out so we don't freeze up cobaltstrike if the script
 	# loops without calling engine.fork()
-	if (_pycobalt_thread_callback()) {
-		# then fork it
+	_pycobalt_debug('Running without forking first');
+	$ret = _pycobalt_thread_callback();
+
+	if ($ret) {
+		# fork it
+		_pycobalt_debug('Forking now');
 		$script_thread = fork(&_pycobalt_thread_callback, \$_pycobalt_handle,
 			\$_pycobalt_script, \%_pycobalt_objects, \$pycobalt_path,
-			\$json_path, \$json_jar_file, \$pycobalt_debug_on, \%_pycobalt_handles);
-	}
+			\$json_path, \$json_jar_file, \$pycobalt_debug_on,
+			\%_pycobalt_handles, \$pycobalt_timeout, \%_pycobalt_returns,
+			\$_pycobalt_returns_lock);
 
-	%_pycobalt_handles[$_pycobalt_script] = $_pycobalt_handle;
+		%_pycobalt_handles[$_pycobalt_script] = $_pycobalt_handle;
+	} else {
+		# initial execution failed
+		_pycobalt_debug('Initial handler failed');
+		return $null;
+	}
 
 	return $_pycobalt_handle;
 }
 
+# Wait for a Python script to stop
+#
+# Usage: python_wait(handle, timeout=None)
+sub python_wait {
+	local('$handle');
+
+	$handle = $1;
+	$timeout = $2;
+
+	if ($handle in python_handles()) {
+		wait($handle, $timeout);
+	} else {
+		_pycobalt_error("Called python_wait on an unrecognized handle");
+		return false;
+	}
+}
+
 # Stop a Python script with its handle
+#
+# Usage: python_stop(handle)
 sub python_stop {
 	local('$handle $file');
 
@@ -565,6 +751,8 @@ sub python_stop {
 
 # Stop a Python script with its filename
 # The filename must exactly match the filename passed to python()
+#
+# Usage: python_stop_file(filename)
 sub python_stop_file {
 	local('$handle $handle $file');
 
@@ -579,15 +767,19 @@ sub python_stop_file {
 }
 
 # Stop all Python scripts
+#
+# Usage: python_stop_all()
 sub python_stop_all {
 	local('$handle');
 
-	foreach $handle (values(%_pycobalt_handles)) {
+	foreach $handle (python_handles()) {
 		python_stop($handle);
 	}
 }
 
 # Eval arbitrary code within the context of a Python script
+#
+# Usage: python_eval(handle, code)
 sub python_eval {
 	local('$handle $code');
 
@@ -597,41 +789,51 @@ sub python_eval {
 	_pycobalt_write_message($handle, 'eval', $code);
 }
 
-# Get a list of running filenames
-sub python_files {
-	return keys(%_pycobalt_handles);
-}
-
-# Get a list of running handles
-sub python_handles {
-	return values(%_pycobalt_handles);
-}
-
 # Start a Python script
+#
+# Usage: python <file>
 command python {
 	local('$file');
 
 	$file = $1;
 
+	# check arguments
+	if (!$file) {
+		_pycobalt_error("Usage: python <file>");
+		return;
+	}
+
 	python($file);
 }
 
 # Stop a Python script by its filename
+#
+# Usage: python-stop <file>
 command python-stop {
 	local('$file');
 
 	$file = $1;
 
+	# check arguments
+	if (!$file) {
+		_pycobalt_error("Usage: python-stop <file>");
+		return;
+	}
+
 	python_stop_file($file);
 }
 
 # Stop all Python scripts
+#
+# Usage: python-stop-all
 command python-stop-all {
 	python_stop_all();
 }
 
 # List filenames for running scripts. These filenames may be passed to
 # python-stop and python-eval.
+#
+# Usage: python-list
 command python-list {
 	local('$file @files');
 
@@ -647,16 +849,45 @@ command python-list {
 }
 
 # Eval arbitrary code within the context of a Python script
+#
+# Usage: python-eval <file> <code>
 command python-eval {
 	local('$file $code $handle');
 
 	$file = $1;
 	$code = $2;
 
+	# check arguments
+	if (!$file || !$code) {
+		_pycobalt_error("Usage: python-eval <file> <code>");
+		return;
+	}
+
 	$handle = python_file_to_handle($file);
 	if ($handle) {
 		python_eval($handle, $code);
 	} else {
 		_pycobalt_error("Didn't find a handle for " . $file);
+	}
+}
+
+# Toggle PyCobalt debug messages
+#
+# Usage: python-debug [on|off]
+command python-debug {
+	local('$mode');
+
+	$mode = $1;
+
+	if ($mode eq 'on') {
+		$pycobalt_debug_on = true;
+	} else if ($mode eq 'off') {
+		$pycobalt_debug_on = false;
+	}
+
+	if ($pycobalt_debug_on) {
+		_pycobalt_msg("Debug messages are on");
+	} else {
+		_pycobalt_msg("Debug messages are off");
 	}
 }
