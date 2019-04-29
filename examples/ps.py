@@ -142,8 +142,6 @@ def _(bid, content, when):
                                        ('user', 'User'),
                                        ('session', 'Session')))
 
-    time.sleep(10)
-
     return console.table(tree_procs, keys=headers)
 
 engine.loop()
