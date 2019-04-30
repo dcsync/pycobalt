@@ -9,7 +9,7 @@ import requests
 import textwrap
 import re
 
-url = 'https://www.cobaltstrike.com/aggressor-script/functions.html'
+urls = ('https://www.cobaltstrike.com/aggressor-script/functions.html', 'https://www.cobaltstrike.com/aggressor-script/rfunctions.html')
 out = 'aggressor.py'
 
 # Additional sleep/aggressor functions to include
@@ -62,39 +62,36 @@ silent_functions = [
 def main():
     print('downloading list')
 
-    html = requests.get(url).text
-    soup = BeautifulSoup(html, 'lxml')
-
-    print('parsing')
-
-    # <h2><a href="#-is64">-is64</a></h2>
     functions = {}
-    container = soup.find('div', {'class': 'col-lg-12'})
+    for url in urls:
+        html = requests.get(url).text
+        soup = BeautifulSoup(html, 'lxml')
 
-    # get names
-    names = []
-    for h2 in container.find_all('h2'):
-        for a in h2.find_all('a'):
-            name = a.text.strip()
-            names.append(name)
+        print('parsing')
 
-    # get docs
-    docs = []
-    for div in container.find_all('div'):
-        doc = div.text
-        docs.append(doc)
+        # <h2><a href="#-is64">-is64</a></h2>
+        container = soup.find('div', {'class': 'col-lg-12'})
 
-    # zip together
-    for name, doc in zip(names, docs):
-        functions[name] = doc
+        # get names
+        names = []
+        for h2 in container.find_all('h2'):
+            for a in h2.find_all('a'):
+                name = a.text.strip()
+                names.append(name)
 
-    # fix up docs
-    for name, doc in functions.items():
-        doc = doc.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
-        doc = doc.replace('\t', ' ' * 4)
-        doc = '\n'.join([line.rstrip() for line in doc.splitlines()])
-        doc = '\nDocumentation from {}:\n'.format(url) + textwrap.indent(doc, ' ' * 4)
-        functions[name] = doc
+        # get docs
+        docs = []
+        for div in container.find_all('div'):
+            doc = div.text
+            docs.append(doc)
+
+        # fix up docs
+        for name, doc in zip(names, docs):
+            doc = doc.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
+            doc = doc.replace('\t', ' ' * 4)
+            doc = '\n'.join([line.rstrip() for line in doc.splitlines()])
+            doc = '\nDocumentation from {}:\n'.format(url) + textwrap.indent(doc, ' ' * 4)
+            functions[name] = doc
 
     # add sleep functions
     for func in sleep_functions:
