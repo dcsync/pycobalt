@@ -75,7 +75,7 @@ def register(name, callback, quote_replacement=None):
         callback(*args)
 
     callbacks.register(command_callback, prefix='command_{}'.format(name))
-    aggressor.command(name, command_callback)
+    aggressor.command(name, command_callback, sync=False)
 
 class command:
     """

@@ -24,7 +24,7 @@ To register a callback manually (useful for setting the serialized name manually
 
 ## call
 ```python
-call(name, args)
+call(name, args, return_id=None)
 ```
 
 Call a function callback by name
@@ -33,6 +33,7 @@ Call a function callback by name
 
 - `name`: Name of callback
 - `args`: Arguments to pass to callback (checked by `utils.check_args` first)
+- `return_id`: Write a return value to the script with this ID (optional)
 
 **Returns**:
 

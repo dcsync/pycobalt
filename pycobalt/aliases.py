@@ -96,7 +96,7 @@ def register(name, callback, short_help=None, long_help=None,
             raise e
 
     callbacks.register(alias_callback, prefix='alias_{}'.format(name))
-    aggressor.alias(name, alias_callback)
+    aggressor.alias(name, alias_callback, sync=False)
 
     # by default short_help is just 'Custom Python command'
     if not short_help:
@@ -109,7 +109,7 @@ def register(name, callback, short_help=None, long_help=None,
     # tack the syntax on the long_help, even if the user set their own
     long_help += '\n\nSyntax: {} {}'.format(name, utils.signature_command(callback, trim=1))
 
-    aggressor.beacon_command_register(name, short_help, long_help)
+    aggressor.beacon_command_register(name, short_help, long_help, sync=False)
 
 class alias:
     """

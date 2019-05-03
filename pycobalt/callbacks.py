@@ -31,27 +31,41 @@ _callbacks = {}
 # { func: name }
 _reverse_callbacks = {}
 
-def call(name, args):
+def call(name, args, return_id=None):
     """
     Call a function callback by name
 
     :param name: Name of callback
     :param args: Arguments to pass to callback (checked by `utils.check_args` first)
+    :param return_id: Write a return value to the script with this ID (optional)
     :return: Return value of callback
     """
+
+    engine.debug('Calling callback {}'.format(name))
 
     global _callbacks
     if name in _callbacks:
         callback = _callbacks[name]
         if utils.check_args(callback, args):
-            return callback(*args)
+            return_value = callback(*args)
+
+            # send return value
+            if return_id:
+                return_message = {
+                    'value': return_value,
+                    'id': return_id
+                }
+                engine.debug('Return sync: {} {}'.format(return_id, return_value))
+                engine.write('return', return_message)
+
+            return True
         else:
             syntax = '{}{}'.format(name, utils.signature(callback))
             raise RuntimeError("{} is an invalid number of arguments for callback '{}'. Syntax: {}".format(len(args), name, syntax))
+            return False
     else:
-        engine.debug('Unknown callback {}'.format(name))
-
-    return None
+        engine.debug('Tried to call unknown callback: {}'.format(name))
+        return False
 
 def name(func):
     """

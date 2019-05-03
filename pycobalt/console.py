@@ -176,7 +176,7 @@ def register_modifier(name, callback, known_only=True):
     name = name.upper()
 
     def modifier_callback(*args):
-        #engine.debug('calling callback for modifier {}'.format(name))
+        engine.debug('calling callback for modifier {}'.format(name))
         try:
             return callback(*args)
         except Exception as exc:

@@ -3,7 +3,6 @@ For communication with Cobalt Strike
 """
 
 # TODO better argument checking on aggressor functions
-# TODO handle 'set'
 
 import json
 import re
@@ -109,20 +108,18 @@ def handle_message(name, message):
     :param message: Message body
     """
 
-    #debug('handling message of type {}: {}'.format(name, message))
+
+    debug('handling message of type {}: {}'.format(name, message))
     if name == 'callback':
         # dispatch callback
         callback_name = message['name']
         callback_args = message['args'] if 'args' in message else []
-        return_value = callbacks.call(callback_name, callback_args)
 
         if 'sync' in message and message['sync'] and 'id' in message:
-            # send return value
-            return_message = {
-                'value': return_value,
-                'id': message['id']
-            }
-            write('return', return_message)
+            callbacks.call(callback_name, callback_args, return_id=message['id'])
+        else:
+            callbacks.call(callback_name, callback_args)
+
     elif name == 'eval':
         # eval python code
         eval(message)
@@ -232,7 +229,7 @@ def stop():
 
     sys.exit()
 
-def call(name, args=None, silent=False, fork=False, sync=True):
+def call(name, args=None, silent=False, fork=None, sync=True):
     """
     Call a sleep/aggressor function. You should use the `aggressor.py` helpers
     where possible.
@@ -251,11 +248,14 @@ def call(name, args=None, silent=False, fork=False, sync=True):
         args = []
 
     # serialize and register function callbacks if needed
-    if callbacks.has_callback(args):
-        # when there's a callback involved we usually have to fork because the
-        # main script thread is busy reading from the script.
-        #debug("forcing fork for call to: {}".format(name))
-        fork = True
+    if fork is None:
+        if callbacks.has_callback(args):
+            # when there's a callback involved we usually have to fork because the
+            # main script thread is busy reading from the script.
+            #debug("forcing fork for call to: {}".format(name))
+            fork = True
+        else:
+            fork = False
 
     message = {
         'name': name,

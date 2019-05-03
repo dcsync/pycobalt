@@ -210,7 +210,7 @@ sub _pycobalt_deserialize_special {
 			# `$return_expected = true` it will wait for a return value from
 			# the Python script and return it.
 			$callback = lambda({
-				local('@args $tries %info $id $error');
+				local('@args $start_time %info $id $error @handles $handle');
 				@args = @_;
 				# XXX stack is already overflowing when there are menu options and such
 				# could possibly fork() here to create a new thread/stack
@@ -226,27 +226,38 @@ sub _pycobalt_deserialize_special {
 					%info['id'] = $id;
 				}
 
-				if (!_pycobalt_write_message($callback_handle, 'callback', %info)) {
-					_pycobalt_debug("Callback belongs to a closed script: " . $callback_name);
+				# XXX if $callback_handle is $null we broadcast this callback
+				# everywhere. this is a shitty workaround for a threading issue
+				# in 'set'.
+				if ($callback_handle is $null) {
+					@handles = python_handles();
+				} else {
+					@handles = @($callback_handle);
+				}
+
+				foreach $handle (@handles) {
+					if (!_pycobalt_write_message($handle, 'callback', %info)) {
+						_pycobalt_debug("Tried to send callback to a closed script: " . $callback_name);
+					}
 				}
 
 				# wait for return value
 				if ($return_expected) {
 					_pycobalt_debug('Waiting for return value from Python script');
-					_pycobalt_debug_stacktrace();
+					#_pycobalt_debug_stacktrace();
 
-					# we allow the script a total of 2 seconds to give us a
+					# we allow the script a total of $pycobalt_timeout seconds to give us a
 					# return value
-					$tries = 0;
-					while ($tries < $pycobalt_timeout / 100) {
-						sleep(100);
+					$start_time = ticks();
+					while (ticks() < $start_time + $pycobalt_timeout) {
 						acquire($_pycobalt_returns_lock);
 						if ($id in %_pycobalt_returns) {
 							release($_pycobalt_returns_lock);
 							return %_pycobalt_returns[$id];
 						}
 						release($_pycobalt_returns_lock);
-						$tries += 1;
+
+						sleep(10);
 					}
 
 					$error = "$callback_name timed out after $pycobalt_timeout milliseconds without receiving a return value";
@@ -387,7 +398,7 @@ sub _pycobalt_script_debug {
 # Handle a message
 sub _pycobalt_handle_message {
 	local('$name $message $func $silent $fork');
-	local('$i $ret %menu');
+	local('$i $ret %menu $handle');
 
 	$handle = $1;
 	$name = $2;
@@ -513,17 +524,21 @@ sub _pycobalt_handle_message {
 		#  - name: name of display parameter to set (string)
 		#  - callback: callback to call (serialized callback string)
 
-		local('%info $lambda $name');
+		local('%info $lambda $name $h');
 		%info = _pycobalt_deserialize_special($message, $handle);
 		$name = %info['name'];
 		$callback = %info['callback'];
 
 		set "$name" {
 			_pycobalt_debug('inside set block');
-			_pycobalt_debug_stacktrace();
+			#_pycobalt_debug_stacktrace();
+
+			# XXX for some reason this closure breaks so we have to send the
+			# callback to all scripts. ($callback_handle => $null)
 			$ret = invoke($callback, @_,
-			              parameters => %($return_expected => true,
-			              $callback_handle => $handle));
+						  parameters => %($return_expected => true,
+						  $callback_handle => $null));
+
 			_pycobalt_debug("return: " . $ret);
 			return $ret;
 		}
@@ -541,6 +556,7 @@ sub _pycobalt_handle_message {
 		# set the return value. this is retrieved by whichever function/thread
 		# needs it.
 		acquire($_pycobalt_returns_lock);
+		_pycobalt_debug("Received return on Aggressor side: $id $value");
 		%_pycobalt_returns[$id] = $value;
 		release($_pycobalt_returns_lock);
 	} else {
@@ -570,7 +586,7 @@ sub _pycobalt_get_stderr {
 sub _pycobalt_stderr_callback {
 	local('$stderr $line');
 
-	$stderr = _pycobalt_get_stderr($_pycobalt_handle);
+	$stderr = _pycobalt_get_stderr($handle);
 
 	while $line (readln($stderr)) {
 		# print error message
@@ -582,16 +598,16 @@ sub _pycobalt_stderr_callback {
 sub _pycobalt_thread_callback {
 	local('$line $obj');
 
-	_pycobalt_debug('handler thread:');
-	_pycobalt_debug_stacktrace();
+	_pycobalt_debug('--- In _pycobalt_thread_callback --- ');
+	#_pycobalt_debug_stacktrace();
 
-	while $line (readln($_pycobalt_handle)) {
+	while $line (readln($handle)) {
 		#_pycobalt_debug('main thread line: ' . $line);
 
 		$obj = json_loads($line);
 
 		if ($obj && 'name' in $obj && 'message' in $obj) {
-			if (_pycobalt_handle_message($_pycobalt_handle, $obj['name'], $obj['message'])) {
+			if (_pycobalt_handle_message($handle, $obj['name'], $obj['message'])) {
 				return true;
 			}
 		} else {
@@ -601,10 +617,10 @@ sub _pycobalt_thread_callback {
 	}
 
 	_pycobalt_msg('Script process exited: ' . $_pycobalt_script);
-	remove(%_pycobalt_handles, $_pycobalt_handle);
+	remove(%_pycobalt_handles, $handle);
 
-	if (!-eof $_pycobalt_handle) {
-		closef($_pycobalt_handle);
+	if (!-eof $handle) {
+		closef($handle);
 	}
 
 	return false;
@@ -676,41 +692,38 @@ sub python {
 	# execute the script
 	_pycobalt_msg('Executing script ' . $_pycobalt_script);
 	# global variable
-	$_pycobalt_handle = exec($pycobalt_python . ' ' . $_pycobalt_script);
+	$handle = exec($pycobalt_python . ' ' . $_pycobalt_script);
 	if (checkError($error)) {
 		_pycobalt_msg("Failed to execute script '" . $_pycobalt_script . "': " . $error);
 		return $null;
 	}
 
 	# start the stderr handler
-	$stderr_thread = fork(&_pycobalt_stderr_callback, \$_pycobalt_handle, \$_pycobalt_script);
-
-	_pycobalt_debug('main thread:');
-	_pycobalt_debug_thread();
+	$stderr_thread = fork(&_pycobalt_stderr_callback, \$handle, \$_pycobalt_script);
 
 	# run without forking first so we can register context menu stuff
 	# TODO make this time out so we don't freeze up cobaltstrike if the script
 	# loops without calling engine.fork()
 	_pycobalt_debug('Running without forking first');
-	$ret = _pycobalt_thread_callback();
+	$ret = _pycobalt_thread_callback(\$handle);
 
 	if ($ret) {
 		# fork it
 		_pycobalt_debug('Forking now');
-		$script_thread = fork(&_pycobalt_thread_callback, \$_pycobalt_handle,
+		$script_thread = fork(&_pycobalt_thread_callback, \$handle,
 			\$_pycobalt_script, \%_pycobalt_objects, \$pycobalt_path,
 			\$json_path, \$json_jar_file, \$pycobalt_debug_on,
 			\%_pycobalt_handles, \$pycobalt_timeout, \%_pycobalt_returns,
 			\$_pycobalt_returns_lock);
 
-		%_pycobalt_handles[$_pycobalt_script] = $_pycobalt_handle;
+		%_pycobalt_handles[$_pycobalt_script] = $handle;
 	} else {
 		# initial execution failed
 		_pycobalt_debug('Initial handler failed');
 		return $null;
 	}
 
-	return $_pycobalt_handle;
+	return $handle;
 }
 
 # Wait for a Python script to stop
