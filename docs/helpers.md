@@ -37,7 +37,7 @@ Parse output of `bps()` as passed to the callback.
 **Returns**:
 
 List of dictionaries representing the process list, sorted by PID.
-         Dictionary fields include: name, ppid, pid, arch, and user.
+         Dictionary fields include: name, ppid, pid, arch, user, session.
 
 ## parse_jobs
 ```python
@@ -284,7 +284,8 @@ Quoted string or list of strings
 execute_assembly_quote(arg)
 ```
 
-Quote a string or list of strings for use as arguments to pass to `bexecute_assembly`.
+Quote a string or list of strings for use as arguments to pass to
+`bexecute_assembly`.
 
 The argument format appears to be pretty simple. Arguments may be enclosed
 in double-quotes. Double-quotes may be escaped with backslashes.
@@ -301,6 +302,21 @@ space.
 **Returns**:
 
 Argument string for `bexecute_assembly`
+
+## eaq
+```python
+eaq(arg)
+```
+
+Alias for execute_assembly_quote
+
+**Arguments**:
+
+- `arg`: Argument to quote
+
+**Returns**:
+
+Quoted argument
 
 ## argument_quote
 ```python
@@ -465,7 +481,7 @@ code_string(string, *args, **kwargs)
 
 Fix an indented multi-line string. Example:
 
-    csharp = helpers.code_format('''
+    csharp = helpers.code_string('''
                 Console.WriteLine("{arg1}" + "{arg2}");
                 ''', arg1='ex', arg2='ample')
 

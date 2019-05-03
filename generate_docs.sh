@@ -15,7 +15,7 @@ modules=(
 	console
 	#bot
 )
-level='++'
+level='+'
 preprocessor=pydocmd.restructuredtext.Preprocessor
 
 mkdir -p $docs

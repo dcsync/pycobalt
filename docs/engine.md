@@ -138,7 +138,7 @@ Stop the script (just exits the process)
 
 ## call
 ```python
-call(name, args=None, silent=False, fork=False, sync=True)
+call(name, args=None, silent=False, fork=None, sync=True)
 ```
 
 Call a sleep/aggressor function. You should use the `aggressor.py` helpers
