@@ -42,7 +42,7 @@ def parse_ps(content, sort_by='pid'):
     :param content: Output of `bps()`
     :param sort_by: Parameter to sort by
     :return: List of dictionaries representing the process list, sorted by PID.
-             Dictionary fields include: name, ppid, pid, arch, and user.
+             Dictionary fields include: name, ppid, pid, arch, user, session.
     """
 
     procs = []
@@ -358,7 +358,8 @@ def csharp_quote(arg):
 
 def execute_assembly_quote(arg):
     """
-    Quote a string or list of strings for use as arguments to pass to `bexecute_assembly`.
+    Quote a string or list of strings for use as arguments to pass to
+    `bexecute_assembly`.
 
     The argument format appears to be pretty simple. Arguments may be enclosed
     in double-quotes. Double-quotes may be escaped with backslashes.
@@ -388,6 +389,16 @@ def execute_assembly_quote(arg):
         new_string = '"{}"'.format(new_string)
 
         return new_string
+
+def eaq(arg):
+    """
+    Alias for execute_assembly_quote
+
+    :param arg: Argument to quote
+    :return: Quoted argument
+    """
+
+    return execute_assembly_quote(arg)
 
 def argument_quote(arg):
     r"""
@@ -560,7 +571,7 @@ def code_string(string, *args, **kwargs):
     """
     Fix an indented multi-line string. Example:
 
-        csharp = helpers.code_format('''
+        csharp = helpers.code_string('''
                     Console.WriteLine("{arg1}" + "{arg2}");
                     ''', arg1='ex', arg2='ample')
 

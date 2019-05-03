@@ -388,7 +388,8 @@ they don't match an Exception will be printed to the Script Console and an
 error message will be returned in place of your callback's return value.
 
 Unlike alias, command, and event callbacks, output modifier callbacks are
-called in Cobalt Strike's main thread. In order to avoid freezing up the entire
+called in Cobalt Strike's main thread. This means you need to write your output
+modifiers to be relatively fast. In order to avoid freezing up the entire
 application PyCobalt will timeout and return/print an error if your callback
 doesn't return within 8 seconds. You may modify this timeout by setting
 [`$pycobalt_timeout`](#aggressor-configuration).
@@ -534,10 +535,12 @@ some of the functions available:
     ID), and `description`.
   - `parse_ps(content)`: Parses the callback output of `bps`. Returns a list of
     dictionaries. Each dictionary represents a process with the following
-    fileds: `name`, `pid`, `ppid`, `arch` (if available), and `user` (if available).
+	fields: `name`, `pid`, `ppid`, `arch` (if available), `user` (if
+    available), and `session` (if available).
   - `parse_ls(content)`: Parses the callback output of `bls`. Returns a list of
     dictionaries. Each dictionary represents a file with the following fields:
-    `type` (D/F), `size` (in bytes), `modified` (date and time), and `name`.
+	`type` (`'D'` or `'F'`), `size` (in bytes), `modified` (date and time), and
+    `name`.
   - `recurse_ls(bid, directory, callback, depth=9999)`: Recursively list files
     with `bls` and call `callback(path)` for each file.
   - `find_process(bid, proc_name, callback)`: Calls `bps` to find a process by
@@ -555,6 +558,8 @@ some of the functions available:
     Read [this](https://stackoverflow.com/questions/29213106/how-to-securely-escape-command-line-arguments-for-the-cmd-exe-shell-on-windows).
   - `cmd_quote(arg)`/`cq(arg)`: Quote a string for use as an arguent to a
     cmd.exe command that does not use `CommandLineToArgvW`.
+  - `execute_assembly_quote(arg)`/`eaq(arg)`: Turn a list of arguments into a
+    quoted argument string for `aggressor.bexecute_assembly`.
   - `powershell_base64(string)`: Encode a string as UTF-16LE and base64 it. The
     output is compatible with Powershell's -EncodedCommand flag.
 
