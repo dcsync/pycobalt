@@ -65,7 +65,7 @@ def main():
     functions = {}
     for url in urls:
         html = requests.get(url).text
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, 'html5lib')
 
         print('parsing')
 
@@ -133,20 +133,20 @@ import pycobalt.engine as engine
         pyname = func.replace('-', '')
         if func in silent_functions:
             data += '''
-def {pyname}(*args, silent=False, fork=False):
+def {pyname}(*args, silent=False, fork=None, sync=True):
     r""""{doc}
     """
 
-    return engine.call('{name}', args, silent=silent, fork=fork)
+    return engine.call('{name}', args, silent=silent, fork=fork, sync=sync)
 
 '''.format(name=func, pyname=pyname, doc=doc)
         else:
             data += '''
-def {pyname}(*args, fork=False):
+def {pyname}(*args, fork=None, sync=True):
     r"""{doc}
     """
 
-    return engine.call('{name}', args, fork=fork)
+    return engine.call('{name}', args, fork=fork, sync=sync)
 
 '''.format(name=func, pyname=pyname, doc=doc)
 
