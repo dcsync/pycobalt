@@ -59,6 +59,31 @@ silent_functions = [
     'bexecute_assembly',
 ]
 
+function_arguments = {
+    'is64': ('bid',),
+    'isadmin': ('bid',),
+    'isbeacon': ('bid',),
+    'isssh': ('bid',),
+    'action': ('message',),
+    'add_to_clipboard': ('text',),
+    'applications': (),
+    'archives': (),
+    'artifact': ('listener', 'format', 'remote', 'architecture'),
+    'artifact_sign': ('contents',),
+    'artifact_stageless': ('listener', 'format', 'architecture', 'proxy', 'callback'),
+    'blog': ('bid', 'message'),
+    'blog2': ('bid', 'message'),
+    'btask': ('bid', 'message'),
+    'berror': ('bid', 'message'),
+    'bcd': ('bid', 'folder'),
+    'bclear': ('bid',),
+    'bdata': ('bid',),
+    'beacon_data': ('bid',),
+    'beacon_info': ('bid', 'key'),
+    'bdownload': ('bid', 'file'),
+    'bexit': ('bid',),
+}
+
 def main():
     print('downloading list')
 

@@ -9,11 +9,10 @@ import re
 import sys
 import traceback
 
+import os
+#sys.path.insert(0, os.path.realpath(os.path.dirname(__file__)) + '/..')
+
 import pycobalt.utils as utils
-import pycobalt.events as events
-import pycobalt.aggressor as aggressor
-import pycobalt.commands as commands
-import pycobalt.aliases as aliases
 import pycobalt.callbacks as callbacks
 import pycobalt.serialization as serialization
 
@@ -66,7 +65,7 @@ def debug(line):
 
     global _debug_on
     if _debug_on:
-        write('debug', line)
+        write('debug', str(line))
 
 def handle_exception_softly(exc):
     """
@@ -109,16 +108,17 @@ def handle_message(name, message):
     """
 
 
-    debug('handling message of type {}: {}'.format(name, message))
+    #debug('handling message of type {}: {}'.format(name, message))
     if name == 'callback':
         # dispatch callback
         callback_name = message['name']
         callback_args = message['args'] if 'args' in message else []
 
         if 'sync' in message and message['sync'] and 'id' in message:
-            callbacks.call(callback_name, callback_args, return_id=message['id'])
+            return_message = callbacks.call(callback_name, callback_args, return_id=message['id'])
+            write('return', return_message)
         else:
-            callbacks.call(callback_name, callback_args)
+            return_message = callbacks.call(callback_name, callback_args)
 
     elif name == 'eval':
         # eval python code
@@ -308,7 +308,7 @@ def error(line):
     :param line: Line to write
     """
 
-    write('error', line)
+    write('error', str(line))
 
 def message(line):
     """
@@ -319,7 +319,7 @@ def message(line):
     :param line: Line to write
     """
 
-    write('message', line)
+    write('message', str(line))
 
 def delete(handle):
     """
