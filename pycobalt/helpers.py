@@ -361,13 +361,20 @@ def execute_assembly_quote(arg):
     Quote a string or list of strings for use as arguments to pass to
     `bexecute_assembly`.
 
-    The argument format appears to be pretty simple. Arguments may be enclosed
-    in double-quotes. Double-quotes may be escaped with backslashes.
-    Backslashes may be escaped with backslashes.
-
     The return value is a string suitable for use with `bexecute_assembly`. If
     a list of strings is passed each argument is quoted and separated by a
     space.
+
+    The argument format appears to be pretty simple.^W^Wsomewhat complicated.
+    Arguments may be enclosed in double-quotes. Double-quotes may be escaped
+    with backslashes. Backslash-quote sequences may be escaped by doubling the
+    backslash. I thought I had this figured out. But then I ran into edge
+    cases:
+
+      - "f\\\\""g" and "f\\\\\""g" both result in: f\\"g
+      - it's as if the number of backslashes in a row in front of a
+        double-quote is divided by 2 and rounded down.
+      - none of the quoting rules apply if there's a " in the first argument.
 
     :param arg: Argument to quote (string or list of strings)
     :return: Argument string for `bexecute_assembly`
@@ -379,11 +386,29 @@ def execute_assembly_quote(arg):
     else:
         new_string = str(arg)
 
-        # escape \
-        new_string = new_string.replace('\\', '\\\\')
+        # solution to the weird \\\" problem:
+        #  - split the string up into chunks separated by "
+        #  - for each chunk work backwards and double up \ until we hit a non-\
+        parts = new_string.split('"')
+        new_parts = []
+        for part in parts[:-1]:
+            new_part = ''
+            past_end = False
+            for char in part[::-1]:
+                if past_end:
+                    new_part = char + new_part
+                elif char == '\\':
+                    # escape the backslash
+                    new_part = char * 2 + new_part
+                else:
+                    new_part = char + new_part
+                    past_end = True
 
-        # escape "
-        new_string = new_string.replace('"', '\\"')
+            new_parts.append(new_part)
+
+        new_parts.append(parts[-1])
+
+        new_string = r'\"'.join(new_parts)
 
         # enclose in "
         new_string = '"{}"'.format(new_string)

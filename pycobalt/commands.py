@@ -71,7 +71,7 @@ def register(name, callback, quote_replacement=None):
         if quote_replacement:
             args = [arg.replace(quote_replacement, '"') for arg in args]
 
-        #engine.debug('calling callback for command {}'.format(name))
+        #engine.debug('Calling callback for command {}'.format(name))
         callback(*args)
 
     callbacks.register(command_callback, prefix='command_{}'.format(name))

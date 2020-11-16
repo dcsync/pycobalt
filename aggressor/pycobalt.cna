@@ -886,8 +886,8 @@ command python-eval {
 
 # Toggle PyCobalt debug messages
 #
-# Usage: python-debug [on|off]
-command python-debug {
+# Usage: pycobalt-debug [on|off]
+command pycobalt-debug {
 	local('$mode');
 
 	$mode = $1;

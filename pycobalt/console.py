@@ -92,6 +92,21 @@ SSH Beacon Console
  - `SSH_OUTPUT_ALT`: bid, message
  - `SSH_OUTPUT_DOWNLOADS`: bid, downloads={'name', 'path', 'size', 'rcvd'}
  - `SSH_INPUT`: bid, user, text, when
+
+Resource and artifact kits
+ - `APPLET_SHELLCODE_FORMAT`: <unknown>
+ - `DROPPER_ARTIFACT_GENERATOR`:<unknown>
+ - `EXECUTABLE_ARTIFACT_GENERATOR`:<unknown>
+ - `HTMLAPP_EXE`:<unknown>
+ - `HTMLAPP_POWERSHELL`:<unknown>
+ - `POWERSHELL_COMPRESS`: <unknown>
+ - `PYTHON_COMPRESS`: <unknown>
+ - `RESOURCE_GENERATOR`: <unknown>
+ - `RESOURCE_GENERATOR_VBS`: <unknown>
+ - `SIGNED_APPLET_MAINCLASS`: <unknown>
+ - `SIGNED_APPLET_RESOURCE`: <unknown>
+ - `SMART_APPLET_MAINCLASS`: <unknown>
+ - `SMART_APPLET_RESOURCE`: <unknown>
 """
 
 import math
@@ -150,6 +165,19 @@ _known_modifiers = (
     'SSH_OUTPUT_ALT',
     'SSH_OUTPUT_DOWNLOADS',
     'SSH_INPUT',
+    'APPLET_SHELLCODE_FORMAT',
+    'DROPPER_ARTIFACT_GENERATOR',
+    'EXECUTABLE_ARTIFACT_GENERATOR',
+    'HTMLAPP_EXE',
+    'HTMLAPP_POWERSHELL',
+    'POWERSHELL_COMPRESS',
+    'PYTHON_COMPRESS',
+    'RESOURCE_GENERATOR',
+    'RESOURCE_GENERATOR_VBS',
+    'SIGNED_APPLET_MAINCLASS',
+    'SIGNED_APPLET_RESOURCE',
+    'SMART_APPLET_MAINCLASS',
+    'SMART_APPLET_RESOURCE',
 )
 
 def is_known_modifier(name):
@@ -176,7 +204,7 @@ def register_modifier(name, callback, known_only=True):
     name = name.upper()
 
     def modifier_callback(*args):
-        engine.debug('calling callback for modifier {}'.format(name))
+        #engine.debug('calling callback for modifier {}'.format(name))
         try:
             return callback(*args)
         except Exception as exc:

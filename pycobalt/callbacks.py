@@ -24,7 +24,7 @@ To register a callback manually (useful for setting the serialized name manually
 import collections
 
 import pycobalt.utils as utils
-import pycobalt.engine as engine
+#import pycobalt.engine as engine
 
 # { name: func }
 _callbacks = {}
@@ -41,7 +41,7 @@ def call(name, args, return_id=None):
     :return: Return value of callback
     """
 
-    engine.debug('Calling callback {}'.format(name))
+    #engine.debug('Calling callback {}'.format(name))
 
     global _callbacks
     if name in _callbacks:
@@ -55,8 +55,9 @@ def call(name, args, return_id=None):
                     'value': return_value,
                     'id': return_id
                 }
-                engine.debug('Return sync: {} {}'.format(return_id, return_value))
-                engine.write('return', return_message)
+                #engine.debug('Return sync: {} {}'.format(return_id, return_value))
+                #engine.write('return', return_message)
+                return return_message
 
             return True
         else:
@@ -64,7 +65,7 @@ def call(name, args, return_id=None):
             raise RuntimeError("{} is an invalid number of arguments for callback '{}'. Syntax: {}".format(len(args), name, syntax))
             return False
     else:
-        engine.debug('Tried to call unknown callback: {}'.format(name))
+        #engine.debug('Tried to call unknown callback: {}'.format(name))
         return False
 
 def name(func):

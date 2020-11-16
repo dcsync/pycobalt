@@ -38,6 +38,7 @@ default_using = [
 default_runner = 'dotnet'
 default_build_paths = ['bin/Release/netcoreapp2.1/SharpGen.dll',
                        'bin/Debug/netcoreapp2.1/SharpGen.dll']
+default_confuser_location = '../third_party/ConfuserEx'
 
 # Location of the sharpgen directory
 _sharpgen_location = utils.basedir('../third_party/SharpGen')
@@ -552,7 +553,7 @@ def wrap_code(source, function_name='Main', function_type='void',
 
     return out
 
-def generate_confuser_config(protections):
+def generate_confuser_config(protections, executable=None):
     """
     Generate a ConfuserEx config file.
 
@@ -563,14 +564,22 @@ def generate_confuser_config(protections):
     :param protections: List of protection names or a dictionary of
                         dictionaries containing protections and their
                         arguments.
+    :param executable: Executable to generate config for (default: leave ambiguous for SharpGen)
     :return: Generated ConfuserEx config file
     """
 
-    config = textwrap.dedent("""\
-        <project baseDir="{0}" outputDir="{1}" xmlns="http://confuser.codeplex.com">
-          <module path="{2}">
-            <rule pattern="true" inherit="false">
-        """)
+    if executable:
+        config = helpers.code_string(r"""
+            <project baseDir="{0}" outputDir="{1}" xmlns="http://confuser.codeplex.com">
+              <module path="{2}">
+                <rule pattern="true" inherit="false">
+            """)
+    else:
+        config = helpers.code_string(r"""
+            <project baseDir="{0}" outputDir="{1}" xmlns="http://confuser.codeplex.com">
+              <module path="{2}">
+                <rule pattern="true" inherit="false">
+            """)
 
     indent = ' ' * 6
     if isinstance(protections, dict):
@@ -593,7 +602,7 @@ def generate_confuser_config(protections):
         for protection in protections:
             config += indent + '<protection id="{}" />\n'.format(protection)
 
-    config += textwrap.dedent("""\
+    config += helpers.code_string(r"""
             </rule>
           </module>
         </project>
@@ -834,7 +843,7 @@ def compile(
 
     # check to make sure both arguments were not passed
     if confuser_protections and confuser_config:
-        raise RuntimeError('Arguments confuser_protections and confuser_config are not compatible together')
+        raise RuntimeError('Arguments confuser_protections and confuser_config are mutually exclusive')
 
     # if confuser_protections is passed generate a ConfuserEx config file
     confuser_tempfile = None
@@ -1095,3 +1104,31 @@ def execute(bid, code, args, delete_after=True, silent=True, **kwargs):
         os.remove(compiled)
 
     return from_cache
+
+def confuse(executable, location=None, config=None, protections=None):
+    """
+    Run ConfuserEx on an executable.
+
+    :param executable: Executable to obfuscate
+    :param config: Config file
+    :param protections: Protections to generate config file from
+    """
+
+    # check to make sure both arguments were not passed
+    if protections and config:
+        raise RuntimeError('Arguments protections and config are mutually exclusive')
+
+    if not location:
+        location = default_confuser_location
+
+    # Find ConfuserEx executable
+    for config in ('Release', 'Debug'):
+        path = '{}/{}/bin/Confuser.CLI.exe'.format(location, config)
+        if os.path.isfile(path):
+            confuser_executable = path
+            break
+    else:
+        raise RuntimeError('Could not find Confuser.CLI.exe in {}'.format(location))
+
+    if confuser_config:
+        args += ['--confuse', confuser_config]

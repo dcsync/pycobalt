@@ -17,7 +17,7 @@ Decorator example:
 import collections
 
 import pycobalt.utils as utils
-import pycobalt.engine as engine
+#import pycobalt.engine as engine
 import pycobalt.aggressor as aggressor
 import pycobalt.callbacks as callbacks
 
@@ -112,7 +112,7 @@ def register(name, callback, official_only=True):
     """
 
     def event_callback(*args):
-        engine.debug('calling callback for event {}'.format(name))
+        #engine.debug('calling callback for event {}'.format(name))
         callback(*args)
 
     if official_only and not is_official(name):
